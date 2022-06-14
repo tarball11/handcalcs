@@ -1,0 +1,38 @@
+---
+title: "To Do"
+author: "Travis J. Carter"
+output: html_document
+---
+
+# To do list
+- Unify code base across solutions and functions, in order to ensure that the same exact process is used for calculating values and presenting solutions.
+	- Option 1: Have code generaate both numerical value and solutions, and present both as a list
+	- Option 2: Have code return either the numerical value OR the solutions, determined by a function argument
+- Implement full consistency with the function names (e.g., calc_r)
+- Allow for rounding precision to be passed as a function argument, rather than fixed at 4; also maybe separate the precision for interim calculations and the precision of the final answer (i.e., precision argument for interim calcs, and digits argument for final rounding)
+- Decide if it works better to do all of the calculations within a tibble, or separately.
+- Consistency with interim variable naming (e.g., M_y vs My; b_Y vs. bY).
+- Maybe include a function argument to allow for equations to be displayed in an aligned environment or not (i.e., toggle between "&=" and "="). 
+- Implement error/input checking
+- Z-score functions: standardize the arguments (mu/sigma vs. M/SD)
+- Be consistent about order of function arguments (e.g., sigma, N, mu, SD)
+- Make sure that the last value reported in a solutions function is printed to the correct number of digits (using sprintf, not round).
+- Perhaps make sure that the interim calculations are printed to the correct number of digits (using sprintf, rather than being trailing zeros being implicitly stripped via straight printing). [Maybe? It is often harder to read with trailing zeroes.]
+- Naming functions: It gets pretty unwieldy naming functions based on notation that can't be represented in the function name, particularly the functions for calculating standard error. Maybe better to have a formal system identifying type of test (one_samp_t; paired_t, indep_t) and the outcome being calculated (SE, df, etc.)
+- Add in more line breaks, particularly for longer formulas, to make sure that they aren't going to go off the page.
+- For CIs, maybe the last lines of the formula should be separate calculations for the upper and lower bounds? (Maybe not?)
+- If implementing this as some kind of self-contained object, include a spot for grading notes (rubric).
+- Make sure that you are rounding z-values (i.e., z-scores) to two digits prior to looking them up in the table to get areas. Perhaps incorporate that (as a default) into any of the formulas that produce area from z-scores.
+- Figure out a way to get plain text into formulas (e.g., subscripts that are not meant to be italicized, "one-tailed", etc.)
+- Maybe incorporate the rounding explicitly into the presentation of the solution (e.g., provide the answer to four decimals, then show it being rounded to two)
+- Change defaults for plot_dist() to have no y-axis.
+- For the plot_dist() function, maybe make it easier to specify the distribution function (dnorm, dt, etc.)
+- Maybe have a mode for the solution functions that just spits out the bare formula(s)? 
+- Does it make sense to turn to object-oriented programming here?
+- Use package gt instead of kableExtra to render tables
+- Use package learnr to generate the online tutorials?
+
+## Tests to construct
+- Related to z-test (normal deviate test): Identify the sample mean that would be at the Xth percentile.
+- ANOVA!
+- Make sure there's a conceptual version for every test (not just computational)
