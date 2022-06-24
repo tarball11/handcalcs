@@ -1,5 +1,5 @@
-Package: StatsSolutions
-Title: Generate Step-by-Step Solutions for Statistics Problems
+Package: handcalcs
+Title: Generate Hand-calculated Solutions for Statistics Problems
 Version: 0.0.0.9000
 Authors@R: 
     person("Travis", "Carter", , "tjcarter@roanoke.edu", role = c("aut", "cre"),
@@ -10,8 +10,12 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    stringr,
     dplyr,
     magrittr
+VignetteBuilder: knitr
