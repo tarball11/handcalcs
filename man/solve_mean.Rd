@@ -2,31 +2,39 @@
 % Please edit documentation in R/centraltendency.R
 \name{solve_mean}
 \alias{solve_mean}
-\title{Solve arithmetic mean}
+\title{Arithmetic mean: calculate value (with rounding) and present solutions}
 \usage{
-solve_mean(x, nm = "X", precision = 4, digits = 4)
+solve_mean(x, sub = "", sym = ifelse(nchar(sub) == 1, sub, "X"), ...)
 }
 \arguments{
-\item{x}{A numeric vector}
+\item{x}{Numeric vector.}
 
-\item{nm}{Name of numeric vector (reported as subscript in solutions)}
+\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
+solutions). Leave empty to report no subscript.}
 
-\item{precision}{Number of digits to round for interim calculation steps}
+\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
+Only one character allowed.}
 
-\item{digits}{Number of digits to report for final result}
+\item{...}{Additional arguments to override default behaviors (see
+\code{\link{handcalcs_defaults}}).}
 }
 \value{
-A list with the interim calculations (SumX, N), the final value (M), and the solution (slv)
+A list with the interim calculations (\code{SumX}, \code{n}), the
+final value (\code{M}), and the solution string (\code{solution}) in LaTeX format.
 }
 \description{
-Solve arithmetic mean
+Arithmetic mean: calculate value (with rounding) and present solutions
 }
 \examples{
-x <- 1:10
+x <- sample(x = 1:10, size = 20, replace = TRUE)
 solve_mean(x)
 
-(x<- rnorm(20))
-solve_mean(x, nm='Y')
+# Note that the value calculated by solve_mean(x) will be different than the
+# value calculated by mean(x) when rounding occurs.
+(x <- rnorm(20))
+solve_mean(x, sub = "Y")
 
+# The value of sub can be long, but not sym.
+solve_mean(x, sub = "Donuts")
 
 }
