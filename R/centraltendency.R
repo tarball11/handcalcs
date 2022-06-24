@@ -50,12 +50,10 @@ solve_mean <- function(x,
   equals <- ifelse(use_aligned, "&=", "=")
 
   # Create the solution string, with rounded values (minimally displayed)
-  solution <- stringr::str_glue(
+  solution <- glue_solution(
   	"M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
   	"[equals] \\frac{[SumX]}{[n]}",
   	"[equals] \\textbf{[M]}",
-  	.sep = " \\\\ ",
-  	.open = "[", .close = "]",
   	SumX = fmt(SumX, get_digits(SumX, round_interim)),
   	M = fmt(M, get_digits(M, round_final))
   	)
@@ -119,10 +117,8 @@ solve_median <- function(x,
   equals <- ifelse(use_aligned, "&=", "=")
 
   # Create the solution string, with rounded values (minimally displayed)
-  solution <- stringr::str_glue(
+  solution <- glue_solution(
   	"\\text{Median}_{[sub]} [equals] \\textbf{[Med]}",
-  	.sep = " \\\\ ",
-  	.open = "[", .close = "]",
   	Med = fmt(Med, get_digits(Med, round_final))
   )
 
@@ -183,10 +179,8 @@ solve_mode <- function(x,
   equals <- ifelse(use_aligned, "&=", "=")
 
   # Create the solution string, with rounded values (minimally displayed)
-  solution <- stringr::str_glue(
+  solution <- glue_solution(
   	"\\text{Mode}_{[sub]} [equals] \\textbf{[Mode]}",
-  	.sep = " \\\\ ",
-  	.open = "[", .close = "]",
   	Mode = paste(Mode, collapse = ", ")
   )
 

@@ -19,7 +19,18 @@ get_digits<- function(x, max_digits = 4) {
 	return(i)
 }
 
-
-fmt<- function(x, digits) {
+# Formats a number as a string rounded to the appropriate number of digits
+fmt<- function(x, digits = 4) {
 	sprintf(paste0('%1.', digits, 'f'), x)
+}
+
+# Wrapper for glue::glue() to generate solution strings, using defaults useful
+# for LaTeX strings
+glue_solution <- function(..., .envir = parent.frame()) {
+	glue::glue(...,
+						 .envir = .envir,
+						 .sep = " \\\\ ",
+						 .open = "[",
+						 .close = "]",
+	)
 }
