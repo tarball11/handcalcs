@@ -77,3 +77,24 @@ check_defaults<- function(x, l) {
 	val <- ifelse(!is.null(l[[x]]), l[[x]], op[[x]])
 	return(val)
 }
+
+# Generates list of options, overriding the global options if specified.
+get_opts<- function(...) {
+	args <- list(...)
+	opts <- options()$handcalcs
+
+	# No arguments, return current global values
+	if(length(args) == 0) return(opts)
+
+	# Warn if an invalid argument is supplied
+	if(!all(names(args) %in% names(opts))) {
+		warning('One or more of the arguments is invalid.')
+	}
+
+	for(i in names(args)) {
+		opts[[i]] = args[[i]]
+	}
+
+	return(opts)
+}
+
