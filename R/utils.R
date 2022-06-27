@@ -1,3 +1,15 @@
+rnd <- function(x, digits, round_to = get_handcalcs_opts()$round_to) {
+	stopifnot(is.numeric(x))
+	stopifnot(is.numeric(digits), length(digits) == 1)
+	stopifnot(round_to %in% c('decimals', 'sigfigs'))
+
+	if(round_to == 'sigfigs') {
+		signif(x, digits)
+	} else {
+		round(x, digits)
+	}
+}
+
 #' Figures out the minumum number of digits (up to four) to report after the decimal place
 #'
 #' @param x Numeric vector.
