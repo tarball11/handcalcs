@@ -9,8 +9,8 @@
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return A list with the interim calculations (\code{SumX}, \code{n}), the
-#'   final value (\code{M}), and the solution string (\code{solution}) in LaTeX
-#'   format.
+#'   final value (\code{M}), the solution string (\code{solution}), and the
+#'   bare formula (\code{formula}) in LaTeX format.
 #' @export
 #'
 #' @examples
@@ -102,7 +102,8 @@ mean_formula <- function(sub = "",
 	use_aligned <- check_defaults('use_aligned', list(...))
 	equals <- ifelse(use_aligned, "&=", "=")
 
-	glue_solution("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}")
+	glue::glue("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
+						 .open = "[", .close = "]")
 }
 
 
@@ -233,13 +234,15 @@ solve_mode <- function(x,
 #'
 #' @param Samples List of means and sample sizes. Must be a list of vectors with
 #'   names M and n, one vector per subgroup (see examples).
+#' @param truncate_k Numeric scalar. How many subgroups are allowed before it
+#'   truncates the solution with ellipses? (Default is 5; minimum is 3.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return A list with vectors for the means (\code{M}) and sample sizes
 #'   (\code{n}), the interim calculations (\code{Sum_M_x_n}, \code{Sum_n}), the
-#'   final value (\code{M_w}), and the solution string (\code{solution}) in
-#'   LaTeX format.
+#'   final value (\code{M_w}), the solution string (\code{solution}), and the
+#'   bare formula (\code{formula}) in LaTeX format.
 #'
 #' @return
 #' @export
@@ -248,12 +251,17 @@ solve_mode <- function(x,
 #' l <- list(A = c(M = 10, n = 20), B = c(M = 15, n = 25), c = c(M = 20, n = 30))
 #' solve_weighted_mean(l)
 #'
-solve_weighted_mean<- function(Samples, ...) {
+solve_weighted_mean<- function(Samples, truncate_k = 5, ...) {
+
+	# Samples must be a list with at least two subgroups represented
+	stopifnot(is.list(Samples), length(Samples) > 1)
 	# Disallow missing values.
 	stopifnot(all(!is.na(purrr::flatten_dbl(Samples))))
 	# Samples must be list of vectors of length 2, with values named M and n
 	stopifnot(all(purrr::map_lgl(Samples, ~length(.x) == 2)))
 	stopifnot(all(purrr::flatten_lgl(purrr::map(Samples, ~names(.x) == c('M', 'n')))))
+	# Confirm truncate_k is a valid value
+	stopifnot(is.numeric(truncate_k), truncate_k > 2)
 
 	# Round values to round_interim at each interim step
 	round_interim <- check_defaults('round_interim', list(...))
@@ -263,17 +271,31 @@ solve_weighted_mean<- function(Samples, ...) {
 	use_aligned <- check_defaults('use_aligned', list(...))
 	equals <- ifelse(use_aligned, "&=", "=")
 
+	# Number of subgroups
+	k <- length(Samples)
 
-	# Get vectors of means, sample sizes, and subscripts (1:n)
+	# Get vectors of means, sample sizes, and subscripts (1:k)
 	M <- purrr::map_dbl(Samples, 'M') %>% round(round_interim)
 	n <- purrr::map_dbl(Samples, 'n') %>% round(0)
-	sub <- 1:length(Samples)
+	sub <- 1:k
 
 	# Calculate weighted mean (M_w)
 	M_x_n <- round(M*n, round_interim)
 	Sum_M_x_n <- round(sum(M_x_n), round_interim)
 	Sum_n <- sum(n)
 	M_w <- round(Sum_M_x_n/Sum_n, round_final)
+
+	if(k > truncate_k) {
+		Num <- glue::glue("([M[1]])([n[1]]) + ([M[2]])([n[2]]) + \\cdots + ([M[k]])([n[k]]))",
+								 .open = "[", .close = "]")
+		Denom <- glue::glue("[n[1]] + [n[2]] + \\cdots + [n[k]]",
+											.open = "[", .close = "]")
+	} else {
+		Num <- glue::glue("([M])([n])", .open='[', .close = ']') %>%
+			glue::glue_collapse(sep = ' + ')
+		Denom <- glue::glue("[n]", .open='[', .close = ']') %>%
+			glue::glue_collapse(sep = ' + ')
+	}
 
 	# Base formula
 	M_w.formula<- weighted_mean_formula(...)
@@ -283,11 +305,7 @@ solve_weighted_mean<- function(Samples, ...) {
 		M_w.formula,
 		"[equals] \\frac{[Num]}{[Denom]}",
 		"[equals] \\frac{[Sum_M_x_n]}{[Sum_n]}",
-		"[equals] [M_w]",
-		Num = glue::glue("([M])([n])", .open='[', .close = ']') %>%
-			glue::glue_collapse(sep = ' + '),
-		Denom = glue::glue("[n]", .open='[', .close = ']') %>%
-			glue::glue_collapse(sep = ' + '),
+		"[equals] \\textbf{[M_w]}",
 		Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, round_interim)),
 		M_w = fmt(M_w, get_digits(M_w, round_final))
 	)
@@ -322,7 +340,6 @@ weighted_mean_formula<- function(...) {
 	use_aligned <- check_defaults('use_aligned', list(...))
 	equals <- ifelse(use_aligned, "&=", "=")
 
-	glue_solution(
-		"M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
-	)
+	glue::glue("M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
+						 .open = "[", .close = "]")
 }
