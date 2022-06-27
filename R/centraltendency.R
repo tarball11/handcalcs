@@ -11,6 +11,7 @@
 #' @return A list with the interim calculations (\code{SumX}, \code{n}), the
 #'   final value (\code{M}), the solution string (\code{solution}), and the
 #'   bare formula (\code{formula}) in LaTeX format.
+#' @seealso \code{\link{mean_formula}} for the bare formula of the mean.
 #' @export
 #'
 #' @examples
@@ -23,23 +24,25 @@
 #' solve_mean(x, sub = "Y", sym = "Y")
 #'
 #' # The value of sub can be long, but not sym.
-#' \dontrun{solve_mean(x, sub = "Donuts", sym = "Donuts")}
+#' \dontrun{
+#' solve_mean(x, sub = "Donuts", sym = "Donuts")
+#' }
 #'
 solve_mean <- function(x,
                        sub = "",
                        sym = "X",
-											 ...) {
+                       ...) {
   # Check argument validity
-	stopifnot(is.numeric(x), any(!is.na(x)))
-	stopifnot(is.character(sub), length(sub) == 1)
+  stopifnot(is.numeric(x), any(!is.na(x)))
+  stopifnot(is.character(sub), length(sub) == 1)
   stopifnot(is.character(sym), nchar(sym) == 1)
 
   # Round values to round_interim at each interim step
-  round_interim <- check_defaults('round_interim', list(...))
+  round_interim <- check_defaults("round_interim", list(...))
   # Round values to round_final at final step
-  round_final <- check_defaults('round_final', list(...))
+  round_final <- check_defaults("round_final", list(...))
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults('use_aligned', list(...))
+  use_aligned <- check_defaults("use_aligned", list(...))
   equals <- ifelse(use_aligned, "&=", "=")
 
   # Calculate mean
@@ -49,26 +52,28 @@ solve_mean <- function(x,
   M <- round(SumX / n, round_final)
 
   # Base formula
-  M.formula<- mean_formula(sub, sym, ...)
+  M.formula <- mean_formula(sub, sym, ...)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-  	M.formula,
-  	"[equals] \\frac{[SumX]}{[n]}",
-  	"[equals] \\textbf{[M]}",
-  	SumX = fmt(SumX, get_digits(SumX, round_interim)),
-  	M = fmt(M, get_digits(M, round_final))
-  	)
+    M.formula,
+    "[equals] \\frac{[SumX]}{[n]}",
+    "[equals] \\textbf{[M]}",
+    SumX = fmt(SumX, get_digits(SumX, round_interim)),
+    M = fmt(M, get_digits(M, round_final))
+  )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults('add_math', list(...))
-  add_aligned <- check_defaults('add_aligned', list(...))
+  add_math <- check_defaults("add_math", list(...))
+  add_aligned <- check_defaults("add_aligned", list(...))
   if (add_aligned) solution <- add_aligned(solution)
   if (add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
-  l <- list(x = x, n = n, SumX = SumX, M = M,
-  					solution = solution, formula = M.formula)
+  l <- list(
+    x = x, n = n, SumX = SumX, M = M,
+    solution = solution, formula = M.formula
+  )
 
   return(l)
 }
@@ -84,6 +89,9 @@ solve_mean <- function(x,
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return Formula in LaTeX format (character string).
+#'
+#' @seealso \code{\link{solve_mean}} for calculating the mean from raw data.
+#'
 #' @export
 #'
 #' @examples
@@ -92,18 +100,19 @@ solve_mean <- function(x,
 #' mean_formula(sub = "Y", sym = "Y")
 #'
 mean_formula <- function(sub = "",
-												sym = "X",
-												...) {
-	# Check argument validity
-	stopifnot(is.character(sub), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+                         sym = "X",
+                         ...) {
+  # Check argument validity
+  stopifnot(is.character(sub), length(sub) == 1)
+  stopifnot(is.character(sym), nchar(sym) == 1)
 
-	# Use the appropriate equals sign for an aligned environment
-	use_aligned <- check_defaults('use_aligned', list(...))
-	equals <- ifelse(use_aligned, "&=", "=")
+  # Use the appropriate equals sign for an aligned environment
+  use_aligned <- check_defaults("use_aligned", list(...))
+  equals <- ifelse(use_aligned, "&=", "=")
 
-	glue::glue("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
-						 .open = "[", .close = "]")
+  glue::glue("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
+    .open = "[", .close = "]"
+  )
 }
 
 
@@ -132,17 +141,17 @@ mean_formula <- function(sub = "",
 #'
 solve_median <- function(x,
                          sub = "",
-												 ...) {
+                         ...) {
   # Check argument validity; Disallow missing values
   stopifnot(is.numeric(x), any(!is.na(x)))
   stopifnot(is.character(sub), length(sub) == 1)
 
   # Round values to round_interim at each interim step
-  round_interim <- check_defaults('round_interim', list(...))
+  round_interim <- check_defaults("round_interim", list(...))
   # Round values to round_final at final step
-  round_final <- check_defaults('round_final', list(...))
+  round_final <- check_defaults("round_final", list(...))
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults('use_aligned', list(...))
+  use_aligned <- check_defaults("use_aligned", list(...))
   equals <- ifelse(use_aligned, "&=", "=")
 
   # Calculate median
@@ -152,13 +161,13 @@ solve_median <- function(x,
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-  	"\\text{Median}_{[sub]} [equals] \\textbf{[Med]}",
-  	Med = fmt(Med, get_digits(Med, round_final))
+    "\\text{Median}_{[sub]} [equals] \\textbf{[Med]}",
+    Med = fmt(Med, get_digits(Med, round_final))
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults('add_math', list(...))
-  add_aligned <- check_defaults('add_aligned', list(...))
+  add_math <- check_defaults("add_math", list(...))
+  add_aligned <- check_defaults("add_aligned", list(...))
   if (add_aligned) solution <- add_aligned(solution)
   if (add_math) solution <- add_math(solution)
 
@@ -191,18 +200,18 @@ solve_median <- function(x,
 #'
 solve_mode <- function(x,
                        sub = "",
-											 ...) {
+                       ...) {
   # Check argument validity; Disallow missing values
   stopifnot(is.numeric(x), any(!is.na(x)))
   stopifnot(is.character(sub), length(sub) == 1)
 
 
   # Round values to round_interim at each interim step
-  round_interim <- check_defaults('round_interim', list(...))
+  round_interim <- check_defaults("round_interim", list(...))
   # Round values to round_final at final step
-  round_final <- check_defaults('round_final', list(...))
+  round_final <- check_defaults("round_final", list(...))
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults('use_aligned', list(...))
+  use_aligned <- check_defaults("use_aligned", list(...))
   equals <- ifelse(use_aligned, "&=", "=")
 
   # Calculate mode(s)
@@ -213,13 +222,13 @@ solve_mode <- function(x,
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-  	"\\text{Mode}_{[sub]} [equals] \\textbf{[Mode]}",
-  	Mode = paste(Mode, collapse = ", ")
+    "\\text{Mode}_{[sub]} [equals] \\textbf{[Mode]}",
+    Mode = paste(Mode, collapse = ", ")
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults('add_math', list(...))
-  add_aligned <- check_defaults('add_aligned', list(...))
+  add_math <- check_defaults("add_math", list(...))
+  add_aligned <- check_defaults("add_aligned", list(...))
   if (add_aligned) solution <- add_aligned(solution)
   if (add_math) solution <- add_math(solution)
 
@@ -244,6 +253,10 @@ solve_mode <- function(x,
 #'   final value (\code{M_w}), the solution string (\code{solution}), and the
 #'   bare formula (\code{formula}) in LaTeX format.
 #'
+#' @seealso \code{\link{weighted_mean_formula}} for the bare formula of the
+#'   weighted mean, and \code{\link{solve_mean}} for calculating/solving mean
+#'   from raw data.
+#'
 #' @return
 #' @export
 #'
@@ -251,76 +264,80 @@ solve_mode <- function(x,
 #' l <- list(A = c(M = 10, n = 20), B = c(M = 15, n = 25), c = c(M = 20, n = 30))
 #' solve_weighted_mean(l)
 #'
-solve_weighted_mean<- function(Samples, truncate_k = 5, ...) {
+solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
 
-	# Samples must be a list with at least two subgroups represented
-	stopifnot(is.list(Samples), length(Samples) > 1)
-	# Disallow missing values.
-	stopifnot(all(!is.na(purrr::flatten_dbl(Samples))))
-	# Samples must be list of vectors of length 2, with values named M and n
-	stopifnot(all(purrr::map_lgl(Samples, ~length(.x) == 2)))
-	stopifnot(all(purrr::flatten_lgl(purrr::map(Samples, ~names(.x) == c('M', 'n')))))
-	# Confirm truncate_k is a valid value
-	stopifnot(is.numeric(truncate_k), truncate_k > 2)
+  # Samples must be a list with at least two subgroups represented
+  stopifnot(is.list(Samples), length(Samples) > 1)
+  # Disallow missing values.
+  stopifnot(all(!is.na(purrr::flatten_dbl(Samples))))
+  # Samples must be list of vectors of length 2, with values named M and n
+  stopifnot(all(purrr::map_lgl(Samples, ~ length(.x) == 2)))
+  stopifnot(all(purrr::flatten_lgl(purrr::map(Samples, ~ names(.x) == c("M", "n")))))
+  # Confirm truncate_k is a valid value
+  stopifnot(is.numeric(truncate_k), truncate_k > 2)
 
-	# Round values to round_interim at each interim step
-	round_interim <- check_defaults('round_interim', list(...))
-	# Round values to round_final at final step
-	round_final <- check_defaults('round_final', list(...))
-	# Use the appropriate equals sign for an aligned environment
-	use_aligned <- check_defaults('use_aligned', list(...))
-	equals <- ifelse(use_aligned, "&=", "=")
+  # Round values to round_interim at each interim step
+  round_interim <- check_defaults("round_interim", list(...))
+  # Round values to round_final at final step
+  round_final <- check_defaults("round_final", list(...))
+  # Use the appropriate equals sign for an aligned environment
+  use_aligned <- check_defaults("use_aligned", list(...))
+  equals <- ifelse(use_aligned, "&=", "=")
 
-	# Number of subgroups
-	k <- length(Samples)
+  # Number of subgroups
+  k <- length(Samples)
 
-	# Get vectors of means, sample sizes, and subscripts (1:k)
-	M <- purrr::map_dbl(Samples, 'M') %>% round(round_interim)
-	n <- purrr::map_dbl(Samples, 'n') %>% round(0)
-	sub <- 1:k
+  # Get vectors of means, sample sizes, and subscripts (1:k)
+  M <- purrr::map_dbl(Samples, "M") %>% round(round_interim)
+  n <- purrr::map_dbl(Samples, "n") %>% round(0)
+  sub <- 1:k
 
-	# Calculate weighted mean (M_w)
-	M_x_n <- round(M*n, round_interim)
-	Sum_M_x_n <- round(sum(M_x_n), round_interim)
-	Sum_n <- sum(n)
-	M_w <- round(Sum_M_x_n/Sum_n, round_final)
+  # Calculate weighted mean (M_w)
+  M_x_n <- round(M * n, round_interim)
+  Sum_M_x_n <- round(sum(M_x_n), round_interim)
+  Sum_n <- sum(n)
+  M_w <- round(Sum_M_x_n / Sum_n, round_final)
 
-	if(k > truncate_k) {
-		Num <- glue::glue("([M[1]])([n[1]]) + ([M[2]])([n[2]]) + \\cdots + ([M[k]])([n[k]]))",
-								 .open = "[", .close = "]")
-		Denom <- glue::glue("[n[1]] + [n[2]] + \\cdots + [n[k]]",
-											.open = "[", .close = "]")
-	} else {
-		Num <- glue::glue("([M])([n])", .open='[', .close = ']') %>%
-			glue::glue_collapse(sep = ' + ')
-		Denom <- glue::glue("[n]", .open='[', .close = ']') %>%
-			glue::glue_collapse(sep = ' + ')
-	}
+  if (k > truncate_k) {
+    Num <- glue::glue("([M[1]])([n[1]]) + ([M[2]])([n[2]]) + \\cdots + ([M[k]])([n[k]]))",
+      .open = "[", .close = "]"
+    )
+    Denom <- glue::glue("[n[1]] + [n[2]] + \\cdots + [n[k]]",
+      .open = "[", .close = "]"
+    )
+  } else {
+    Num <- glue::glue("([M])([n])", .open = "[", .close = "]") %>%
+      glue::glue_collapse(sep = " + ")
+    Denom <- glue::glue("[n]", .open = "[", .close = "]") %>%
+      glue::glue_collapse(sep = " + ")
+  }
 
-	# Base formula
-	M_w.formula<- weighted_mean_formula(...)
+  # Base formula
+  M_w.formula <- weighted_mean_formula(...)
 
-	# Create the solution string, with rounded values (minimally displayed)
-	solution <- glue_solution(
-		M_w.formula,
-		"[equals] \\frac{[Num]}{[Denom]}",
-		"[equals] \\frac{[Sum_M_x_n]}{[Sum_n]}",
-		"[equals] \\textbf{[M_w]}",
-		Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, round_interim)),
-		M_w = fmt(M_w, get_digits(M_w, round_final))
-	)
+  # Create the solution string, with rounded values (minimally displayed)
+  solution <- glue_solution(
+    M_w.formula,
+    "[equals] \\frac{[Num]}{[Denom]}",
+    "[equals] \\frac{[Sum_M_x_n]}{[Sum_n]}",
+    "[equals] \\textbf{[M_w]}",
+    Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, round_interim)),
+    M_w = fmt(M_w, get_digits(M_w, round_final))
+  )
 
-	# Add LaTeX math code, if desired.
-	add_math <- check_defaults('add_math', list(...))
-	add_aligned <- check_defaults('add_aligned', list(...))
-	if (add_aligned) solution <- add_aligned(solution)
-	if (add_math) solution <- add_math(solution)
+  # Add LaTeX math code, if desired.
+  add_math <- check_defaults("add_math", list(...))
+  add_aligned <- check_defaults("add_aligned", list(...))
+  if (add_aligned) solution <- add_aligned(solution)
+  if (add_math) solution <- add_math(solution)
 
-	# Return list containing both values and solution string
-	l <- list(M = M, n = n, Sum_M_x_n = Sum_M_x_n, Sum_n = Sum_n, M_w = M_w,
-						solution = solution, formula = M_w.formula)
+  # Return list containing both values and solution string
+  l <- list(
+    M = M, n = n, Sum_M_x_n = Sum_M_x_n, Sum_n = Sum_n, M_w = M_w,
+    solution = solution, formula = M_w.formula
+  )
 
-	return(l)
+  return(l)
 }
 
 #' Formula for Weighted (aka Overall) Mean
@@ -329,17 +346,20 @@ solve_weighted_mean<- function(Samples, truncate_k = 5, ...) {
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return Formula in LaTeX format (character string).
+#' @seealso \code{\link{solve_weighted_mean}} for calculating the weighted mean from
+#'   subgroup data.
 #' @export
 #'
 #' @examples
 #'
 #' weighted_mean_formula()
 #'
-weighted_mean_formula<- function(...) {
-	# Use the appropriate equals sign for an aligned environment
-	use_aligned <- check_defaults('use_aligned', list(...))
-	equals <- ifelse(use_aligned, "&=", "=")
+weighted_mean_formula <- function(...) {
+  # Use the appropriate equals sign for an aligned environment
+  use_aligned <- check_defaults("use_aligned", list(...))
+  equals <- ifelse(use_aligned, "&=", "=")
 
-	glue::glue("M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
-						 .open = "[", .close = "]")
+  glue::glue("M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
+    .open = "[", .close = "]"
+  )
 }
