@@ -37,23 +37,22 @@ solve_mean <- function(x,
   stopifnot(is.character(sub), length(sub) == 1)
   stopifnot(is.character(sym), nchar(sym) == 1)
 
-  # Round values to round_interim at each interim step
-  round_interim <- check_defaults("round_interim", list(...))
-  # Round values to round_final at final step
-  round_final <- check_defaults("round_final", list(...))
+  # Get list of options (allowing user to override defaults) for rounding
+  # behavior and for presenting solutions in LaTeX environment.
+  opts<- get_opts(...)
+
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults("use_aligned", list(...))
-  equals <- ifelse(use_aligned, "&=", "=")
+  equals <- ifelse(opts$use_aligned, "&=", "=")
 
   # Calculate mean
-  x <- round(x, round_interim)
+  x <- round(x, opts$round_interim)
   n <- length(x)
-  SumX <- round(sum(x), round_interim)
-  M <- round(SumX / n, round_final)
+  SumX <- round(sum(x), opts$round_interim)
+  M <- round(SumX / n, opts$round_final)
 
   # Get base formula without LaTeX math/aligned blocks
   M.formula <- mean_formula(sub, sym,
-  													use_aligned = use_aligned,
+  													use_aligned = opts$use_aligned,
   													add_math = FALSE,
   													add_aligned = FALSE)
 
@@ -62,15 +61,13 @@ solve_mean <- function(x,
     M.formula,
     "[equals] \\frac{[SumX]}{[n]}",
     "[equals] \\textbf{[M]}",
-    SumX = fmt(SumX, get_digits(SumX, round_interim)),
-    M = fmt(M, get_digits(M, round_final))
+    SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
+    M = fmt(M, get_digits(M, opts$round_final))
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults("add_math", list(...))
-  add_aligned <- check_defaults("add_aligned", list(...))
-  if (add_aligned) solution <- add_aligned(solution)
-  if (add_math) solution <- add_math(solution)
+  if (opts$add_aligned) solution <- add_aligned(solution)
+  if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
   l <- list(
@@ -109,19 +106,20 @@ mean_formula <- function(sub = "",
   stopifnot(is.character(sub), length(sub) == 1)
   stopifnot(is.character(sym), nchar(sym) == 1)
 
+  # Get list of options (allowing user to override defaults) for rounding
+  # behavior and for presenting solutions in LaTeX environment.
+  opts<- get_opts(...)
+
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults("use_aligned", list(...))
-  equals <- ifelse(use_aligned, "&=", "=")
+  equals <- ifelse(opts$use_aligned, "&=", "=")
 
   solution<- glue::glue("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
     .open = "[", .close = "]"
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults("add_math", list(...))
-  add_aligned <- check_defaults("add_aligned", list(...))
-  if (add_aligned) solution <- add_aligned(solution)
-  if (add_math) solution <- add_math(solution)
+  if (opts$add_aligned) solution <- add_aligned(solution)
+  if (opts$add_math) solution <- add_math(solution)
 
   return(solution)
 }
@@ -157,30 +155,27 @@ solve_median <- function(x,
   stopifnot(is.numeric(x), any(!is.na(x)))
   stopifnot(is.character(sub), length(sub) == 1)
 
-  # Round values to round_interim at each interim step
-  round_interim <- check_defaults("round_interim", list(...))
-  # Round values to round_final at final step
-  round_final <- check_defaults("round_final", list(...))
+  # Get list of options (allowing user to override defaults) for rounding
+  # behavior and for presenting solutions in LaTeX environment.
+  opts<- get_opts(...)
+
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults("use_aligned", list(...))
-  equals <- ifelse(use_aligned, "&=", "=")
+  equals <- ifelse(opts$use_aligned, "&=", "=")
 
   # Calculate median
-  x <- round(x, round_interim)
+  x <- round(x, opts$round_interim)
   x <- sort(x)
-  Med <- round(median(x), round_final)
+  Med <- round(median(x), opts$round_final)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
     "\\text{Median}_{[sub]} [equals] \\textbf{[Med]}",
-    Med = fmt(Med, get_digits(Med, round_final))
+    Med = fmt(Med, get_digits(Med, opts$round_final))
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults("add_math", list(...))
-  add_aligned <- check_defaults("add_aligned", list(...))
-  if (add_aligned) solution <- add_aligned(solution)
-  if (add_math) solution <- add_math(solution)
+  if (opts$add_aligned) solution <- add_aligned(solution)
+  if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
   l <- list(x = x, Med = Med, solution = solution)
@@ -217,16 +212,15 @@ solve_mode <- function(x,
   stopifnot(is.character(sub), length(sub) == 1)
 
 
-  # Round values to round_interim at each interim step
-  round_interim <- check_defaults("round_interim", list(...))
-  # Round values to round_final at final step
-  round_final <- check_defaults("round_final", list(...))
+  # Get list of options (allowing user to override defaults) for rounding
+  # behavior and for presenting solutions in LaTeX environment.
+  opts<- get_opts(...)
+
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults("use_aligned", list(...))
-  equals <- ifelse(use_aligned, "&=", "=")
+  equals <- ifelse(opts$use_aligned, "&=", "=")
 
   # Calculate mode(s)
-  x <- round(x, round_interim)
+  x <- round(x, opts$round_interim)
   x <- sort(x)
   x.max <- which(table(x) == max(table(x)))
   Mode <- as.numeric(names(x.max))
@@ -238,10 +232,8 @@ solve_mode <- function(x,
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults("add_math", list(...))
-  add_aligned <- check_defaults("add_aligned", list(...))
-  if (add_aligned) solution <- add_aligned(solution)
-  if (add_math) solution <- add_math(solution)
+  if (opts$add_aligned) solution <- add_aligned(solution)
+  if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
   l <- list(x = x, Mode = Mode, solution = solution)
@@ -287,27 +279,26 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
   # Confirm truncate_k is a valid value
   stopifnot(is.numeric(truncate_k), truncate_k > 2)
 
-  # Round values to round_interim at each interim step
-  round_interim <- check_defaults("round_interim", list(...))
-  # Round values to round_final at final step
-  round_final <- check_defaults("round_final", list(...))
+  # Get list of options (allowing user to override defaults) for rounding
+  # behavior and for presenting solutions in LaTeX environment.
+  opts<- get_opts(...)
+
   # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults("use_aligned", list(...))
-  equals <- ifelse(use_aligned, "&=", "=")
+  equals <- ifelse(opts$use_aligned, "&=", "=")
 
   # Number of subgroups
   k <- length(Samples)
 
   # Get vectors of means, sample sizes, and subscripts (1:k)
-  M <- purrr::map_dbl(Samples, "M") %>% round(round_interim)
+  M <- purrr::map_dbl(Samples, "M") %>% round(opts$round_interim)
   n <- purrr::map_dbl(Samples, "n") %>% round(0)
   sub <- 1:k
 
   # Calculate weighted mean (M_w)
-  M_x_n <- round(M * n, round_interim)
-  Sum_M_x_n <- round(sum(M_x_n), round_interim)
+  M_x_n <- round(M * n, opts$round_interim)
+  Sum_M_x_n <- round(sum(M_x_n), opts$round_interim)
   Sum_n <- sum(n)
-  M_w <- round(Sum_M_x_n / Sum_n, round_final)
+  M_w <- round(Sum_M_x_n / Sum_n, opts$round_final)
 
   if (k > truncate_k) {
     Num <- glue::glue("([M[1]])([n[1]]) + ([M[2]])([n[2]]) + \\cdots + ([M[k]])([n[k]]))",
@@ -327,7 +318,7 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
   M_w.formula <- weighted_mean_formula(...)
 
   # Get base formula without LaTeX math/aligned blocks
-  M_w.formula <- weighted_mean_formula(use_aligned = use_aligned,
+  M_w.formula <- weighted_mean_formula(use_aligned = opts$use_aligned,
   																		 add_math = FALSE,
   																		 add_aligned = FALSE)
 
@@ -337,15 +328,13 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
     "[equals] \\frac{[Num]}{[Denom]}",
     "[equals] \\frac{[Sum_M_x_n]}{[Sum_n]}",
     "[equals] \\textbf{[M_w]}",
-    Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, round_interim)),
-    M_w = fmt(M_w, get_digits(M_w, round_final))
+    Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, opts$round_interim)),
+    M_w = fmt(M_w, get_digits(M_w, opts$round_final))
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults("add_math", list(...))
-  add_aligned <- check_defaults("add_aligned", list(...))
-  if (add_aligned) solution <- add_aligned(solution)
-  if (add_math) solution <- add_math(solution)
+  if (opts$add_aligned) solution <- add_aligned(solution)
+  if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
   l <- list(
@@ -371,19 +360,20 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
 #' weighted_mean_formula()
 #'
 weighted_mean_formula <- function(...) {
-  # Use the appropriate equals sign for an aligned environment
-  use_aligned <- check_defaults("use_aligned", list(...))
-  equals <- ifelse(use_aligned, "&=", "=")
+	# Get list of options (allowing user to override defaults) for rounding
+	# behavior and for presenting solutions in LaTeX environment.
+	opts<- get_opts(...)
+
+	# Use the appropriate equals sign for an aligned environment
+	equals <- ifelse(opts$use_aligned, "&=", "=")
 
   solution<- glue::glue("M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
     .open = "[", .close = "]"
   )
 
   # Add LaTeX math code, if desired.
-  add_math <- check_defaults("add_math", list(...))
-  add_aligned <- check_defaults("add_aligned", list(...))
-  if (add_aligned) solution <- add_aligned(solution)
-  if (add_math) solution <- add_math(solution)
+  if (opts$add_aligned) solution <- add_aligned(solution)
+  if (opts$add_math) solution <- add_math(solution)
 
   return(solution)
 }
