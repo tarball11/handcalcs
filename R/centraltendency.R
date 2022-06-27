@@ -51,8 +51,11 @@ solve_mean <- function(x,
   SumX <- round(sum(x), round_interim)
   M <- round(SumX / n, round_final)
 
-  # Base formula
-  M.formula <- mean_formula(sub, sym, ...)
+  # Get base formula without LaTeX math/aligned blocks
+  M.formula <- mean_formula(sub, sym,
+  													use_aligned = use_aligned,
+  													add_math = FALSE,
+  													add_aligned = FALSE)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
@@ -110,9 +113,17 @@ mean_formula <- function(sub = "",
   use_aligned <- check_defaults("use_aligned", list(...))
   equals <- ifelse(use_aligned, "&=", "=")
 
-  glue::glue("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
+  solution<- glue::glue("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
     .open = "[", .close = "]"
   )
+
+  # Add LaTeX math code, if desired.
+  add_math <- check_defaults("add_math", list(...))
+  add_aligned <- check_defaults("add_aligned", list(...))
+  if (add_aligned) solution <- add_aligned(solution)
+  if (add_math) solution <- add_math(solution)
+
+  return(solution)
 }
 
 
@@ -315,6 +326,11 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
   # Base formula
   M_w.formula <- weighted_mean_formula(...)
 
+  # Get base formula without LaTeX math/aligned blocks
+  M_w.formula <- weighted_mean_formula(use_aligned = use_aligned,
+  																		 add_math = FALSE,
+  																		 add_aligned = FALSE)
+
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
     M_w.formula,
@@ -359,7 +375,15 @@ weighted_mean_formula <- function(...) {
   use_aligned <- check_defaults("use_aligned", list(...))
   equals <- ifelse(use_aligned, "&=", "=")
 
-  glue::glue("M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
+  solution<- glue::glue("M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
     .open = "[", .close = "]"
   )
+
+  # Add LaTeX math code, if desired.
+  add_math <- check_defaults("add_math", list(...))
+  add_aligned <- check_defaults("add_aligned", list(...))
+  if (add_aligned) solution <- add_aligned(solution)
+  if (add_math) solution <- add_math(solution)
+
+  return(solution)
 }
