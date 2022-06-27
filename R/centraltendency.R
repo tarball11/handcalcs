@@ -5,12 +5,15 @@
 #'   solutions). Leave empty to report no subscript.
 #' @param sym Character scalar. Symbol to represent x in formula (default: "X").
 #'   Only one character allowed.
+#' @param trunc_sum Numeric scalar. How many subgroups are allowed before it
+#'   truncates the summation within the solution with ellipses? (Default is 5;
+#'   minimum is 3.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return A list with the interim calculations (\code{SumX}, \code{n}), the
-#'   final value (\code{M}), the solution string (\code{solution}), and the
-#'   bare formula (\code{formula}) in LaTeX format.
+#'   final value (\code{M}), the solution string (\code{solution}), and the bare
+#'   formula (\code{formula}) in LaTeX format.
 #' @seealso \code{\link{mean_formula}} for the bare formula of the mean.
 #' @export
 #'
@@ -23,6 +26,10 @@
 #' (x <- rnorm(20))
 #' solve_mean(x, sub = "Y", sym = "Y")
 #'
+#' # Can override the default values for rounding interim and final values:
+#' (x <- rnorm(20))
+#' solve_mean(x, round_interim = 2, round_final = 2)
+#'
 #' # The value of sub can be long, but not sym.
 #' \dontrun{
 #' solve_mean(x, sub = "Donuts", sym = "Donuts")
@@ -31,24 +38,36 @@
 solve_mean <- function(x,
                        sub = "",
                        sym = "X",
+											 trunc_sum = 5,
                        ...) {
-  # Check argument validity
+
+	# Check argument validity
   stopifnot(is.numeric(x), any(!is.na(x)))
-  stopifnot(is.character(sub), length(sub) == 1)
+  stopifnot(is.character(as.character(sub)), length(sub) == 1)
   stopifnot(is.character(sym), nchar(sym) == 1)
+  stopifnot(is.numeric(trunc_sum), trunc_sum >= 3)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
-  opts<- get_opts(...)
+  opts<- get_handcalcs_opts(...)
 
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
   # Calculate mean
-  x <- round(x, opts$round_interim)
+  x <- rnd(x, opts$round_interim)
   n <- length(x)
-  SumX <- round(sum(x), opts$round_interim)
-  M <- round(SumX / n, opts$round_final)
+  SumX <- rnd(sum(x), opts$round_interim)
+  M <- rnd(SumX / n, opts$round_final)
+
+  # Truncate the formula if there are too many subgroups
+  if (n > trunc_sum) {
+  	Num <- glue::glue("[x[1]] + [x[2]] + \\cdots + [x[n]]",
+  										.open = "[", .close = "]")
+  } else {
+  	Num <- glue::glue("[x]", .open = "[", .close = "]") %>%
+  		glue::glue_collapse(sep = " + ")
+  }
 
   # Get base formula without LaTeX math/aligned blocks
   M.formula <- mean_formula(sub, sym,
@@ -59,10 +78,16 @@ solve_mean <- function(x,
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
     M.formula,
+    "[equals] \\frac{[Num]}{[n]}",
     "[equals] \\frac{[SumX]}{[n]}",
     "[equals] \\textbf{[M]}",
     SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
-    M = fmt(M, get_digits(M, opts$round_final))
+    # Round based on the precision of x and the final calculated value unless
+    # round_to is set to 'sigfigs', in which case just present the final rounded
+    # value as is.
+    M = ifelse(opts$round_to == 'sigfigs',
+    					 M,
+    					 fmt(M, get_digits(c(x, M), opts$round_final)))
   )
 
   # Add LaTeX math code, if desired.
@@ -103,17 +128,19 @@ mean_formula <- function(sub = "",
                          sym = "X",
                          ...) {
   # Check argument validity
-  stopifnot(is.character(sub), length(sub) == 1)
-  stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub)), length(sub) == 1)
+	stopifnot(is.character(sym), nchar(sym) == 1)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
-  opts<- get_opts(...)
+  opts<- get_handcalcs_opts(...)
 
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
-  solution<- glue::glue("M_{[sub]} [equals] \\frac{\\sum{[sym]}}{N}",
+  solution<- glue::glue(
+  	"M_{[sub]} [equals] \\frac{\\sum{[sym]}}{n} \\\\",
+  	"[equals] \\frac{[sym]_{1} + [sym]_{2} + \\cdots + [sym]_{n}}{n}",
     .open = "[", .close = "]"
   )
 
@@ -157,15 +184,15 @@ solve_median <- function(x,
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
-  opts<- get_opts(...)
+  opts<- get_handcalcs_opts(...)
 
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
   # Calculate median
-  x <- round(x, opts$round_interim)
+  x <- rnd(x, opts$round_interim)
   x <- sort(x)
-  Med <- round(median(x), opts$round_final)
+  Med <- rnd(median(x), opts$round_final)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
@@ -200,7 +227,7 @@ solve_median <- function(x,
 #' solve_mode(x)
 #'
 #' # Note that the raw data values get rounded by solve_mode(x), so the exact
-#' # value(s) provided may differ from the values in the raw data.
+#' # value(s) provided may differ from the values in the (unrounded) raw data.
 #' (x <- rnorm(20))
 #' solve_mode(x, round_interim = 2)$Mode
 #'
@@ -214,13 +241,13 @@ solve_mode <- function(x,
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
-  opts<- get_opts(...)
+  opts<- get_handcalcs_opts(...)
 
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
   # Calculate mode(s)
-  x <- round(x, opts$round_interim)
+  x <- rnd(x, opts$round_interim)
   x <- sort(x)
   x.max <- which(table(x) == max(table(x)))
   Mode <- as.numeric(names(x.max))
@@ -246,8 +273,9 @@ solve_mode <- function(x,
 #'
 #' @param Samples List of means and sample sizes. Must be a list of vectors with
 #'   names M and n, one vector per subgroup (see examples).
-#' @param truncate_k Numeric scalar. How many subgroups are allowed before it
-#'   truncates the solution with ellipses? (Default is 5; minimum is 3.)
+#' @param trunc_sum Numeric scalar. How many subgroups are allowed before it
+#'   truncates the summation within the solution with ellipses? (Default is 5;
+#'   minimum is 3.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -264,24 +292,25 @@ solve_mode <- function(x,
 #' @export
 #'
 #' @examples
-#' l <- list(A = c(M = 10, n = 20), B = c(M = 15, n = 25), c = c(M = 20, n = 30))
+#' l <- list(c(M = 10, n = 20), c(M = 15, n = 25), c(M = 20, n = 30), c(M = 25, n = 35))
 #' solve_weighted_mean(l)
 #'
-solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
-
-  # Samples must be a list with at least two subgroups represented
+#' # For a large number of subgroups, you may wish to truncate the solution:
+#' solve_weighted_mean(l, trunc_sum = 3)
+solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
+	# Samples must be a list with at least two subgroups represented
   stopifnot(is.list(Samples), length(Samples) > 1)
   # Disallow missing values.
   stopifnot(all(!is.na(purrr::flatten_dbl(Samples))))
   # Samples must be list of vectors of length 2, with values named M and n
   stopifnot(all(purrr::map_lgl(Samples, ~ length(.x) == 2)))
   stopifnot(all(purrr::flatten_lgl(purrr::map(Samples, ~ names(.x) == c("M", "n")))))
-  # Confirm truncate_k is a valid value
-  stopifnot(is.numeric(truncate_k), truncate_k > 2)
+  # Confirm trunc_sum is a valid value
+  stopifnot(is.numeric(trunc_sum), trunc_sum >= 3)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
-  opts<- get_opts(...)
+  opts<- get_handcalcs_opts(...)
 
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
@@ -290,17 +319,18 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
   k <- length(Samples)
 
   # Get vectors of means, sample sizes, and subscripts (1:k)
-  M <- purrr::map_dbl(Samples, "M") %>% round(opts$round_interim)
+  M <- purrr::map_dbl(Samples, "M") %>% rnd(opts$round_interim)
   n <- purrr::map_dbl(Samples, "n") %>% round(0)
   sub <- 1:k
 
   # Calculate weighted mean (M_w)
-  M_x_n <- round(M * n, opts$round_interim)
-  Sum_M_x_n <- round(sum(M_x_n), opts$round_interim)
+  M_x_n <- rnd(M * n, opts$round_interim)
+  Sum_M_x_n <- rnd(sum(M_x_n), opts$round_interim)
   Sum_n <- sum(n)
-  M_w <- round(Sum_M_x_n / Sum_n, opts$round_final)
+  M_w <- rnd(Sum_M_x_n / Sum_n, opts$round_final)
 
-  if (k > truncate_k) {
+  # Truncate the formula if there are too many subgroups
+  if (k > trunc_sum) {
     Num <- glue::glue("([M[1]])([n[1]]) + ([M[2]])([n[2]]) + \\cdots + ([M[k]])([n[k]]))",
       .open = "[", .close = "]"
     )
@@ -314,9 +344,6 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
       glue::glue_collapse(sep = " + ")
   }
 
-  # Base formula
-  M_w.formula <- weighted_mean_formula(...)
-
   # Get base formula without LaTeX math/aligned blocks
   M_w.formula <- weighted_mean_formula(use_aligned = opts$use_aligned,
   																		 add_math = FALSE,
@@ -329,7 +356,12 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
     "[equals] \\frac{[Sum_M_x_n]}{[Sum_n]}",
     "[equals] \\textbf{[M_w]}",
     Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, opts$round_interim)),
-    M_w = fmt(M_w, get_digits(M_w, opts$round_final))
+    # Round based on the precision of x and the final calculated value unless
+    # round_to is set to 'sigfigs', in which case just present the final rounded
+    # value as is.
+    M_w = ifelse(opts$round_to == 'sigfigs',
+    						 M_w,
+    						 fmt(M_w, get_digits(c(M, M_w), opts$round_final)))
   )
 
   # Add LaTeX math code, if desired.
@@ -362,7 +394,7 @@ solve_weighted_mean <- function(Samples, truncate_k = 5, ...) {
 weighted_mean_formula <- function(...) {
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
-	opts<- get_opts(...)
+	opts<- get_handcalcs_opts(...)
 
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
