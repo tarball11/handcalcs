@@ -40,8 +40,6 @@
 #'
 #' }
 #'
-#'
-#'
 #' @return Named list of default values
 #' @export
 #'
@@ -96,6 +94,9 @@ handcalcs_defaults<- function() {
 get_handcalcs_opts<- function(...) {
 	args <- list(...)
 	opts <- options()$handcalcs
+
+	# If for some reason this isn't set in the global options, set it.
+	if(length(opts) == 0) opts <- options(handcalcs = handcalcs_defaults())
 
 	# No arguments, return current global values
 	if(length(args) == 0) return(opts)
