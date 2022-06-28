@@ -1,4 +1,9 @@
-#' Arithmetic mean: Calculate value (with rounding) and present solutions
+#' Arithmetic Mean
+#'
+#' Calculate value of arithmetic mean (with rounding) and present solutions.
+#' \code{solve_mean()} produces the interim calculations and a full solution
+#' string starting with the bare formula. If you just want the formula, use
+#' \code{mean_formula()}.
 #'
 #' @param x Numeric vector.
 #' @param sub Character scalar. Name of numeric vector (reported as subscript in
@@ -11,10 +16,12 @@
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
-#' @return A list with the interim calculations (\code{SumX}, \code{n}), the
-#'   final value (\code{M}), the solution string (\code{solution}), and the bare
-#'   formula (\code{formula}) in LaTeX format.
-#' @seealso \code{\link{mean_formula}} for the bare formula of the mean.
+#' @return \code{solve_mean()} returns a list with the interim calculations
+#'   (\code{SumX}, \code{n}), the final value (\code{M}), the solution string
+#'   (\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
+#'   \code{mean_formula} returns just the bare formula in LaTeX format as a
+#'   character string.
+#'
 #' @export
 #'
 #' @examples
@@ -34,6 +41,12 @@
 #' \dontrun{
 #' solve_mean(x, sub = "Donuts", sym = "Donuts")
 #' }
+#'
+#' # If you just want the bare formula as a string, use mean_formula():
+#' mean_formula()
+#'
+#' # Can set parameters to change symbols used:
+#' mean_formula(sub = "Y", sym = "Y")
 #'
 solve_mean <- function(x,
                        sub = "",
@@ -104,25 +117,9 @@ solve_mean <- function(x,
 }
 
 
-#' Formula for Arithmetic Mean
-#'
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed.
-#' @param ... Additional arguments to override default behaviors (see
-#'   \code{\link{handcalcs_defaults}}).
-#'
-#' @return Formula in LaTeX format (character string).
-#'
-#' @seealso \code{\link{solve_mean}} for calculating the mean from raw data.
+#' @rdname solve_mean
 #'
 #' @export
-#'
-#' @examples
-#'
-#' mean_formula()
-#' mean_formula(sub = "Y", sym = "Y")
 #'
 mean_formula <- function(sub = "",
                          sym = "X",
@@ -268,8 +265,12 @@ solve_mode <- function(x,
   return(l)
 }
 
-#' Weighted (aka overall) mean: calculate value (with rounding) and present
-#' solutions
+#' Weighted (aka overall) Mean
+#'
+#' Calculate value of weighted (aka overall) mean (with rounding) and present solutions.
+#' \code{solve_weighted_mean()} produces the interim calculations and a full solution
+#' string starting with the bare formula. If you just want the formula, use
+#' \code{weighted_mean_formula()}.
 #'
 #' @param Samples List of means and sample sizes. Must be a list of vectors with
 #'   names M and n, one vector per subgroup (see examples).
@@ -279,16 +280,13 @@ solve_mode <- function(x,
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
-#' @return A list with vectors for the means (\code{M}) and sample sizes
-#'   (\code{n}), the interim calculations (\code{Sum_M_x_n}, \code{Sum_n}), the
-#'   final value (\code{M_w}), the solution string (\code{solution}), and the
-#'   bare formula (\code{formula}) in LaTeX format.
+#' @return \code{solve_weighted_mean()} returns a list with vectors for the
+#'   means (\code{M}) and sample sizes (\code{n}), the interim calculations
+#'   (\code{Sum_M_x_n}, \code{Sum_n}), the final value (\code{M_w}), the
+#'   solution string (\code{solution}), and the bare formula (\code{formula}) in
+#'   LaTeX format. \code{weighted_mean_formula} returns just the bare formula in LaTeX format as a
+#'   character string.
 #'
-#' @seealso \code{\link{weighted_mean_formula}} for the bare formula of the
-#'   weighted mean, and \code{\link{solve_mean}} for calculating/solving mean
-#'   from raw data.
-#'
-#' @return
 #' @export
 #'
 #' @examples
@@ -297,6 +295,10 @@ solve_mode <- function(x,
 #'
 #' # For a large number of subgroups, you may wish to truncate the solution:
 #' solve_weighted_mean(l, trunc_sum = 3)
+#'
+#' # If you just want the bare formula as a string, use weighted_mean_formula():
+#' weighted_mean_formula()
+
 solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
 	# Samples must be a list with at least two subgroups represented
   stopifnot(is.list(Samples), length(Samples) > 1)
@@ -377,19 +379,9 @@ solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
   return(l)
 }
 
-#' Formula for Weighted (aka Overall) Mean
+#' @rdname solve_weighted_mean
 #'
-#' @param ... Additional arguments to override default behaviors (see
-#'   \code{\link{handcalcs_defaults}}).
-#'
-#' @return Formula in LaTeX format (character string).
-#' @seealso \code{\link{solve_weighted_mean}} for calculating the weighted mean from
-#'   subgroup data.
 #' @export
-#'
-#' @examples
-#'
-#' weighted_mean_formula()
 #'
 weighted_mean_formula <- function(...) {
 	# Get list of options (allowing user to override defaults) for rounding
