@@ -2,17 +2,17 @@
 #'
 #' Calculate value of arithmetic mean (with rounding) and present solutions.
 #' \code{solve_mean()} produces the interim calculations and a full solution
-#' string starting with the bare formula. If you just want the formula, use
-#' \code{mean_formula()}.
+#' string, starting with the bare formula. If you just want the bare formula,
+#' use \code{mean_formula()}.
 #'
 #' @param x Numeric vector.
 #' @param sub Character scalar. Name of numeric vector (reported as subscript in
 #'   solutions). Leave empty to report no subscript.
 #' @param sym Character scalar. Symbol to represent x in formula (default: "X").
 #'   Only one character allowed.
-#' @param trunc_sum Numeric scalar. How many subgroups are allowed before it
-#'   truncates the summation within the solution with ellipses? (Default is 5;
-#'   minimum is 3.)
+#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
+#'   explicit summation within the solution using an ellipsis? (See
+#'   \code{\link{summation}}.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -51,14 +51,14 @@
 solve_mean <- function(x,
                        sub = "",
                        sym = "X",
-											 trunc_sum = 5,
+											 abbrev_sum = 5,
                        ...) {
 
 	# Check argument validity
   stopifnot(is.numeric(x), any(!is.na(x)))
   stopifnot(is.character(as.character(sub)), length(sub) == 1)
   stopifnot(is.character(sym), nchar(sym) == 1)
-  stopifnot(is.numeric(trunc_sum), trunc_sum >= 3)
+  stopifnot(is.numeric(abbrev_sum), abbrev_sum >= 3)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -73,14 +73,6 @@ solve_mean <- function(x,
   SumX <- rnd(sum(x), opts$round_interim)
   M <- rnd(SumX / n, opts$round_final)
 
-  # Truncate the formula if there are too many subgroups
-  if (n > trunc_sum) {
-  	Num <- glue::glue("[x[1]] + [x[2]] + \\cdots + [x[n]]",
-  										.open = "[", .close = "]")
-  } else {
-  	Num <- glue::glue("[x]", .open = "[", .close = "]") %>%
-  		glue::glue_collapse(sep = " + ")
-  }
 
   # Get base formula without LaTeX math/aligned blocks
   M.formula <- mean_formula(sub, sym,
@@ -94,6 +86,8 @@ solve_mean <- function(x,
     "[equals] \\frac{[Num]}{[n]}",
     "[equals] \\frac{[SumX]}{[n]}",
     "[equals] \\textbf{[M]}",
+    Num <- glue::glue("[x]", .open = "[", .close = "]") %>%
+    	summation(abbrev_sum = abbrev_sum),
     SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
     # Round based on the precision of x and the final calculated value unless
     # round_to is set to 'sigfigs', in which case just present the final rounded
@@ -108,12 +102,12 @@ solve_mean <- function(x,
   if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
-  l <- list(
-    x = x, n = n, SumX = SumX, M = M,
-    solution = solution, formula = M.formula
-  )
-
-  return(l)
+  list(x = x,
+  		 n = n,
+  		 SumX = SumX,
+  		 M = M,
+  		 solution = solution,
+  		 formula = M.formula)
 }
 
 
@@ -202,9 +196,7 @@ solve_median <- function(x,
   if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
-  l <- list(x = x, Med = Med, solution = solution)
-
-  return(l)
+  list(x = x, Med = Med, solution = solution)
 }
 
 #' Mode: calculate value (with rounding) and present solutions
@@ -260,23 +252,21 @@ solve_mode <- function(x,
   if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
-  l <- list(x = x, Mode = Mode, solution = solution)
-
-  return(l)
+  list(x = x, Mode = Mode, solution = solution)
 }
 
 #' Weighted (aka overall) Mean
 #'
-#' Calculate value of weighted (aka overall) mean (with rounding) and present solutions.
-#' \code{solve_weighted_mean()} produces the interim calculations and a full solution
-#' string starting with the bare formula. If you just want the formula, use
-#' \code{weighted_mean_formula()}.
+#' Calculate value of weighted (aka overall) mean (with rounding) and present
+#' solutions. \code{solve_weighted_mean()} produces the interim calculations and
+#' a full solution string, starting with the bare formula. If you just want the
+#' bare formula, use \code{weighted_mean_formula()}.
 #'
 #' @param Samples List of means and sample sizes. Must be a list of vectors with
 #'   names M and n, one vector per subgroup (see examples).
-#' @param trunc_sum Numeric scalar. How many subgroups are allowed before it
-#'   truncates the summation within the solution with ellipses? (Default is 5;
-#'   minimum is 3.)
+#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
+#'   explicit summation within the solution using an ellipsis? (See
+#'   \code{\link{summation}}.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -284,8 +274,8 @@ solve_mode <- function(x,
 #'   means (\code{M}) and sample sizes (\code{n}), the interim calculations
 #'   (\code{Sum_M_x_n}, \code{Sum_n}), the final value (\code{M_w}), the
 #'   solution string (\code{solution}), and the bare formula (\code{formula}) in
-#'   LaTeX format. \code{weighted_mean_formula} returns just the bare formula in LaTeX format as a
-#'   character string.
+#'   LaTeX format. \code{weighted_mean_formula} returns just the bare formula in
+#'   LaTeX format as a character string.
 #'
 #' @export
 #'
@@ -294,12 +284,14 @@ solve_mode <- function(x,
 #' solve_weighted_mean(l)
 #'
 #' # For a large number of subgroups, you may wish to truncate the solution:
-#' solve_weighted_mean(l, trunc_sum = 3)
+#' solve_weighted_mean(l, abbrev_sum = 3)
 #'
 #' # If you just want the bare formula as a string, use weighted_mean_formula():
 #' weighted_mean_formula()
 
-solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
+solve_weighted_mean <- function(Samples,
+																abbrev_sum = 5,
+																...) {
 	# Samples must be a list with at least two subgroups represented
   stopifnot(is.list(Samples), length(Samples) > 1)
   # Disallow missing values.
@@ -307,8 +299,8 @@ solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
   # Samples must be list of vectors of length 2, with values named M and n
   stopifnot(all(purrr::map_lgl(Samples, ~ length(.x) == 2)))
   stopifnot(all(purrr::flatten_lgl(purrr::map(Samples, ~ names(.x) == c("M", "n")))))
-  # Confirm trunc_sum is a valid value
-  stopifnot(is.numeric(trunc_sum), trunc_sum >= 3)
+  # Confirm abbrev_sum is a valid value
+  stopifnot(is.numeric(abbrev_sum), abbrev_sum >= 3)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -331,21 +323,6 @@ solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
   Sum_n <- sum(n)
   M_w <- rnd(Sum_M_x_n / Sum_n, opts$round_final)
 
-  # Truncate the formula if there are too many subgroups
-  if (k > trunc_sum) {
-    Num <- glue::glue("([M[1]])([n[1]]) + ([M[2]])([n[2]]) + \\cdots + ([M[k]])([n[k]]))",
-      .open = "[", .close = "]"
-    )
-    Denom <- glue::glue("[n[1]] + [n[2]] + \\cdots + [n[k]]",
-      .open = "[", .close = "]"
-    )
-  } else {
-    Num <- glue::glue("([M])([n])", .open = "[", .close = "]") %>%
-      glue::glue_collapse(sep = " + ")
-    Denom <- glue::glue("[n]", .open = "[", .close = "]") %>%
-      glue::glue_collapse(sep = " + ")
-  }
-
   # Get base formula without LaTeX math/aligned blocks
   M_w.formula <- weighted_mean_formula(use_aligned = opts$use_aligned,
   																		 add_math = FALSE,
@@ -357,6 +334,10 @@ solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
     "[equals] \\frac{[Num]}{[Denom]}",
     "[equals] \\frac{[Sum_M_x_n]}{[Sum_n]}",
     "[equals] \\textbf{[M_w]}",
+    Num = glue::glue("([M])([n])", .open = "[", .close = "]") %>%
+    	summation(abbrev_sum = abbrev_sum),
+    Denom = glue::glue("[n]", .open = "[", .close = "]") %>%
+    	summation(abbrev_sum = abbrev_sum),
     Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, opts$round_interim)),
     # Round based on the precision of x and the final calculated value unless
     # round_to is set to 'sigfigs', in which case just present the final rounded
@@ -371,12 +352,13 @@ solve_weighted_mean <- function(Samples, trunc_sum = 5, ...) {
   if (opts$add_math) solution <- add_math(solution)
 
   # Return list containing both values and solution string
-  l <- list(
-    M = M, n = n, Sum_M_x_n = Sum_M_x_n, Sum_n = Sum_n, M_w = M_w,
-    solution = solution, formula = M_w.formula
-  )
-
-  return(l)
+  list(M = M,
+  		 n = n,
+  		 Sum_M_x_n = Sum_M_x_n,
+  		 Sum_n = Sum_n,
+  		 M_w = M_w,
+  		 solution = solution,
+  		 formula = M_w.formula)
 }
 
 #' @rdname solve_weighted_mean
@@ -391,7 +373,9 @@ weighted_mean_formula <- function(...) {
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-  solution<- glue::glue("M_{weighted} [equals] \\frac{(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})}{n_{1} + n_{2} + \\cdots + n_{k}}",
+  solution<- glue::glue("M_{weighted} [equals] \\frac{[Num]}{[Denom]}",
+  											Num = "(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})",
+  											Denom = "n_{1} + n_{2} + \\cdots + n_{k}",
     .open = "[", .close = "]"
   )
 
