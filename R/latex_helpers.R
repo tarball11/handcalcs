@@ -9,14 +9,19 @@ add_math<- function(solution) {
 	paste0("$$ ", solution, "$$")
 }
 
+# LaTeX-friendly glue
+lglue <- function(..., .envir = parent.frame()) {
+	glue::glue(..., .envir = .envir, .open = "<<", .close = ">>")
+}
+
 # Wrapper for glue::glue() to generate solution strings, using defaults useful
 # for LaTeX strings
 glue_solution <- function(..., .envir = parent.frame()) {
 	glue::glue(...,
 						 .envir = .envir,
 						 .sep = " \\\\ ",
-						 .open = "[",
-						 .close = "]",
+						 .open = "<<",
+						 .close = ">>",
 	)
 }
 
@@ -46,7 +51,7 @@ glue_solution <- function(..., .envir = parent.frame()) {
 #' # More complex uses are possible (e.g., sum of squared deviations)
 #' x <- sample(1:20, size = 10)
 #' M <- round(mean(x), 2)
-#' sum_values <- glue::glue("([x] - [M])^2", .open = "[", .close = "]")
+#' sum_values <- glue::glue("(<<x>> - <<M>>)^2", .open = "<<", .close = ">>")
 #' summation(sum_values)
 #'
 #' # If you wish to avoid abbreviation, set the value higher:
@@ -62,7 +67,6 @@ summation<- function(sum_values, abbrev_sum = 5) {
 		sum_values %>%
 			glue::glue_collapse(sep = " + ")
 	} else {
-		glue::glue("[sum_values[1]] + [sum_values[2]] + \\cdots + [sum_values[n]]",
-							 .open = "[", .close = "]")
+		lglue("<<sum_values[1]>> + <<sum_values[2]>> + \\cdots + <<sum_values[n]>>")
 	}
 }

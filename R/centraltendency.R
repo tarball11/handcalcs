@@ -13,6 +13,7 @@
 #' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
 #'   explicit summation within the solution using an ellipsis? (See
 #'   \code{\link{summation}}.)
+#'   \code{\link{summation}}.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -83,11 +84,10 @@ solve_mean <- function(x,
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
     M.formula,
-    "[equals] \\frac{[Num]}{[n]}",
-    "[equals] \\frac{[SumX]}{[n]}",
-    "[equals] \\textbf{[M]}",
-    Num <- glue::glue("[x]", .open = "[", .close = "]") %>%
-    	summation(abbrev_sum = abbrev_sum),
+    "<<equals>> \\frac{<<Num>>}{<<n>>}",
+    "<<equals>> \\frac{<<SumX>>}{<<n>>}",
+    "<<equals>> \\textbf{<<M>>}",
+    Num <- summation(lglue("<<x>>"), abbrev_sum = abbrev_sum),
     SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
     # Round based on the precision of x and the final calculated value unless
     # round_to is set to 'sigfigs', in which case just present the final rounded
@@ -129,11 +129,9 @@ mean_formula <- function(sub = "",
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
-  solution<- glue::glue(
-  	"M_{[sub]} [equals] \\frac{\\sum{[sym]}}{n} \\\\",
-  	"[equals] \\frac{[sym]_{1} + [sym]_{2} + \\cdots + [sym]_{n}}{n}",
-    .open = "[", .close = "]"
-  )
+  solution<- lglue(
+  	"M_{<<sub>>} <<equals>> \\frac{\\sum{<<sym>>}}{n} \\\\",
+  	"<<equals>> \\frac{<<sym>>_{1} + <<sym>>_{2} + \\cdots + <<sym>>_{n}}{n}")
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
@@ -187,7 +185,7 @@ solve_median <- function(x,
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-    "\\text{Median}_{[sub]} [equals] \\textbf{[Med]}",
+    "\\text{Median}_{<<sub>>} <<equals>> \\textbf{<<Med>>}",
     Med = fmt(Med, get_digits(Med, opts$round_final))
   )
 
@@ -243,7 +241,7 @@ solve_mode <- function(x,
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-    "\\text{Mode}_{[sub]} [equals] \\textbf{[Mode]}",
+    "\\text{Mode}_{<<sub>>} <<equals>> \\textbf{<<Mode>>}",
     Mode = paste(Mode, collapse = ", ")
   )
 
@@ -331,13 +329,11 @@ solve_weighted_mean <- function(Samples,
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
     M_w.formula,
-    "[equals] \\frac{[Num]}{[Denom]}",
-    "[equals] \\frac{[Sum_M_x_n]}{[Sum_n]}",
-    "[equals] \\textbf{[M_w]}",
-    Num = glue::glue("([M])([n])", .open = "[", .close = "]") %>%
-    	summation(abbrev_sum = abbrev_sum),
-    Denom = glue::glue("[n]", .open = "[", .close = "]") %>%
-    	summation(abbrev_sum = abbrev_sum),
+    "<<equals>> \\frac{<<Num>>}{<<Denom>>}",
+    "<<equals>> \\frac{<<Sum_M_x_n>>}{<<Sum_n>>}",
+    "<<equals>> \\textbf{<<M_w>>}",
+    Num = summation(lglue("(<<M>>)(<<n>>)"), abbrev_sum = abbrev_sum),
+    Denom = summation(lglue("<<n>>"), abbrev_sum = abbrev_sum),
     Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, opts$round_interim)),
     # Round based on the precision of x and the final calculated value unless
     # round_to is set to 'sigfigs', in which case just present the final rounded
@@ -373,11 +369,9 @@ weighted_mean_formula <- function(...) {
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-  solution<- glue::glue("M_{weighted} [equals] \\frac{[Num]}{[Denom]}",
-  											Num = "(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})",
-  											Denom = "n_{1} + n_{2} + \\cdots + n_{k}",
-    .open = "[", .close = "]"
-  )
+	solution<- lglue("M_{weighted} <<equals>> \\frac{<<Num>>}{<<Denom>>}",
+									 Num = "(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})",
+									 Denom = "n_{1} + n_{2} + \\cdots + n_{k}")
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
