@@ -97,11 +97,11 @@ solve_sum_squares <- function(x,
   SS <- rnd(sum(DevSq), opts$round_final)
 
   # Get base formula without LaTeX math/aligned blocks
-  SS.formula <- sum_squares_formula(sub, sym,
-    use_aligned = opts$use_aligned,
-    add_math = FALSE,
-    add_aligned = FALSE
-  )
+  SS.formula <- sum_squares_formula(sub = sub,
+  																	sym = sym,
+  																	use_aligned = opts$use_aligned,
+  																	add_math = FALSE,
+  																	add_aligned = FALSE)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
@@ -211,11 +211,11 @@ solve_sum_squares2 <- function(x,
   SS <- rnd(Sum_XSq - Sq_SumX_n, opts$round_final)
 
   # Get base formula without LaTeX math/aligned blocks
-  SS.formula <- sum_squares_formula2(sub = sub, sym = sym,
-    use_aligned = opts$use_aligned,
-    add_math = FALSE,
-    add_aligned = FALSE
-  )
+  SS.formula <- sum_squares_formula2(sub = sub,
+  																	 sym = sym,
+  																	 use_aligned = opts$use_aligned,
+  																	 add_math = FALSE,
+  																	 add_aligned = FALSE)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(

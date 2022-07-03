@@ -32,7 +32,7 @@ glue_solution <- function(..., .envir = parent.frame()) {
 #' (e.g., produced by \code{glue::glue()}) and returns a string enumerating the
 #' process. For instance, if you wished to sum the integers 1 to 3, this would
 #' be spelled out as "1 + 2 + 3". By default, will abbreviate the summation for
-#' vectors longer than `\code{abbrev_sum}` by using an ellipsis (LaTeX: \cdots).
+#' vectors longer than `\code{abbrev_sum}` by using an ellipsis (LaTeX: `\cdots`).
 #'
 #' @param sum_values Character vector (or vector of values that can be coerced
 #'   to character) of values to be summed.

@@ -13,7 +13,6 @@
 #' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
 #'   explicit summation within the solution using an ellipsis? (See
 #'   \code{\link{summation}}.)
-#'   \code{\link{summation}}.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -76,7 +75,8 @@ solve_mean <- function(x,
 
 
   # Get base formula without LaTeX math/aligned blocks
-  M.formula <- mean_formula(sub, sym,
+  M.formula <- mean_formula(sub = sub,
+  													sym = sym,
   													use_aligned = opts$use_aligned,
   													add_math = FALSE,
   													add_aligned = FALSE)
@@ -87,15 +87,14 @@ solve_mean <- function(x,
     "<<equals>> \\frac{<<Num>>}{<<n>>}",
     "<<equals>> \\frac{<<SumX>>}{<<n>>}",
     "<<equals>> \\textbf{<<M>>}",
-    Num <- summation(lglue("<<x>>"), abbrev_sum = abbrev_sum),
+    Num = summation(lglue("<<x>>"), abbrev_sum = abbrev_sum),
     SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
     # Round based on the precision of x and the final calculated value unless
     # round_to is set to 'sigfigs', in which case just present the final rounded
     # value as is.
     M = ifelse(opts$round_to == 'sigfigs',
     					 M,
-    					 fmt(M, get_digits(c(x, M), opts$round_final)))
-  )
+    					 fmt(M, get_digits(c(x, M), opts$round_final))))
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
