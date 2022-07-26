@@ -10,12 +10,16 @@ rnd <- function(x, digits, round_to = get_handcalcs_opts()$round_to) {
 	}
 }
 
-#' Figures out the minumum number of digits (up to four) to report after the decimal place
+#' Get Minimum Digits
+#'
+#' Figures out the minimum number of digits (up to four) to report after the
+#' decimal place.
 #'
 #' @param x Numeric vector.
 #' @param max_digits Numeric scalar: maximum number of digits.
 #'
-#' @return
+#' @return Numeric scalar: smallest number of digits to which the number(s) can
+#'   be rounded (up to max_digits) without losing precision.
 #' @export
 #'
 #' @examples

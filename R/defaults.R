@@ -57,17 +57,6 @@ handcalcs_defaults<- function() {
 	)
 }
 
-# # Checks to see if a value is set in the list. If so, returns that value. If
-# # not, returns current global option. Note: does not confirm correct class/type
-# # for values!
-# check_defaults<- function(x, l) {
-# 	op<- getOption('handcalcs')
-# 	stopifnot(x %in% names(op))
-#
-# 	val <- ifelse(!is.null(l[[x]]), l[[x]], op[[x]])
-# 	return(val)
-# }
-
 
 #' Generates list of options, overriding the global options if specified.
 #'
@@ -78,7 +67,7 @@ handcalcs_defaults<- function() {
 #'
 #' @param ... Default options to override
 #'
-#' @return
+#' @return A named list of the options.
 #' @export
 #'
 #' @examples
