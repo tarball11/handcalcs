@@ -2,9 +2,12 @@
 % Please edit documentation in R/centraltendency.R
 \name{solve_mean}
 \alias{solve_mean}
-\title{Arithmetic mean: calculate value (with rounding) and present solutions}
+\alias{mean_formula}
+\title{Arithmetic Mean}
 \usage{
-solve_mean(x, sub = "", sym = ifelse(nchar(sub) == 1, sub, "X"), ...)
+solve_mean(x, sub = "", sym = "X", abbrev_sum = 5, ...)
+
+mean_formula(sub = "", sym = "X", ...)
 }
 \arguments{
 \item{x}{Numeric vector.}
@@ -15,15 +18,25 @@ solutions). Leave empty to report no subscript.}
 \item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
 Only one character allowed.}
 
+\item{abbrev_sum}{Numeric scalar. Maximum length of x before it abbreviates
+explicit summation within the solution using an ellipsis? (See
+\code{\link{summation}}.)}
+
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}
 }
 \value{
-A list with the interim calculations (\code{SumX}, \code{n}), the
-final value (\code{M}), and the solution string (\code{solution}) in LaTeX format.
+\code{solve_mean()} returns a list with the interim calculations
+(\code{SumX}, \code{n}), the final value (\code{M}), the solution string
+(\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
+\code{mean_formula} returns just the bare formula in LaTeX format as a
+character string.
 }
 \description{
-Arithmetic mean: calculate value (with rounding) and present solutions
+Calculate value of arithmetic mean (with rounding) and present solutions.
+\code{solve_mean()} produces the interim calculations and a full solution
+string, starting with the bare formula. If you just want the bare formula,
+use \code{mean_formula()}.
 }
 \examples{
 x <- sample(x = 1:10, size = 20, replace = TRUE)
@@ -32,9 +45,21 @@ solve_mean(x)
 # Note that the value calculated by solve_mean(x) will be different than the
 # value calculated by mean(x) when rounding occurs.
 (x <- rnorm(20))
-solve_mean(x, sub = "Y")
+solve_mean(x, sub = "Y", sym = "Y")
+
+# Can override the default values for rounding interim and final values:
+(x <- rnorm(20))
+solve_mean(x, round_interim = 2, round_final = 2)
 
 # The value of sub can be long, but not sym.
-solve_mean(x, sub = "Donuts")
+\dontrun{
+solve_mean(x, sub = "Donuts", sym = "Donuts")
+}
+
+# If you just want the bare formula as a string, use mean_formula():
+mean_formula()
+
+# Can set parameters to change symbols used:
+mean_formula(sub = "Y", sym = "Y")
 
 }

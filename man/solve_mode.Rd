@@ -2,7 +2,7 @@
 % Please edit documentation in R/centraltendency.R
 \name{solve_mode}
 \alias{solve_mode}
-\title{Solves for the mode}
+\title{Mode: calculate value (with rounding) and present solutions}
 \usage{
 solve_mode(x, sub = "", ...)
 }
@@ -20,14 +20,14 @@ A list with the mode value(s) (\code{Mode}) and the solution
 (\code{solution}) in LaTeX format.
 }
 \description{
-Solves for the mode
+Mode: calculate value (with rounding) and present solutions
 }
 \examples{
 #' x <- sample(x = 1:10, size = 20, replace = TRUE)
 solve_mode(x)
 
 # Note that the raw data values get rounded by solve_mode(x), so the exact
-# value(s) provided may differ from the values in the raw data.
+# value(s) provided may differ from the values in the (unrounded) raw data.
 (x <- rnorm(20))
 solve_mode(x, round_interim = 2)$Mode
 

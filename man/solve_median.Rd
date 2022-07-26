@@ -2,7 +2,7 @@
 % Please edit documentation in R/centraltendency.R
 \name{solve_median}
 \alias{solve_median}
-\title{Solves for the median}
+\title{Median: calculate value (with rounding) and present solutions}
 \usage{
 solve_median(x, sub = "", ...)
 }
@@ -20,7 +20,7 @@ A list with the median value (\code{Med}) and the solution
 (\code{solution}) in LaTeX format.
 }
 \description{
-Solves for the median
+Median: calculate value (with rounding) and present solutions
 }
 \examples{
 #' x <- sample(x = 1:10, size = 20, replace = TRUE)
