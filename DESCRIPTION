@@ -15,7 +15,9 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
-    stringr,
+    glue,
     dplyr,
-    magrittr
+    magrittr,
+    gt,
+    ggplot2
 VignetteBuilder: knitr
