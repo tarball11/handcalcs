@@ -3,14 +3,14 @@
 #' Calculate value of sum of squares (with rounding) and present solutions.
 #' \code{solve_sum_squares()} produces the interim calculations and a full
 #' solution string, starting with the bare formula. If you just want the bare
-#' formula, use \code{sum_squares_formula()}.
+#' formula, use \code{sum_squares_formula()}. To generate the table
+#' demonstrating the calculations, use \code{sum_squares_table}.
 #'
-#' The standard functions use the conceptual formula:
-#' \deqn{SS = \sum(X - M)^2}.
+#' The standard functions use the conceptual formula: \deqn{SS = \sum(X - M)^2}.
 #'
-#' The '2' functions (\code{solve_sum_squares2},
-#' \code{sum_squares_formula2}) use the alternative computational formula:
-#' \deqn{SS = \sum(X^2) - [(\sum X)^2] / n}
+#' The '2' functions (\code{solve_sum_squares2}, \code{sum_squares_formula2})
+#' use the alternative computational formula: \deqn{SS = \sum(X^2) - [(\sum
+#' X)^2] / n}
 #'
 #'
 #' @param x Numeric vector.
@@ -21,6 +21,9 @@
 #' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
 #'   explicit summation within the solution using an ellipsis? (See
 #'   \code{\link{summation}}.)
+#' @param SS.lst List of values produced by \code{solve_sum_squares} or
+#'   \code{solve_sum_squares2}. Be sure to use the table function that
+#'   corresponds to the solution function.
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -31,7 +34,9 @@
 #'   (Note that the two functions will return different values for the interim
 #'   calculations based on using different formulas.) The two formula functions
 #'   (\code{sum_squares_formula}, \code{sum_squares_formula2}) return the bare
-#'   formula in LaTeX format as a character string.
+#'   formula in LaTeX format as a character string. The two table functions
+#'   (\code{sum_squares_table}, \code{sum_squares_table2}) return a gt object
+#'   which can be rendered into HTML or PDF.
 #'
 #' @export
 #'
@@ -109,7 +114,7 @@ solve_sum_squares <- function(x,
     "<<equals>> <<Sum.1>>",
     "<<equals>> <<Sum.2>>",
     "<<equals>> <<Sum.3>>",
-    "<<equals>> \\textbf{<<SS>>}",
+    "<<equals>> \\mathbf{<<SS>>}",
     # Put M in brackets if it's negative (avoid confusion in deviation scores)
     Sum.1 = summation(lglue("(<<x>> - <<M>>)^2",
     									M = ifelse(M < 0, paste0('[', M, ']'), M)),
@@ -173,6 +178,37 @@ sum_squares_formula <- function(sub = "",
 #' @rdname solve_sum_squares
 #'
 #' @export
+#'
+sum_squares_table <- function(SS.lst,
+															sub = "",
+															sym = "X",
+															...) {
+
+	# Get list of options (allowing user to override defaults) for rounding
+	# behavior and for presenting solutions in LaTeX environment.
+	opts <- get_handcalcs_opts(...)
+
+	tibble::tibble(x = SS.lst$x,
+								 Dev = SS.lst$Dev,
+								 DevSq = SS.lst$DevSq) %>%
+		gt::gt() %>%
+		gt::cols_label(
+			x = lglue('$$<<sym>>$$'),
+			Dev = lglue('$$(<<sym>> - M_{<<sub>>})$$'),
+			DevSq = lglue('$$(<<sym>> - M_{<<sub>>})^2$$')) %>%
+		gt::grand_summary_rows(
+			columns = c(x, Dev, DevSq),
+			fns = list("$$\\sum$$" = ~fmt(sum(.),
+																		get_digits(., opts$round_interim))),
+			formatter = gt::fmt_passthrough) %>%
+		table_fmt()
+}
+
+
+
+#' @rdname solve_sum_squares
+#'
+#' @export
 solve_sum_squares2 <- function(x,
                                sub = "",
                                sym = "X",
@@ -224,7 +260,7 @@ solve_sum_squares2 <- function(x,
     "<<equals>> <<Sum_XSq.2>> - \\frac{(<<SumX>>)^2}{<<n>>}",
     "<<equals>> <<Sum_XSq>> - \\frac{<<Sq_SumX>>}{<<n>>}",
     "<<equals>> <<Sum_XSq>> - <<Sq_SumX_n>>",
-    "<<equals>> \\textbf{<<SS>>}",
+    "<<equals>> \\mathbf{<<SS>>}",
     Sum_XSq.1 = summation(lglue("(<<x>>)^2"),
     											abbrev_sum = abbrev_sum),
     Sum_XSq.2 = summation(lglue("(<<XSq>>)"),
@@ -284,4 +320,63 @@ sum_squares_formula2 <- function(sub = "",
   if (opts$add_math) solution <- add_math(solution)
 
   return(solution)
+}
+
+#' @rdname solve_sum_squares
+#'
+#' @export
+#'
+sum_squares_table2 <- function(SS.lst,
+															 sym = "X",
+															 ...) {
+
+	# Get list of options (allowing user to override defaults) for rounding
+	# behavior and for presenting solutions in LaTeX environment.
+	opts <- get_handcalcs_opts(...)
+
+	tibble::tibble(x = SS.lst$x,
+								 XSq = SS.lst$XSq) %>%
+		gt::gt() %>%
+		gt::cols_label(
+			x = lglue('$$<<sym>>$$'),
+			XSq = lglue('$$<<sym>>^2$$')) %>%
+		gt::grand_summary_rows(
+			columns = c(x, XSq),
+			fns = list("$$\\sum$$" = ~fmt(sum(.),
+																		get_digits(., opts$round_interim))),
+			formatter = gt::fmt_passthrough) %>%
+		table_fmt()
+}
+
+# Adds additional formatting to sum of squares tables.
+table_fmt <- function(gt_obj) {
+	# General left-right border style
+	lr_bdr <- gt::cell_borders(sides = c('left', 'right'),
+													weight = gt::px(2),
+													color = '#CCCCCC',
+													style = 'solid')
+	# General
+	tb_bdr <- gt::cell_borders(sides = c('top', 'bottom'),
+														 weight = 0)
+
+	gt_obj %>%
+	gt::tab_options(table.font.size = 12,
+									column_labels.vlines.width = 1,
+									column_labels.vlines.color = '#000000') %>%
+		gt::opt_vertical_padding(scale = 0.20) %>%
+		gt::opt_horizontal_padding(scale = 1.5) %>%
+		gt::opt_table_font(font = list('Serif',
+																	 gt::google_font(name = 'Inconsolata'))) %>%
+		gt::tab_style(style = lr_bdr,
+									locations = gt::cells_body()) %>%
+		gt::tab_style(style = lr_bdr,
+										locations = gt::cells_column_labels()) %>%
+		gt::tab_style(style = lr_bdr,
+									locations = gt::cells_grand_summary()) %>%
+		gt::tab_style(style = tb_bdr,
+									locations = gt::cells_stub()) %>%
+		gt::tab_style(style = tb_bdr,
+									locations = gt::cells_stubhead())
+
+
 }
