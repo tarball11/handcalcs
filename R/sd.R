@@ -262,7 +262,7 @@ solve_std_dev <- function(mode,
 	solution <- glue_solution(
 		std_dev.solution,
 		"<<equals>> \\sqrt{<<variance>>}",
-		"<<equals>> \\textbf{<<std_dev.fmt>>}",
+		"<<equals>> \\mathbf{<<std_dev.fmt>>}",
 		# Round based on the precision of the final calculated value unless round_to is
 		# set to 'sigfigs', in which case just present the final rounded value as is.
 		std_dev.fmt = ifelse(opts$round_to == 'sigfigs',

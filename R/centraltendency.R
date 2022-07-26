@@ -86,7 +86,7 @@ solve_mean <- function(x,
     M.formula,
     "<<equals>> \\frac{<<Num>>}{<<n>>}",
     "<<equals>> \\frac{<<SumX>>}{<<n>>}",
-    "<<equals>> \\textbf{<<M>>}",
+    "<<equals>> \\mathbf{<<M>>}",
     Num = summation(lglue("<<x>>"), abbrev_sum = abbrev_sum),
     SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
     # Round based on the precision of x and the final calculated value unless
@@ -179,12 +179,11 @@ solve_median <- function(x,
 
   # Calculate median
   x <- rnd(x, opts$round_interim)
-  x <- sort(x)
   Med <- rnd(median(x), opts$round_final)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-    "\\text{Median}_{<<sub>>} <<equals>> \\textbf{<<Med>>}",
+    "\\text{Median}_{<<sub>>} <<equals>> \\mathbf{<<Med>>}",
     Med = fmt(Med, get_digits(Med, opts$round_final))
   )
 
@@ -240,7 +239,7 @@ solve_mode <- function(x,
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-    "\\text{Mode}_{<<sub>>} <<equals>> \\textbf{<<Mode>>}",
+    "\\text{Mode}_{<<sub>>} <<equals>> \\mathbf{<<Mode>>}",
     Mode = paste(Mode, collapse = ", ")
   )
 
@@ -330,7 +329,7 @@ solve_weighted_mean <- function(Samples,
     M_w.formula,
     "<<equals>> \\frac{<<Num>>}{<<Denom>>}",
     "<<equals>> \\frac{<<Sum_M_x_n>>}{<<Sum_n>>}",
-    "<<equals>> \\textbf{<<M_w>>}",
+    "<<equals>> \\mathbf{<<M_w>>}",
     Num = summation(lglue("(<<M>>)(<<n>>)"), abbrev_sum = abbrev_sum),
     Denom = summation(lglue("<<n>>"), abbrev_sum = abbrev_sum),
     Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, opts$round_interim)),
