@@ -9,6 +9,9 @@
 #' @docType package
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
+#' @importFrom rlang %||%
+#' @importFrom ggplot2 %+replace%
 #'
 #' @name handcalcs
 NULL
