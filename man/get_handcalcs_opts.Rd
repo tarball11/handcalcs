@@ -10,7 +10,7 @@ get_handcalcs_opts(...)
 \item{...}{Default options to override}
 }
 \value{
-
+A named list of the options.
 }
 \description{
 get_handcalcs_opts() is a convenience function for setting options(handcalcs = .). (See

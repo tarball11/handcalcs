@@ -27,6 +27,11 @@
 #' = 4). Note: It is strongly recommended that you change this value if you are
 #' using sigfigs instead of decimals for rounding.}
 #'
+#' \item{\code{round_z}}{Number of digits to round values of `z`, such as for
+#' *z*-scores (default = 2). This is primarily useful to ensure that the *z*
+#' values being reported conform to the values presented in a z-table. Note that
+#' this overrides `round_interim` and `round_final`.}
+#'
 #' \item{\code{add_math}}{Enclose solution string in LaTeX math block (`$$`;
 #' default = TRUE)? If set to `FALSE`, must manually include the math block tags
 #' in order for the solution to render properly.}
@@ -51,6 +56,7 @@ handcalcs_defaults<- function() {
 		round_to = 'decimals',
 		round_interim = 4,
 		round_final = 4,
+		round_z = 2,
 		add_math = TRUE,
 		add_aligned = TRUE,
 		use_aligned = TRUE

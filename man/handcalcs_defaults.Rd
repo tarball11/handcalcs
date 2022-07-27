@@ -37,6 +37,11 @@ this value if you are using sigfigs instead of decimals for rounding.}
 = 4). Note: It is strongly recommended that you change this value if you are
 using sigfigs instead of decimals for rounding.}
 
+\item{\code{round_z}}{Number of digits to round values of \code{z}, such as for
+\emph{z}-scores (default = 2). This is primarily useful to ensure that the \emph{z}
+values being reported conform to the values presented in a z-table. Note that
+this overrides \code{round_interim} and \code{round_final}.}
+
 \item{\code{add_math}}{Enclose solution string in LaTeX math block (\verb{$$};
 default = TRUE)? If set to \code{FALSE}, must manually include the math block tags
 in order for the solution to render properly.}

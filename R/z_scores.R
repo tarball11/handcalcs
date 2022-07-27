@@ -8,6 +8,9 @@
 #' raw score (`x`). If you just want the bare formula for either step, use
 #' \code{x_to_z_formula()} or \code{z_to_x_formula()}.
 #'
+#' Note that *z*-scores are rounded to the value of `round_z` instead of the
+#' value of `round_interim` or `round_final` (see [handcalcs_defaults()]).
+#'
 #' @param x Numeric scalar. Raw score to convert to a z-score.
 #' @param z Numeric scalar. Z-score to convert to a raw score (x).
 #' @param M Numeric scalar. Mean of distribution.
@@ -18,8 +21,8 @@
 #'   Only one character allowed.
 #' @param population Logical. Is this a population, rather than a sample? This
 #'   is only relevant for displaying the formula in the solutions, which will
-#'   use Greek letters to denote the mean ($\mu$) and standard deviation
-#'   ($\sigma$).
+#'   use Greek letters to denote the population mean (\eqn{\mu}) and standard
+#'   deviation (\eqn{\sigma}).
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -86,7 +89,7 @@ solve_x_to_z <- function(x,
 	SD <- rnd(SD, opts$round_interim)
 
 	M_diff <- rnd(x - M, opts$round_interim)
-	z <- rnd(M_diff / SD, opts$round_interim)
+	z <- rnd(M_diff / SD, opts$round_z)
 
 	# Get base formula without LaTeX math/aligned blocks
 	Z.formula <- x_to_z_formula(sub = sub,
@@ -105,9 +108,7 @@ solve_x_to_z <- function(x,
 		# Round based on the precision of x and the final calculated value unless
 		# round_to is set to 'sigfigs', in which case just present the final rounded
 		# value as is.
-		z = ifelse(opts$round_to == 'sigfigs',
-							 z,
-							 fmt(z, get_digits(z, opts$round_final))))
+		z = ifelse(opts$round_to == 'sigfigs', z, fmt(z, opts$round_z)))
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -186,7 +187,7 @@ solve_z_to_x <- function(z,
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
 	# Calculate z-score
-	z <- rnd(z, opts$round_interim)
+	z <- rnd(z, opts$round_z)
 	M <- rnd(M, opts$round_interim)
 	SD <- rnd(SD, opts$round_interim)
 

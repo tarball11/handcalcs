@@ -30,8 +30,8 @@ Only one character allowed.}
 
 \item{population}{Logical. Is this a population, rather than a sample? This
 is only relevant for displaying the formula in the solutions, which will
-use Greek letters to denote the mean ($\mu$) and standard deviation
-($\sigma$).}
+use Greek letters to denote the population mean (\eqn{\mu}) and standard
+deviation (\eqn{\sigma}).}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}
@@ -59,6 +59,10 @@ mean (\code{M}) and standard deviation (\code{SD}), and calculates the standard 
 distribution's mean (\code{M}) and standard deviation (\code{SD}), and calculates the
 raw score (\code{x}). If you just want the bare formula for either step, use
 \code{x_to_z_formula()} or \code{z_to_x_formula()}.
+}
+\details{
+Note that \emph{z}-scores are rounded to the value of \code{round_z} instead of the
+value of \code{round_interim} or \code{round_final} (see \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).
 }
 \examples{
 # Convert a raw score to a z-score:
