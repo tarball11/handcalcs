@@ -45,4 +45,7 @@ value of \code{round_final} (see \code{\link[=handcalcs_defaults]{handcalcs_defa
 \examples{
 solve_z_obt(M = 6, mu = 5, sigma = 2, N = 100)
 
+# If you just want the formula:
+z_obt_formula()
+
 }

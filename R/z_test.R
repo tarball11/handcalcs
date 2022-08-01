@@ -57,9 +57,7 @@ solve_sigma_M<- function(sigma,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		sigma_M.f,
-		"<<equals>> \\frac{<<sigma>>}{\\sqrt{<<N>>}}",
-		"<<equals>> \\frac{<<sigma>>}{<<sqrtN>>}",
-		"<<equals>> \\mathbf{<<sigma_M>>}",
+		"<<equals>> \\frac{<<sigma>>}{\\sqrt{<<N>>}} = \\frac{<<sigma>>}{<<sqrtN>>} = \\mathbf{<<sigma_M>>}",
 		sqrtN = fmt(sqrtN, get_digits(sqrtN, opts$round_interim)),
 		# Round based on the final calculated value unless round_to is set to
 		# 'sigfigs', in which case just present the final rounded value as is.
@@ -134,6 +132,9 @@ sigma_M_formula <- function(...) {
 #' @examples
 #' solve_z_obt(M = 6, mu = 5, sigma = 2, N = 100)
 #'
+#' # If you just want the formula:
+#' z_obt_formula()
+#'
 solve_z_obt <- function(M,
 												mu,
 												sigma,
@@ -156,7 +157,7 @@ solve_z_obt <- function(M,
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
 	# Calculate sigma_M from sigma and N
-	if(!missing(sigma)) {
+	if(missing(sigma_M)) {
 		stopifnot(is.numeric(sigma), is.numeric(N))
 		stopifnot(length(sigma) == 1, length(N) == 1)
 		stopifnot(sigma > 0, N > 0)
@@ -172,6 +173,8 @@ solve_z_obt <- function(M,
 
 		sigma_M <- sigma_M.lst$sigma_M
 		sigma_M.solution <- sigma_M.lst$solution
+	} else {
+		sigma_M.solution <- NULL
 	}
 
 	stopifnot(is.numeric(sigma_M), length(sigma_M) == 1, sigma_M > 0)
@@ -192,9 +195,7 @@ solve_z_obt <- function(M,
 
 	solution <- glue_solution(
 		z_obt.solution,
-		"<<equals>> \\frac{<<M>> - <<mu>>}{<<sigma_M>>}",
-		"<<equals>> \\frac{<<M_diff>>}{<<sigma_M>>}",
-		"<<equals>> \\mathbf{<<z_obt>>}",
+		"<<equals>> \\frac{<<M>> - <<mu>>}{<<sigma_M>>} = \\frac{<<M_diff>>}{<<sigma_M>>} = \\mathbf{<<z_obt>>}",
 		M_diff = fmt(M_diff, get_digits(M_diff, opts$round_interim)),
 		sigma_M = fmt(sigma_M, get_digits(sigma_M, opts$round_interim)),
 		# Print values of 'z_obt' to the precision of opts$round_z unless round_to is
@@ -215,8 +216,6 @@ solve_z_obt <- function(M,
 			 z_obt = z_obt,
 			 solution = solution,
 			 formula = z_obt.f)
-
-
 }
 
 #' @rdname solve_z_obt
@@ -313,5 +312,4 @@ solve_z_to_p <- function(z,
 			 direction = direction,
 			 p = p,
 			 solution = solution)
-
 }
