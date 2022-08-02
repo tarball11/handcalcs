@@ -2,7 +2,7 @@
 % Please edit documentation in R/critical.R
 \name{solve_z_crit}
 \alias{solve_z_crit}
-\title{Critical values of Z}
+\title{Critical values of \emph{z}}
 \usage{
 solve_z_crit(alpha = 0.05, direction = c("pos", "neg", "both"), ...)
 }
