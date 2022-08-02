@@ -32,6 +32,11 @@
 #' values being reported conform to the values presented in a z-table. Note that
 #' this overrides `round_interim` and `round_final`.}
 #'
+#' \item{\code{round_t}}{Number of digits to round values of `t`, such as for
+#' critical values of *t* (default = 3). This is primarily useful to ensure that
+#' the *t* values being reported conform to the values presented in a t-table.
+#' Note that this overrides `round_interim` and `round_final`.}
+#'
 #' \item{\code{add_math}}{Enclose solution string in LaTeX math block (`$$`;
 #' default = TRUE)? If set to `FALSE`, must manually include the math block tags
 #' in order for the solution to render properly.}
@@ -57,6 +62,7 @@ handcalcs_defaults<- function() {
 		round_interim = 4,
 		round_final = 4,
 		round_z = 2,
+		round_t = 3,
 		add_math = TRUE,
 		add_aligned = TRUE,
 		use_aligned = TRUE

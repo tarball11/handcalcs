@@ -42,6 +42,11 @@ using sigfigs instead of decimals for rounding.}
 values being reported conform to the values presented in a z-table. Note that
 this overrides \code{round_interim} and \code{round_final}.}
 
+\item{\code{round_t}}{Number of digits to round values of \code{t}, such as for
+critical values of \emph{t} (default = 3). This is primarily useful to ensure that
+the \emph{t} values being reported conform to the values presented in a t-table.
+Note that this overrides \code{round_interim} and \code{round_final}.}
+
 \item{\code{add_math}}{Enclose solution string in LaTeX math block (\verb{$$};
 default = TRUE)? If set to \code{FALSE}, must manually include the math block tags
 in order for the solution to render properly.}
