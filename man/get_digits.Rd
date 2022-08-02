@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_digits}
 \alias{get_digits}
-\title{Figures out the minumum number of digits (up to four) to report after the decimal place}
+\title{Get Minimum Digits}
 \usage{
 get_digits(x, max_digits = 4)
 }
@@ -12,10 +12,12 @@ get_digits(x, max_digits = 4)
 \item{max_digits}{Numeric scalar: maximum number of digits.}
 }
 \value{
-
+Numeric scalar: smallest number of digits to which the number(s) can
+be rounded (up to max_digits) without losing precision.
 }
 \description{
-Figures out the minumum number of digits (up to four) to report after the decimal place
+Figures out the minimum number of digits (up to four) to report after the
+decimal place.
 }
 \examples{
 

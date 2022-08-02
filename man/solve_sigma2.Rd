@@ -42,7 +42,7 @@ explicit summation within the solution using an ellipsis? (See
 (\code{x}).}
 
 \item{...}{Additional arguments to override default behaviors (see
-\code{\link{handcalcs_defaults}}).}
+\code{\link[=handcalcs_defaults]{handcalcs_defaults()}}}
 }
 \value{
 \code{solve_sigma2()} returns a list with the interim values and

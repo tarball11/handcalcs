@@ -21,7 +21,7 @@
 #'   \code{\link{summation}}.) Only used when calculating SS from raw data
 #'   (\code{x}).
 #' @param ... Additional arguments to override default behaviors (see
-#'   \code{\link{handcalcs_defaults}}).
+#'   [handcalcs_defaults()]
 #'
 #' @return \code{solve_sigma2()} returns a list with the interim values and
 #'   calculations (\code{x}, \code{SS}, \code{n}), the final value
@@ -219,7 +219,7 @@ solve_variance <- function(mode,
 
 	# Calculate variance:
 	variance <- if(mode == 'sample') (SS / (n - 1)) else (SS / n)
-	variance <- round(variance, opts$round_final)
+	variance <- rnd(variance, opts$round_final)
 
 	# Get base formula without LaTeX math/aligned blocks
 	var.f <- variance_formula(mode = mode,

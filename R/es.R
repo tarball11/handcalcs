@@ -145,8 +145,9 @@ cohens_d_one_z_formula <- function(...) {
 #'
 #' Calculates and presents solution string for effect site (Cohen's d) comparing
 #' a single sample to a population mean when the population standard deviation
-#' is *not* known (and must be estimated): difference between observed sample mean (`M`) and population mean
-#' (`mu`) in units of the sample standard deviation (`SD`).
+#' is *not* known (and must be estimated): difference between observed sample
+#' mean (`M`) and population mean (`mu`) in units of the sample standard
+#' deviation (`SD`).
 #'
 #' @param M Numeric scalar. Sample mean.
 #' @param mu Numeric scalar. Population mean.
@@ -157,10 +158,10 @@ cohens_d_one_z_formula <- function(...) {
 #'   [handcalcs_defaults()]
 #'
 #' @return `solve_cohens_d_one_t()` returns a list with the provided values
-#'   (`M`, `mu`, `SD`), the interim calculations (`M_diff`), the final
-#'   value (`d`), the solution string (`solution`), and the bare formula
-#'   (`formula`) in LaTeX format. `cohens_d_one_t_formula()` returns just the
-#'   bare formula in LaTeX format as a character string.
+#'   (`M`, `mu`, `SD`), the interim calculations (`M_diff`), the final value
+#'   (`d`), the solution string (`solution`), and the bare formula (`formula`)
+#'   in LaTeX format. `cohens_d_one_t_formula()` returns just the bare formula
+#'   in LaTeX format as a character string.
 #' @export
 #'
 #' @examples

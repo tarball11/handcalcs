@@ -24,16 +24,17 @@ cohens_d_one_t_formula(...)
 }
 \value{
 \code{solve_cohens_d_one_t()} returns a list with the provided values
-(\code{M}, \code{mu}, \code{SD}), the interim calculations (\code{M_diff}), the final
-value (\code{d}), the solution string (\code{solution}), and the bare formula
-(\code{formula}) in LaTeX format. \code{cohens_d_one_t_formula()} returns just the
-bare formula in LaTeX format as a character string.
+(\code{M}, \code{mu}, \code{SD}), the interim calculations (\code{M_diff}), the final value
+(\code{d}), the solution string (\code{solution}), and the bare formula (\code{formula})
+in LaTeX format. \code{cohens_d_one_t_formula()} returns just the bare formula
+in LaTeX format as a character string.
 }
 \description{
 Calculates and presents solution string for effect site (Cohen's d) comparing
 a single sample to a population mean when the population standard deviation
-is \emph{not} known (and must be estimated): difference between observed sample mean (\code{M}) and population mean
-(\code{mu}) in units of the sample standard deviation (\code{SD}).
+is \emph{not} known (and must be estimated): difference between observed sample
+mean (\code{M}) and population mean (\code{mu}) in units of the sample standard
+deviation (\code{SD}).
 }
 \examples{
 
