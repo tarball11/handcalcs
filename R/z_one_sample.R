@@ -1,8 +1,8 @@
-#' Standard Error of the Mean with Known Population Standard Deviation
+#' Standard Error of the Mean (Known Population Standard Deviation)
 #'
 #' Calculates and provides solutions for the standard error of the mean (aka
 #' standard deviation of the sampling distribution of the mean) when the
-#' population standard deviation (\eqn{\sigma}) is known (\eqn{\sigma_M = \sigma
+#' population standard deviation (\eqn{\sigma}) is known (\eqn{\sigma_{M} = \sigma
 #' / \sqrt (N)}).
 #'
 #' @param sigma Numeric scalar. Population standard deviation.
@@ -122,25 +122,25 @@ sigma_M_formula <- function(...) {
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]
 #'
-#' @return `solve_z_obt()` returns a list with the provided values (`M`, `mu`,
+#' @return `solve_z_one_sample()` returns a list with the provided values (`M`, `mu`,
 #'   `sigma`, `N`), the interim calculations (`sigma_M`, `M_diff`), the final
 #'   value (`z_obt`), the solution string (`solution`), and the bare formula
-#'   (`formula`) in LaTeX format. `z_obt_formula()` returns just the bare
+#'   (`formula`) in LaTeX format. `z_one_sample_formula()` returns just the bare
 #'   formula in LaTeX format as a character string.
 #' @export
 #'
 #' @examples
-#' solve_z_obt(M = 6, mu = 5, sigma = 2, N = 100)
+#' solve_z_one_sample(M = 6, mu = 5, sigma = 2, N = 100)
 #'
 #' # If you just want the formula:
-#' z_obt_formula()
+#' z_one_sample_formula()
 #'
-solve_z_obt <- function(M,
-												mu,
-												sigma,
-												N,
-												sigma_M,
-												...) {
+solve_z_one_sample <- function(M,
+															 mu,
+															 sigma,
+															 N,
+															 sigma_M,
+															 ...) {
 
 	stopifnot(is.numeric(M), is.numeric(mu))
 	stopifnot(length(M) == 1, length(mu) == 1)
@@ -184,9 +184,9 @@ solve_z_obt <- function(M,
 	z_obt <- rnd(M_diff/sigma_M, opts$round_final)
 
 	# Get base formula without LaTeX math/aligned blocks
-	z_obt.f <- z_obt_formula(use_aligned = opts$use_aligned,
-													 add_math = FALSE,
-													 add_aligned = FALSE)
+	z_obt.f <- z_one_sample_formula(use_aligned = opts$use_aligned,
+																	add_math = FALSE,
+																	add_aligned = FALSE)
 
 	# Prepend the solution for sigma_M if calculating from components
 	z_obt.solution <- ifelse(!is.null(sigma_M.solution),
@@ -218,11 +218,11 @@ solve_z_obt <- function(M,
 			 formula = z_obt.f)
 }
 
-#' @rdname solve_z_obt
+#' @rdname solve_z_one_sample
 #'
 #' @export
 #'
-z_obt_formula <- function(...) {
+z_one_sample_formula <- function(...) {
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -239,77 +239,4 @@ z_obt_formula <- function(...) {
 	if (opts$add_math) solution <- add_math(solution)
 
 	return(solution)
-}
-
-
-#' Calculate *p* values from the standard normal (*z*) distribution.
-#'
-#' Note that values of `z` are rounded to the value of `round_z` instead of the
-#' value of `round_interim` or `round_final` (see [handcalcs_defaults()]).
-#'
-#' @param z Numeric scalar. Value of z.
-#' @param direction For which tail(s) of the distribution should the p-value be
-#'   located: pos (area under the curve above `z`), neg (area under the curve
-#'   below `z`), both (area under the curve above +`z` and below -`z`).
-#' @param ... Additional arguments to override default behaviors (see
-#'   [handcalcs_defaults()]
-#'
-#' @return Returns a list with the provided values (`z`, `direction`), the final
-#'   value (`p`), and the solution string (`solution`) in LaTeX format.
-#'
-#' @export
-#'
-#' @examples
-#' solve_z_to_p(1.96, direction = 'both')
-#'
-#' # In some cases, you may need to change the default value of round_z
-#' solve_z_to_p(1.645, direction = 'pos', round_z = 3)
-#'
-solve_z_to_p <- function(z,
-												 direction = c('pos', 'neg', 'both'),
-												 ...) {
-
-	stopifnot(is.numeric(z), length(z) == 1)
-	stopifnot(!missing(direction))
-	direction <- match.arg(direction)
-
-	# Get list of options (allowing user to override defaults) for rounding
-	# behavior and for presenting solutions in LaTeX environment.
-	opts<- get_handcalcs_opts(...)
-
-	# Use the appropriate equals sign for an aligned environment
-	equals <- ifelse(opts$use_aligned, "&=", "=")
-
-	# Round the initial value
-	z <- rnd(z, opts$round_z)
-
-	# Get the p-value/solution string:
-	if(direction == 'pos') {
-		p <- rnd(pnorm(q = z, lower.tail=FALSE), opts$round_final)
-		sol.str <- "p(z > <<z>>) <<equals>> \\mathbf{<<p>>}"
-	} else if(direction == 'neg') {
-		p <- rnd(pnorm(q = z, lower.tail=FALSE), opts$round_final)
-		sol.str <- "p(z < <<z>>) <<equals>> \\mathbf{<<p>>}"
-	} else if(direction == 'both') {
-		p <- rnd(pnorm(q = z, lower.tail=FALSE), opts$round_final)
-		sol.str <- "p(z > <<abs(z)>>  & z < <<-abs(z)>>) <<equals>> \\mathbf{<<p>>}"
-	}
-
-	solution <- glue_solution(
-		sol.str,
-		# Print values to the appropriate precision unless round_to is set to
-		# 'sigfigs', in which case just present the final rounded value as is.
-		z = ifelse(opts$round_to == 'sigfigs', z, fmt(z, opts$round_z)),
-		p = ifelse(opts$round_to == 'sigfigs', p, fmt(p, opts$round_final)))
-
-
-	# Add LaTeX math code, if desired.
-	if (opts$add_aligned) solution <- add_aligned(solution)
-	if (opts$add_math) solution <- add_math(solution)
-
-	# Return list containing both values and solution string
-	list(z = z,
-			 direction = direction,
-			 p = p,
-			 solution = solution)
 }
