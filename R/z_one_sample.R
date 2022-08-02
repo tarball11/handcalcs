@@ -232,7 +232,7 @@ z_one_sample_formula <- function(...) {
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
 	# Create the formula string:
-	solution<- lglue("z_{obt} <<equals>> \\frac{M - \\mu}{\\sigma_{M}}")
+	solution<- lglue("z_{\\text{obt}} <<equals>> \\frac{M - \\mu}{\\sigma_{M}}")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)

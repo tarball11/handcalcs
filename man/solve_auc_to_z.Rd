@@ -17,10 +17,9 @@ and 1.}
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 }
 \value{
-Returns a list with the starting value (\code{a}), the interim
-calculations (\code{a_tail} for \code{type = between}), the final value (\code{z} for
-\code{type = above} and \code{type = below}; \code{z1} and \code{z2} for \code{type = between} and
-\code{type = tails}), and the solution string (\code{solution}).
+Returns a list with the provided value (\code{a}), any interim areas
+calculated (\code{a_above}, \code{a_below}, \code{a_between}, \code{a_1tail}, \code{a_2tails},
+depending on the type of area provided), the final value (\code{z} for \code{type = above} and \code{type = below}; \code{z1} and \code{z2} for \code{type = between} and \code{type = tails}), and the solution string (\code{solution}).
 }
 \description{
 Takes a given area under the curve (AUC) and calculates the corresponding

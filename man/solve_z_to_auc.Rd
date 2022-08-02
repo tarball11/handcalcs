@@ -17,7 +17,7 @@ value. For type values of \code{between} and \code{tails}, can be of length 1 or
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 }
 \value{
-Returns a list with the starting value (\code{z}), the interim
+Returns a list with the given value (\code{z}), the interim
 calculations (\code{a1} and \code{a2} for \code{type = between} and \code{type = tails}), the
 final value (\code{a}), and the solution string (\code{solution}).
 }

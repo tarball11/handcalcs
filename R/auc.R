@@ -32,7 +32,7 @@
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]).
 #'
-#' @return Returns a list with the starting value (`z`), the interim
+#' @return Returns a list with the given value (`z`), the interim
 #'   calculations (`a1` and `a2` for `type = between` and `type = tails`), the
 #'   final value (`a`), and the solution string (`solution`).
 #' @export
@@ -223,10 +223,11 @@ solve_z_to_auc <- function(z,
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]).
 #'
-#' @return Returns a list with the starting value (`a`), the interim
-#'   calculations (`a_tail` for `type = between`), the final value (`z` for
-#'   `type = above` and `type = below`; `z1` and `z2` for `type = between` and
-#'   `type = tails`), and the solution string (`solution`).
+#' @return Returns a list with the provided value (`a`), any interim areas
+#'   calculated (`a_above`, `a_below`, `a_between`, `a_1tail`, `a_2tails`,
+#'   depending on the type of area provided), the final value (`z` for `type =
+#'   above` and `type = below`; `z1` and `z2` for `type = between` and `type =
+#'   tails`), and the solution string (`solution`).
 #' @export
 #'
 #' @examples
@@ -260,26 +261,31 @@ solve_auc_to_z <- function(a,
 		a <- rnd(a, opts$round_interim)
 
 		# Some values are not always returned. Null values are dropped from the return list.
-		z <- z1 <- z2 <- a_tail <- NULL
+		z <- z1 <- z2 <- NULL
+		a_above <- a_below <- a_between <- a_2tails <- a_1tail <- NULL
 
 		if(type == 'above') {
 			# Calculate z
+			a_above <- a
 			z <- rnd(qnorm(p=a, lower.tail=FALSE), opts$round_z)
 
 			# Create the solution string, with rounded values (minimally displayed)
 			solution <- glue_solution(
-				"A_{\\text{above}} <<equals>> <<a>> \\rightarrow z = \\mathbf{<<z>>}",
+				"A_{\\text{above}} <<equals>> <<a_above>> \\rightarrow z = \\mathbf{<<z>>}",
+				a_above = ifelse(opts$round_to == 'sigfigs', a_above, fmt(a_above, opts$round_interim)),
 				# Print value of 'z' to the precision of opts$round_z unless round_to is
 				# set to 'sigfigs', in which case just present the final rounded value as is.
 				z = ifelse(opts$round_to == 'sigfigs', z, fmt(z, opts$round_z)))
 
 		} else if(type == 'below') {
 			# Calculate z
+			a_below <- a
 			z <- rnd(qnorm(p=a, lower.tail=TRUE), opts$round_z)
 
 			# Create the solution string, with rounded values (minimally displayed)
 			solution <- glue_solution(
-				"A_{\\text{below}} <<equals>> <<a>> \\rightarrow z = \\mathbf{<<z>>}",
+				"A_{\\text{below}} <<equals>> <<a_below>> \\rightarrow z = \\mathbf{<<z>>}",
+				a_below = ifelse(opts$round_to == 'sigfigs', a_below, fmt(a_below, opts$round_interim)),
 				# Print value of 'z' to the precision of opts$round_z unless round_to is
 				# set to 'sigfigs', in which case just present the final rounded value as is.
 				z = ifelse(opts$round_to == 'sigfigs', z, fmt(z, opts$round_z)))
@@ -287,35 +293,42 @@ solve_auc_to_z <- function(a,
 
 		} else if(type == 'between') {
 			# Calculate z
-			a_tail <- rnd((1 - a)/2, opts$round_interim)
-			z1 <- rnd(qnorm(p = a_tail, lower.tail = TRUE), opts$round_z)
-			z2 <- rnd(qnorm(p = a_tail, lower.tail = FALSE), opts$round_z)
+			a_between <- a
+			a_2tails <- rnd(1 - a_between, opts$round_interim)
+			a_1tail <- rnd(a_2tails/2, opts$round_interim)
+			z1 <- rnd(qnorm(p = a_1tail, lower.tail = TRUE), opts$round_z)
+			z2 <- rnd(qnorm(p = a_1tail, lower.tail = FALSE), opts$round_z)
 
 			# Create the solution string, with rounded values (minimally displayed)
 			solution <- glue_solution(
 				"A_{\\text{between}} <<equals>> <<a>>",
-				"A_{\\text{tail}} <<equals>> \\frac{1 - A_{\\text{between}}}{2} = \\frac{1 - <<a>>}{2} = <<a_tail>>",
-				"A_{\\text{below}} <<equals>> <<a_tail>> \\rightarrow z_{\\text{lower}} = \\mathbf{<<z1>>}",
-				"A_{\\text{above}} <<equals>> <<a_tail>> \\rightarrow z_{\\text{upper}} = \\mathbf{<<z2>>}",
+				"A_{\\text{2-tails}} <<equals>> 1 - A_{\\text{between}} = 1 - <<a_between>> = <<a_2tails>>",
+				"A_{\\text{1-tail}} <<equals>> \\frac{A_{\\text{2-tails}}}{2} = \\frac{<<a_2tails>>}{2} = <<a_1tail>>",
+				"A_{\\text{below}} <<equals>> <<a_1tail>> \\rightarrow z_{\\text{lower}} = \\mathbf{<<z1>>}",
+				"A_{\\text{above}} <<equals>> <<a_1tail>> \\rightarrow z_{\\text{upper}} = \\mathbf{<<z2>>}",
+				a_between = ifelse(opts$round_to == 'sigfigs', a_between, fmt(a_between, opts$round_interim)),
+				a_2tails = ifelse(opts$round_to == 'sigfigs', a_2tails, fmt(a_2tails, opts$round_interim)),
+				a_1tail = ifelse(opts$round_to == 'sigfigs', a_1tail, fmt(a_1tail, opts$round_interim)),
 				# Print values of 'z' to the precision of opts$round_z unless round_to is
 				# set to 'sigfigs', in which case just present the final rounded value as is.
 				z1 = ifelse(opts$round_to == 'sigfigs', z1, fmt(z1, opts$round_z)),
 				z2 = ifelse(opts$round_to == 'sigfigs', z2, fmt(z2, opts$round_z)))
 
 		} else if(type == 'tails') {
-			# Find area in one tail:
-			a_tail <- rnd(a/2, opts$round_interim)
-
 			# Calculate z
-			z1 <- rnd(qnorm(p = a_tail, lower.tail = TRUE), opts$round_z)
-			z2 <- rnd(qnorm(p = a_tail, lower.tail = FALSE), opts$round_z)
+			a_2tails <- a
+			a_1tail <- rnd(a_2tails/2, opts$round_interim)
+
+			z1 <- rnd(qnorm(p = a_1tail, lower.tail = TRUE), opts$round_z)
+			z2 <- rnd(qnorm(p = a_1tail, lower.tail = FALSE), opts$round_z)
 
 			# Create the solution string, with rounded values (minimally displayed)
 			solution <- glue_solution(
-				"A_{\\text{both-tails}} <<equals>> <<a>>",
-				"A_{\\text{one-tail}} <<equals>> \\frac{A_{\\text{both-tails}}}{2} = \\frac{<<a>>}{2} = <<a_tail>>",
-				"A_{\\text{below}} <<equals>> <<a_tail>> \\rightarrow z_{\\text{lower}} = \\mathbf{<<z1>>}",
-				"A_{\\text{above}} <<equals>> <<a_tail>> \\rightarrow z_{\\text{upper}} = \\mathbf{<<z2>>}",
+				"A_{\\text{1-tail}} <<equals>> \\frac{A_{\\text{2-tails}}}{2} = \\frac{<<a_2tails>>}{2} = <<a_1tail>>",
+				"A_{\\text{below}} <<equals>> <<a_1tail>> \\rightarrow z_{\\text{lower}} = \\mathbf{<<z1>>}",
+				"A_{\\text{above}} <<equals>> <<a_1tail>> \\rightarrow z_{\\text{upper}} = \\mathbf{<<z2>>}",
+				a_2tails = ifelse(opts$round_to == 'sigfigs', a_2tails, fmt(a_2tails, opts$round_interim)),
+				a_1tail = ifelse(opts$round_to == 'sigfigs', a_1tail, fmt(a_1tail, opts$round_interim)),
 				# Print values of 'z' to the precision of opts$round_z unless round_to is
 				# set to 'sigfigs', in which case just present the final rounded value as is.
 				z1 = ifelse(opts$round_to == 'sigfigs', z1, fmt(z1, opts$round_z)),
@@ -328,7 +341,11 @@ solve_auc_to_z <- function(a,
 
 		# Return list containing both values and solution string
 		list(a = a,
-				 a_tail = a_tail,
+				 a_above = a_above,
+				 a_below = a_below,
+				 a_between = a_between,
+				 a_2tails = a_2tails,
+				 a_1tail = a_1tail,
 				 z1 = z1,
 				 z2 = z2,
 				 z = z,
