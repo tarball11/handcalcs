@@ -41,6 +41,11 @@ standard deviation (\eqn{\sigma}) is known: \eqn{M \pm (z_{1 -
 \alpha/2})(\sigma_{M})}. May either provide \code{sigma_M}, or that value can be
 calculated from \code{sigma} and \code{N}.
 }
+\details{
+Note that the critical value of \emph{z} (\code{z_crit}) is rounded to the value of
+\code{round_z} instead of the value of \code{round_interim} or \code{round_final} (see
+\code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).
+}
 \examples{
 
 solve_ci_z(M = 5, sigma_M = 0.2)
