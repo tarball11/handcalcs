@@ -26,21 +26,35 @@ glue_solution <- function(..., .envir = parent.frame()) {
 }
 
 
-#' Explicit Summation
+#' Abbreviate Math Sequences
 #'
-#' Takes a character vector of values that would be part of a summation sequence
-#' (e.g., produced by \code{glue::glue()}) and returns a string enumerating the
-#' process. For instance, if you wished to sum the integers 1 to 3, this would
-#' be spelled out as "1 + 2 + 3". By default, will abbreviate the summation for
-#' vectors longer than `\code{abbrev_sum}` by using an ellipsis (LaTeX: `\cdots`).
+#' Three different functions designed to take a character vector of values that
+#' would be part of a sequence that would be abbreviated with an ellipsis
+#' (LaTeX: `\cdots`), if the sequence is sufficiently long. If the length of the
+#' sequence is greater than or equal to `abbrev_at`, it will be abbreviated. If
+#' not, the full sequence will be shown.
 #'
-#' @param sum_values Character vector (or vector of values that can be coerced
-#'   to character) of values to be summed.
-#' @param abbrev_sum Numeric scalar indicating when to abbreviate the summation
-#'   (with an ellipsis). If the length of sum_values exceeds the value of
-#'   abbrev_sum, will return abbreviated string. (Note: minimum value is 3.)
+#' `summation()` takes a sequence of values to be summed and returns a string
+#' enumerating the process. For instance, if you wished to sum the integers 1 to
+#' 100, this would be spelled out as "1 + 2 + ... + 100".
 #'
-#' @return Explicit summation string (scalar). For instance,
+#' `comma_list()` takes a set of values to be listed in a comma separated list.
+#' For instance, if you wished to list the integers 1 to 100, this would be
+#' spelled out as "1, 2, ..., 100".
+#'
+#' `math_list()` is a more general form, allowing you to specify the string
+#' separating the values. (`summation()` and `comma_list()` are just wrappers
+#' around `math_list()`.)
+#'
+#' @param values Character vector (or vector of values that can be coerced to
+#'   character) of values to be summed.
+#' @param abbrev_at,abbrev_sum Numeric scalar indicating when to abbreviate the
+#'   summation with an ellipsis (default = 6). If the length of `values` exceeds
+#'   the value of abbrev_at, will return abbreviated string. (Note: minimum
+#'   value is 3.) Note: `abbrev_sum` is an alias for `abbrev_at` for
+#'   `summation()`, which defaults to the value of `abbrev_sum` set globally.
+#'
+#' @return String containing the (possibly abbreviated) sequence. For instance,
 #'   \code{summation(1:4)} would return "1 + 2 + 3 + 4".
 #' @export
 #'
@@ -51,22 +65,50 @@ glue_solution <- function(..., .envir = parent.frame()) {
 #' # More complex uses are possible (e.g., sum of squared deviations)
 #' x <- sample(1:20, size = 10)
 #' M <- round(mean(x), 2)
-#' sum_values <- glue::glue("(<<x>> - <<M>>)^2", .open = "<<", .close = ">>")
-#' summation(sum_values)
+#' values <- glue::glue("(<<x>> - <<M>>)^2", .open = "<<", .close = ">>")
+#' summation(values)
 #'
 #' # If you wish to avoid abbreviation, set the value higher:
-#' summation(sum_values, abbrev_sum = length(sum_values))
+#' summation(values, abbrev_at = length(values))
 #'
-summation<- function(sum_values, abbrev_sum = 5) {
-	stopifnot(is.character(as.character(sum_values)))
-	stopifnot(is.numeric(abbrev_sum), abbrev_sum >= 3)
+#' # Comma-separated lists are also simple:
+#' comma_list(1:15)
+#'
+#' # Other types of sequences are possible with math_list()
+#' math_list(1:10, sep = "*")
+#'
+math_list <- function(values, sep, abbrev_at = 6) {
+	stopifnot(is.character(as.character(values)))
+	stopifnot(is.character(as.character(sep)))
+	stopifnot(is.numeric(abbrev_at), abbrev_at >= 3)
 
-	n <- length(sum_values)
+	n <- length(values)
 
-	if(n <= 2 | n <= abbrev_sum) {
-		sum_values %>%
-			glue::glue_collapse(sep = " + ")
+	if(n <= 2 | n < abbrev_at) {
+		values %>%
+			glue::glue_collapse(sep = sep)
 	} else {
-		lglue("<<sum_values[1]>> + <<sum_values[2]>> + \\cdots + <<sum_values[n]>>")
+		lglue("<<values[1]>><<sep>><<values[2]>><<sep>>\\cdots<<sep>><<values[n]>>")
 	}
 }
+
+#' @rdname math_list
+#'
+#' @export
+#'
+summation <- function(values,
+											abbrev_sum = get_handcalcs_opts()$abbrev_sum,
+											abbrev_at = get_handcalcs_opts()$abbrev_sum) {
+	if(missing(abbrev_sum) & missing(abbrev_at)) stop("Must supply an argument for abbrev_sum or abbrev_at.")
+	if(missing(abbrev_at)) abbrev_at = abbrev_sum
+	if(missing(abbrev_sum)) abbrev_sum = abbrev_at
+
+	math_list(values, sep = " + ", abbrev_at = abbrev_at)
+}
+#' @rdname math_list
+#'
+#' @export
+#'
+comma_list <- function(values, abbrev_at = 6) math_list(values, sep = ", ", abbrev_at = abbrev_at)
+
+
