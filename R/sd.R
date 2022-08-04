@@ -1,12 +1,13 @@
 #' Population Standard Deviation
 #'
-#' Calculates population standard deviation (\eqn{\sigma = \sqrt(SS / n)}) either from a set of
-#' raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
-#' (\code{n}), OR from the population variance (\code{sigma2}). If providing raw
-#' data, it will include the calculation of SS in the solution string. If
-#' providing \code{SS} and \code{n}, it will include the calculation of the
-#' population variance in the solution string. Otherwise, if only \code{sigma2}
-#' is provided, will simply show the final calculation (\eqn{\sqrt(\sigma^2)}).
+#' Calculates population standard deviation (\eqn{\sigma = \sqrt(SS / n)})
+#' either from a set of raw values (\code{x}) OR from the sum of squares
+#' (\code{SS}) and sample size (\code{n}), OR from the population variance
+#' (\code{sigma2}). If providing raw data, it will include the calculation of SS
+#' in the solution string. If providing \code{SS} and \code{n}, it will include
+#' the calculation of the population variance in the solution string. Otherwise,
+#' if only \code{sigma2} is provided, will simply show the final calculation
+#' (\eqn{\sqrt(\sigma^2)}).
 #'
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
@@ -20,10 +21,6 @@
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
-#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
-#'   explicit summation within the solution using an ellipsis? (See
-#'   \code{\link{summation}}.) Only used when calculating SS from raw data
-#'   (\code{x}).
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -63,7 +60,6 @@ solve_sigma <- function(x,
 												sub = "",
 												sym = "X",
 												SS.f = solve_sum_squares,
-												abbrev_sum = 4,
 												...) {
 
 	solve_std_dev(mode = 'population',
@@ -74,7 +70,6 @@ solve_sigma <- function(x,
 								sub = sub,
 								sym = sym,
 								SS.f = SS.f,
-								abbrev_sum = abbrev_sum,
 								...)
 }
 
@@ -95,12 +90,12 @@ sigma_formula <- function(sub = "",
 
 #' Sample Standard Deviation
 #'
-#' Calculates sample standard deviation (\eqn{s = \sqrt[SS / (n - 1)]}) either from a set of
-#' raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
-#' (\code{n}), OR from the sample variance (\code{s2}). If providing raw
-#' data, it will include the calculation of SS in the solution string. If
-#' providing \code{SS} and \code{n}, it will include the calculation of the
-#' sample variance in the solution string. Otherwise, if only \code{s2}
+#' Calculates sample standard deviation (\eqn{s = \sqrt[SS / (n - 1)]}) either
+#' from a set of raw values (\code{x}) OR from the sum of squares (\code{SS})
+#' and sample size (\code{n}), OR from the sample variance (\code{s2}). If
+#' providing raw data, it will include the calculation of SS in the solution
+#' string. If providing \code{SS} and \code{n}, it will include the calculation
+#' of the sample variance in the solution string. Otherwise, if only \code{s2}
 #' is provided, will simply show the final calculation (\eqn{\sqrt(s^2)}).
 #'
 #' @param x Numeric vector of raw data values.
@@ -115,18 +110,14 @@ sigma_formula <- function(sub = "",
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
-#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
-#'   explicit summation within the solution using an ellipsis? (See
-#'   \code{\link{summation}}.) Only used when calculating SS from raw data
-#'   (\code{x}).
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
-#' @return \code{solve_sd()} returns a list with the interim values and calculations
-#'   (\code{x}, \code{SS}, \code{n}, \code{s2}), the final value (\code{s}), the solution string
-#'   (\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
-#'   \code{sigma2_formula} returns just the bare formula in LaTeX format as a
-#'   character string.
+#' @return \code{solve_sd()} returns a list with the interim values and
+#'   calculations (\code{x}, \code{SS}, \code{n}, \code{s2}), the final value
+#'   (\code{s}), the solution string (\code{solution}), and the bare formula
+#'   (\code{formula}) in LaTeX format. \code{sigma2_formula} returns just the
+#'   bare formula in LaTeX format as a character string.
 #'
 #' @export
 #'
@@ -158,7 +149,6 @@ solve_sd <- function(x,
 										 sub = "",
 										 sym = "X",
 										 SS.f = solve_sum_squares,
-										 abbrev_sum = 4,
 										 ...) {
 
 	solve_std_dev(mode = 'sample',
@@ -169,7 +159,6 @@ solve_sd <- function(x,
 								sub = sub,
 								sym = sym,
 								SS.f = SS.f,
-								abbrev_sum = abbrev_sum,
 								...)
 }
 
@@ -196,7 +185,6 @@ solve_std_dev <- function(mode,
 													sub = "",
 													sym = "X",
 													SS.f = solve_sum_squares,
-													abbrev_sum = 4,
 													...) {
 
 	# Must know proper mode for calculation
@@ -226,7 +214,8 @@ solve_std_dev <- function(mode,
 															n = n,
 															sub = sub,
 															sym = sym,
-															abbrev_sum = abbrev_sum,
+															show_summation = opts$show_summation,
+															abbrev_sum = opts$abbrev_sum,
 															round_interim = opts$round_interim,
 															round_final = opts$round_interim,
 															add_math = FALSE,

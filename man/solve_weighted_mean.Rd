@@ -5,17 +5,13 @@
 \alias{weighted_mean_formula}
 \title{Weighted (aka overall) Mean}
 \usage{
-solve_weighted_mean(Samples, abbrev_sum = 5, ...)
+solve_weighted_mean(Samples, ...)
 
 weighted_mean_formula(...)
 }
 \arguments{
 \item{Samples}{List of means and sample sizes. Must be a list of vectors with
 names M and n, one vector per subgroup (see examples).}
-
-\item{abbrev_sum}{Numeric scalar. Maximum length of x before it abbreviates
-explicit summation within the solution using an ellipsis? (See
-\code{\link{summation}}.)}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}

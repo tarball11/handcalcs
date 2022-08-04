@@ -5,7 +5,7 @@
 \alias{mean_formula}
 \title{Arithmetic Mean}
 \usage{
-solve_mean(x, sub = "", sym = "X", abbrev_sum = 5, ...)
+solve_mean(x, sub = "", sym = "X", ...)
 
 mean_formula(sub = "", sym = "X", ...)
 }
@@ -17,10 +17,6 @@ solutions). Leave empty to report no subscript.}
 
 \item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
 Only one character allowed.}
-
-\item{abbrev_sum}{Numeric scalar. Maximum length of x before it abbreviates
-explicit summation within the solution using an ellipsis? (See
-\code{\link{summation}}.)}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}

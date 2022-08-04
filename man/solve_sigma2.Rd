@@ -5,16 +5,7 @@
 \alias{sigma2_formula}
 \title{Population Variance}
 \usage{
-solve_sigma2(
-  x,
-  SS,
-  n,
-  sub = "",
-  sym = "X",
-  SS.f = solve_sum_squares,
-  abbrev_sum = 4,
-  ...
-)
+solve_sigma2(x, SS, n, sub = "", sym = "X", SS.f = solve_sum_squares, ...)
 
 sigma2_formula(sub = "", ...)
 }
@@ -35,11 +26,6 @@ Only one character allowed. Only used when calculating SS from raw data
 \item{SS.f}{Formula to use for sum of squares calculation (either
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 from raw data (\code{x}).}
-
-\item{abbrev_sum}{Numeric scalar. Maximum length of x before it abbreviates
-explicit summation within the solution using an ellipsis? (See
-\code{\link{summation}}.) Only used when calculating SS from raw data
-(\code{x}).}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}}

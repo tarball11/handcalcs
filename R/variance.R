@@ -16,10 +16,6 @@
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
-#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
-#'   explicit summation within the solution using an ellipsis? (See
-#'   \code{\link{summation}}.) Only used when calculating SS from raw data
-#'   (\code{x}).
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]
 #'
@@ -56,7 +52,6 @@ solve_sigma2 <- function(x,
 												 sub = "",
 												 sym = "X",
 												 SS.f = solve_sum_squares,
-												 abbrev_sum = 4,
 												 ...) {
 
 	solve_variance(mode = 'population',
@@ -66,7 +61,6 @@ solve_sigma2 <- function(x,
 								 sub = sub,
 								 sym = sym,
 								 SS.f = SS.f,
-								 abbrev_sum = abbrev_sum,
 								 ...)
 }
 
@@ -77,9 +71,9 @@ solve_sigma2 <- function(x,
 sigma2_formula <- function(sub = "",
 													 ...) {
 
-		variance_formula(mode = 'population',
-										 sub = sub,
-										 ...)
+	variance_formula(mode = 'population',
+									 sub = sub,
+									 ...)
 }
 
 
@@ -101,10 +95,6 @@ sigma2_formula <- function(sub = "",
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
-#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
-#'   explicit summation within the solution using an ellipsis? (See
-#'   \code{\link{summation}}.) Only used when calculating SS from raw data
-#'   (\code{x}).
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -136,13 +126,12 @@ sigma2_formula <- function(sub = "",
 #' s2_formula(sub = "Y")
 #'
 solve_s2 <- function(x,
-													 SS,
-													 n,
-													 sub = "",
-													 sym = "X",
-													 SS.f = solve_sum_squares,
-													 abbrev_sum = 4,
-													 ...) {
+										 SS,
+										 n,
+										 sub = "",
+										 sym = "X",
+										 SS.f = solve_sum_squares,
+										 ...) {
 	solve_variance(mode = 'sample',
 								 x = x,
 								 SS = SS,
@@ -150,7 +139,6 @@ solve_s2 <- function(x,
 								 sub = sub,
 								 sym = sym,
 								 SS.f = SS.f,
-								 abbrev_sum = abbrev_sum,
 								 ...)
 }
 
@@ -159,7 +147,7 @@ solve_s2 <- function(x,
 #' @export
 #'
 s2_formula <- function(sub = "",
-														 ...) {
+											 ...) {
 	variance_formula(mode = 'sample',
 									 sub = sub,
 									 ...)
@@ -174,7 +162,6 @@ solve_variance <- function(mode,
 													 sub = "",
 													 sym = "X",
 													 SS.f = solve_sum_squares,
-													 abbrev_sum = 4,
 													 ...) {
 	# Must know proper mode for calculation
 	stopifnot(mode %in% c('population', 'sample'))
@@ -202,7 +189,8 @@ solve_variance <- function(mode,
 		SS.lst <- SS.f(x = x,
 									 sub = sub,
 									 sym = sym,
-									 abbrev_sum = abbrev_sum,
+									 show_summation = opts$show_summation,
+									 abbrev_sum = opts$abbrev_sum,
 									 round_interim = opts$round_interim,
 									 round_final = opts$round_interim,
 									 add_math = FALSE,
@@ -236,8 +224,8 @@ solve_variance <- function(mode,
 	# Round based on the precision of the final calculated value unless round_to is
 	# set to 'sigfigs', in which case just present the final rounded value as is.
 	variance.fmt <- ifelse(opts$round_to == 'sigfigs',
-												variance,
-												fmt(variance, get_digits(variance, opts$round_final)))
+												 variance,
+												 fmt(variance, get_digits(variance, opts$round_final)))
 
 
 	# Create the solution string, with rounded values (minimally displayed)

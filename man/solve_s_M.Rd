@@ -27,7 +27,7 @@ character string.
 \description{
 Calculates and provides solutions for the standard error of the mean (aka
 standard deviation of the sampling distribution of the mean) using the sample
-standard deviation (\eqn{s_{M} = s / \sqrt (N)}).
+standard deviation (\eqn{s_{M} = s / \sqrt{N}}).
 }
 \examples{
 solve_s_M(SD = 5, N = 25)

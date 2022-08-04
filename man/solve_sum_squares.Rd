@@ -9,13 +9,13 @@
 \alias{sum_squares_table2}
 \title{Sum of Squares}
 \usage{
-solve_sum_squares(x, sub = "", sym = "X", abbrev_sum = 4, ...)
+solve_sum_squares(x, sub = "", sym = "X", ...)
 
 sum_squares_formula(sub = "", sym = "X", ...)
 
 sum_squares_table(SS.lst, sub = "", sym = "X", ...)
 
-solve_sum_squares2(x, sub = "", sym = "X", abbrev_sum = 4, ...)
+solve_sum_squares2(x, sub = "", sym = "X", ...)
 
 sum_squares_formula2(sub = "", sym = "X", ...)
 
@@ -29,10 +29,6 @@ solutions). Leave empty to report no subscript.}
 
 \item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
 Only one character allowed.}
-
-\item{abbrev_sum}{Numeric scalar. Maximum length of x before it abbreviates
-explicit summation within the solution using an ellipsis? (See
-\code{\link{summation}}.)}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}

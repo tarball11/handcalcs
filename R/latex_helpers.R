@@ -9,22 +9,34 @@ add_math<- function(solution) {
 	paste0("$$ ", solution, "$$")
 }
 
-# LaTeX-friendly glue
+# LaTeX-friendly glue. (Note: discards NULL values from the ... argument.)
 lglue <- function(..., .envir = parent.frame()) {
-	glue::glue(..., .envir = .envir, .open = "<<", .close = ">>")
+	# glue::glue(..., .envir = .envir, .open = "<<", .close = ">>")
+	l <- purrr::compact(list(...))
+	do.call(eval(parse(text='glue::glue')),
+					args = c(l, list(.envir = .envir,
+													 .open = "<<",
+													 .close = ">>")))
+
 }
 
 # Wrapper for glue::glue() to generate solution strings, using defaults useful
-# for LaTeX strings
+# for LaTeX strings. (Note: discards NULL values from the ... argument.)
 glue_solution <- function(..., .envir = parent.frame()) {
-	glue::glue(...,
-						 .envir = .envir,
-						 .sep = " \\\\ ",
-						 .open = "<<",
-						 .close = ">>",
-	)
-}
+	# glue::glue(...,
+	# 					 .envir = .envir,
+	# 					 .sep = " \\\\ ",
+	# 					 .open = "<<",
+	# 					 .close = ">>",
+	# )
 
+	l <- purrr::compact(list(...))
+	do.call(eval(parse(text='glue::glue')),
+					args = c(l, list(.envir = .envir,
+													 .sep = " \\\\ ",
+													 .open = "<<",
+													 .close = ">>")))
+}
 
 #' Abbreviate Math Sequences
 #'

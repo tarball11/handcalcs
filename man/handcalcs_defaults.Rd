@@ -58,6 +58,21 @@ solutions to be set in the same aligned environment.}
 \item{\code{use_aligned}}{Use "&=" instead of "=" in solution string to
 generate aligned equations (default = TRUE).}
 
+\item{\code{show_summation}}{Logical. Should explicit summation steps (e.g.,
+for sum of squares) be made explicit? If true, will include a step after a
+formula shows \eqn{\Sum{X}} that makes the summation explicit (e.g.,
+\eqn{X_{1} + X_{2} + ... + X_{n}}). If false, will skip that step. (See
+\code{\link[=summation]{summation()}}.)}
+
+\item{\code{abbrev_sum}}{Numeric scalar (default = 6). If \code{show_summation} is
+TRUE, at what length of \code{x} should it abbreviate the explicit summation
+within the solution using an ellipsis? If the length of \code{x} is greater than
+or equal to \code{abbrev_sum}, it will abbreviate the summation sequence (e.g., "1
+\itemize{
+\item 2 + ... + 6"). Otherwise, will show the entire sequence (e.g., "1 + 2 + 3 +
+4 + 5 + 6").}
+}
+
 }
 }
 \examples{

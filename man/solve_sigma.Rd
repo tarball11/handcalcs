@@ -13,7 +13,6 @@ solve_sigma(
   sub = "",
   sym = "X",
   SS.f = solve_sum_squares,
-  abbrev_sum = 4,
   ...
 )
 
@@ -39,11 +38,6 @@ Only one character allowed. Only used when calculating SS from raw data
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 from raw data (\code{x}).}
 
-\item{abbrev_sum}{Numeric scalar. Maximum length of x before it abbreviates
-explicit summation within the solution using an ellipsis? (See
-\code{\link{summation}}.) Only used when calculating SS from raw data
-(\code{x}).}
-
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}
 }
@@ -55,13 +49,14 @@ formula (\code{formula}) in LaTeX format. \code{sigma_formula} returns just
 the bare formula in LaTeX format as a character string.
 }
 \description{
-Calculates population standard deviation (\eqn{\sigma = \sqrt(SS / n)}) either from a set of
-raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
-(\code{n}), OR from the population variance (\code{sigma2}). If providing raw
-data, it will include the calculation of SS in the solution string. If
-providing \code{SS} and \code{n}, it will include the calculation of the
-population variance in the solution string. Otherwise, if only \code{sigma2}
-is provided, will simply show the final calculation (\eqn{\sqrt(\sigma^2)}).
+Calculates population standard deviation (\eqn{\sigma = \sqrt(SS / n)})
+either from a set of raw values (\code{x}) OR from the sum of squares
+(\code{SS}) and sample size (\code{n}), OR from the population variance
+(\code{sigma2}). If providing raw data, it will include the calculation of SS
+in the solution string. If providing \code{SS} and \code{n}, it will include
+the calculation of the population variance in the solution string. Otherwise,
+if only \code{sigma2} is provided, will simply show the final calculation
+(\eqn{\sqrt(\sigma^2)}).
 }
 \examples{
 # Simple usage: generate raw data, produce results

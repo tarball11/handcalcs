@@ -10,9 +10,6 @@
 #'   solutions). Leave empty to report no subscript.
 #' @param sym Character scalar. Symbol to represent x in formula (default: "X").
 #'   Only one character allowed.
-#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
-#'   explicit summation within the solution using an ellipsis? (See
-#'   \code{\link{summation}}.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -51,14 +48,12 @@
 solve_mean <- function(x,
                        sub = "",
                        sym = "X",
-											 abbrev_sum = 5,
                        ...) {
 
 	# Check argument validity
   stopifnot(is.numeric(x), any(!is.na(x)))
   stopifnot(is.character(as.character(sub)), length(sub) == 1)
   stopifnot(is.character(sym), nchar(sym) == 1)
-  stopifnot(is.numeric(abbrev_sum), abbrev_sum >= 3)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -73,28 +68,29 @@ solve_mean <- function(x,
   SumX <- rnd(sum(x), opts$round_interim)
   M <- rnd(SumX / n, opts$round_final)
 
-
   # Get base formula without LaTeX math/aligned blocks
   M.formula <- mean_formula(sub = sub,
   													sym = sym,
+  													show_summation = opts$show_summation,
   													use_aligned = opts$use_aligned,
   													add_math = FALSE,
   													add_aligned = FALSE)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-    M.formula,
-    "<<equals>> \\frac{<<Num>>}{<<n>>}",
-    "<<equals>> \\frac{<<SumX>>}{<<n>>}",
-    "<<equals>> \\mathbf{<<M>>}",
-    Num = summation(lglue("<<x>>"), abbrev_sum = abbrev_sum),
-    SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
-    # Round based on the precision of x and the final calculated value unless
-    # round_to is set to 'sigfigs', in which case just present the final rounded
-    # value as is.
-    M = ifelse(opts$round_to == 'sigfigs',
-    					 M,
-    					 fmt(M, get_digits(c(x, M), opts$round_final))))
+  	M.formula,
+  	# Show the summation step, if set
+  	if(opts$show_summation) {"<<equals>> \\frac{<<Num>>}{<<n>>}"},
+  	"<<equals>> \\frac{<<SumX>>}{<<n>>}",
+  	"<<equals>> \\mathbf{<<M>>}",
+  	Num = summation(lglue("<<x>>"), abbrev_sum = opts$abbrev_sum),
+  	SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
+  	# Round based on the precision of x and the final calculated value unless
+  	# round_to is set to 'sigfigs', in which case just present the final rounded
+  	# value as is.
+  	M = ifelse(opts$round_to == 'sigfigs',
+  						 M,
+  						 fmt(M, get_digits(c(x, M), opts$round_final))))
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
@@ -123,14 +119,17 @@ mean_formula <- function(sub = "",
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
-  opts<- get_handcalcs_opts(...)
+  opts <- get_handcalcs_opts(...)
 
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
   solution<- lglue(
-  	"M_{<<sub>>} <<equals>> \\frac{\\sum{<<sym>>}}{n} \\\\",
-  	"<<equals>> \\frac{<<sym>>_{1} + <<sym>>_{2} + \\cdots + <<sym>>_{n}}{n}")
+  	"M_{<<sub>>} <<equals>> \\frac{\\sum{<<sym>>}}{n}",
+  	if(opts$show_summation) {
+  		"\\\\ <<equals>> \\frac{<<sym>>_{1} + <<sym>>_{2} + \\cdots + <<sym>>_{n}}{n}"
+  	})
+
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
@@ -260,9 +259,6 @@ solve_mode <- function(x,
 #'
 #' @param Samples List of means and sample sizes. Must be a list of vectors with
 #'   names M and n, one vector per subgroup (see examples).
-#' @param abbrev_sum Numeric scalar. Maximum length of x before it abbreviates
-#'   explicit summation within the solution using an ellipsis? (See
-#'   \code{\link{summation}}.)
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -286,7 +282,6 @@ solve_mode <- function(x,
 #' weighted_mean_formula()
 
 solve_weighted_mean <- function(Samples,
-																abbrev_sum = 5,
 																...) {
 	# Samples must be a list with at least two subgroups represented
   stopifnot(is.list(Samples), length(Samples) > 1)
@@ -295,8 +290,6 @@ solve_weighted_mean <- function(Samples,
   # Samples must be list of vectors of length 2, with values named M and n
   stopifnot(all(purrr::map_lgl(Samples, ~ length(.x) == 2)))
   stopifnot(all(purrr::flatten_lgl(purrr::map(Samples, ~ names(.x) == c("M", "n")))))
-  # Confirm abbrev_sum is a valid value
-  stopifnot(is.numeric(abbrev_sum), abbrev_sum >= 3)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -321,17 +314,19 @@ solve_weighted_mean <- function(Samples,
 
   # Get base formula without LaTeX math/aligned blocks
   M_w.formula <- weighted_mean_formula(use_aligned = opts$use_aligned,
+  																		 show_summation = opts$show_summation,
   																		 add_math = FALSE,
   																		 add_aligned = FALSE)
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
     M_w.formula,
-    "<<equals>> \\frac{<<Num>>}{<<Denom>>}",
+    # Show the summation step, if set
+    if(opts$show_summation) {"<<equals>> \\frac{<<Num>>}{<<Denom>>}"},
     "<<equals>> \\frac{<<Sum_M_x_n>>}{<<Sum_n>>}",
     "<<equals>> \\mathbf{<<M_w>>}",
-    Num = summation(lglue("(<<M>>)(<<n>>)"), abbrev_sum = abbrev_sum),
-    Denom = summation(lglue("<<n>>"), abbrev_sum = abbrev_sum),
+    Num = summation(lglue("(<<M>>)(<<n>>)"), abbrev_sum = opts$abbrev_sum),
+    Denom = summation(lglue("<<n>>"), abbrev_sum = opts$abbrev_sum),
     Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, opts$round_interim)),
     # Round based on the precision of x and the final calculated value unless
     # round_to is set to 'sigfigs', in which case just present the final rounded
@@ -367,7 +362,8 @@ weighted_mean_formula <- function(...) {
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	solution<- lglue("M_{weighted} <<equals>> \\frac{<<Num>>}{<<Denom>>}",
+	solution<- lglue("M_{weighted} <<equals>> \\frac{\\sum{M_{i}n_{i}}}{\\sum{n_{i}}}",
+									 if(opts$show_summation) {"\\\\ <<equals>> \\frac{<<Num>>}{<<Denom>>}"},
 									 Num = "(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})",
 									 Denom = "n_{1} + n_{2} + \\cdots + n_{k}")
 

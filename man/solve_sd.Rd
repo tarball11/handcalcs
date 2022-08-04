@@ -5,17 +5,7 @@
 \alias{sd_formula}
 \title{Sample Standard Deviation}
 \usage{
-solve_sd(
-  x,
-  SS,
-  n,
-  s2,
-  sub = "",
-  sym = "X",
-  SS.f = solve_sum_squares,
-  abbrev_sum = 4,
-  ...
-)
+solve_sd(x, SS, n, s2, sub = "", sym = "X", SS.f = solve_sum_squares, ...)
 
 sd_formula(sub = "", ...)
 }
@@ -39,28 +29,23 @@ Only one character allowed. Only used when calculating SS from raw data
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 from raw data (\code{x}).}
 
-\item{abbrev_sum}{Numeric scalar. Maximum length of x before it abbreviates
-explicit summation within the solution using an ellipsis? (See
-\code{\link{summation}}.) Only used when calculating SS from raw data
-(\code{x}).}
-
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}
 }
 \value{
-\code{solve_sd()} returns a list with the interim values and calculations
-(\code{x}, \code{SS}, \code{n}, \code{s2}), the final value (\code{s}), the solution string
-(\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
-\code{sigma2_formula} returns just the bare formula in LaTeX format as a
-character string.
+\code{solve_sd()} returns a list with the interim values and
+calculations (\code{x}, \code{SS}, \code{n}, \code{s2}), the final value
+(\code{s}), the solution string (\code{solution}), and the bare formula
+(\code{formula}) in LaTeX format. \code{sigma2_formula} returns just the
+bare formula in LaTeX format as a character string.
 }
 \description{
-Calculates sample standard deviation (\eqn{s = \sqrt[SS / (n - 1)]}) either from a set of
-raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
-(\code{n}), OR from the sample variance (\code{s2}). If providing raw
-data, it will include the calculation of SS in the solution string. If
-providing \code{SS} and \code{n}, it will include the calculation of the
-sample variance in the solution string. Otherwise, if only \code{s2}
+Calculates sample standard deviation (\eqn{s = \sqrt[SS / (n - 1)]}) either
+from a set of raw values (\code{x}) OR from the sum of squares (\code{SS})
+and sample size (\code{n}), OR from the sample variance (\code{s2}). If
+providing raw data, it will include the calculation of SS in the solution
+string. If providing \code{SS} and \code{n}, it will include the calculation
+of the sample variance in the solution string. Otherwise, if only \code{s2}
 is provided, will simply show the final calculation (\eqn{\sqrt(s^2)}).
 }
 \examples{
