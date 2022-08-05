@@ -9,17 +9,17 @@
 \alias{sum_squares_table2}
 \title{Sum of Squares}
 \usage{
-solve_sum_squares(x, sub_val = "", sym_x = "X", ...)
+solve_sum_squares(x, sub_val = "", sym_x = "X", sub_x = "", ...)
 
-sum_squares_formula(sub_val = "", sym_x = "X", ...)
+sum_squares_formula(sub_val = "", sym_x = "X", sub_x = "", ...)
 
-sum_squares_table(SS.lst, sub_val = "", sym_x = "X", ...)
+sum_squares_table(SS.lst, sub_val = "", sym_x = "X", sub_x = "", ...)
 
-solve_sum_squares2(x, sub_val = "", sym_x = "X", ...)
+solve_sum_squares2(x, sub_val = "", sym_x = "X", sub_x = "", ...)
 
-sum_squares_formula2(sub_val = "", sym_x = "X", ...)
+sum_squares_formula2(sub_val = "", sym_x = "X", sub_x = "", ...)
 
-sum_squares_table2(SS.lst, sym_x = "X", ...)
+sum_squares_table2(SS.lst, sym_x = "X", sub_x = "", ...)
 }
 \arguments{
 \item{x}{Numeric vector.}
@@ -30,6 +30,9 @@ empty to report no subscript.}
 
 \item{sym_x}{Character scalar. Symbol to represent x in formula (default:
 "X").}
+
+\item{sub_x}{Character scalar. Subscript for x in the formula (e.g.,
+\eqn{X_{D}})}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}

@@ -18,6 +18,8 @@
 #'   \eqn{\sigma_{x}}). Leave empty to report no subscript.
 #' @param sym_x Character scalar. Symbol to represent x in formula when
 #'   calculating from raw data (default: "X").
+#' @param sub_x Character scalar. Subscript for x in the formula when
+#'   calculating from raw data (e.g., \eqn{X_{D}})
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -59,6 +61,7 @@ solve_sigma <- function(x,
 												sigma2,
 												sub_val = "",
 												sym_x = "X",
+												sub_x = "",
 												SS.f = solve_sum_squares,
 												...) {
 
@@ -69,6 +72,7 @@ solve_sigma <- function(x,
 								variance = sigma2,
 								sub_val = sub_val,
 								sym_x = sym_x,
+								sub_x = sub_x,
 								SS.f = SS.f,
 								...)
 }
@@ -107,6 +111,8 @@ sigma_formula <- function(sub_val = "",
 #'   report no subscript.
 #' @param sym_x Character scalar. Symbol to represent x in formula when
 #'   calculating from raw data (default: "X").
+#' @param sub_x Character scalar. Subscript for x in the formula when
+#'   calculating from raw data (e.g., \eqn{X_{D}})
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -148,6 +154,7 @@ solve_sd <- function(x,
 										 s2,
 										 sub_val = "",
 										 sym_x = "X",
+										 sub_x = "",
 										 SS.f = solve_sum_squares,
 										 ...) {
 
@@ -158,6 +165,7 @@ solve_sd <- function(x,
 								variance = s2,
 								sub_val = sub_val,
 								sym_x = sym_x,
+								sub_x = sub_x,
 								SS.f = SS.f,
 								...)
 }
@@ -184,6 +192,7 @@ solve_std_dev <- function(mode,
 													variance,
 													sub_val = "",
 													sym_x = "X",
+													sub_x = "",
 													SS.f = solve_sum_squares,
 													...) {
 
@@ -214,6 +223,7 @@ solve_std_dev <- function(mode,
 															n = n,
 															sub_val = sub_val,
 															sym_x = sym_x,
+															sub_x = sub_x,
 															show_summation = opts$show_summation,
 															abbrev_sum = opts$abbrev_sum,
 															round_interim = opts$round_interim,

@@ -13,6 +13,8 @@
 #'   \eqn{\sigma^2_{x}}). Leave empty to report no subscript.
 #' @param sym_x Character scalar. Symbol to represent x in formula when
 #'   calculating from raw data (default: "X").
+#' @param sub_x Character scalar. Subscript for x in the formula when
+#'   calculating from raw data (e.g., \eqn{X_{D}})
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -51,6 +53,7 @@ solve_sigma2 <- function(x,
 												 n,
 												 sub_val = "",
 												 sym_x = "X",
+												 sub_x = "",
 												 SS.f = solve_sum_squares,
 												 ...) {
 
@@ -60,6 +63,7 @@ solve_sigma2 <- function(x,
 								 n = n,
 								 sub_val = sub_val,
 								 sym_x = sym_x,
+								 sub_x = sub_x,
 								 SS.f = SS.f,
 								 ...)
 }
@@ -92,6 +96,8 @@ sigma2_formula <- function(sub_val = "",
 #'   empty to report no subscript.
 #' @param sym_x Character scalar. Symbol to represent x in formula when
 #'   calculating from raw data (default: "X").
+#' @param sub_x Character scalar. Subscript for x in the formula when
+#'   calculating from raw data (e.g., \eqn{X_{D}})
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -130,6 +136,7 @@ solve_s2 <- function(x,
 										 n,
 										 sub_val = "",
 										 sym_x = "X",
+										 sub_x = "",
 										 SS.f = solve_sum_squares,
 										 ...) {
 	solve_variance(mode = 'sample',
@@ -138,6 +145,7 @@ solve_s2 <- function(x,
 								 n = n,
 								 sub_val = sub_val,
 								 sym_x = sym_x,
+								 sub_x = sub_x,
 								 SS.f = SS.f,
 								 ...)
 }
@@ -161,6 +169,7 @@ solve_variance <- function(mode,
 													 n,
 													 sub_val = "",
 													 sym_x = "X",
+													 sub_x = "",
 													 SS.f = solve_sum_squares,
 													 ...) {
 	# Must know proper mode for calculation
@@ -189,6 +198,7 @@ solve_variance <- function(mode,
 		SS.lst <- SS.f(x = x,
 									 sub_val = sub_val,
 									 sym_x = sym_x,
+									 sub_x = sub_x,
 									 show_summation = opts$show_summation,
 									 abbrev_sum = opts$abbrev_sum,
 									 round_interim = opts$round_interim,

@@ -11,6 +11,7 @@ solve_sigma2(
   n,
   sub_val = "",
   sym_x = "X",
+  sub_x = "",
   SS.f = solve_sum_squares,
   ...
 )
@@ -30,6 +31,9 @@ the formula, in this case the population variance (e.g.,
 
 \item{sym_x}{Character scalar. Symbol to represent x in formula when
 calculating from raw data (default: "X").}
+
+\item{sub_x}{Character scalar. Subscript for x in the formula when
+calculating from raw data (e.g., \eqn{X_{D}})}
 
 \item{SS.f}{Formula to use for sum of squares calculation (either
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
