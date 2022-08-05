@@ -5,9 +5,18 @@
 \alias{sd_formula}
 \title{Sample Standard Deviation}
 \usage{
-solve_sd(x, SS, n, s2, sub = "", sym = "X", SS.f = solve_sum_squares, ...)
+solve_sd(
+  x,
+  SS,
+  n,
+  s2,
+  sub_val = "",
+  sym_x = "X",
+  SS.f = solve_sum_squares,
+  ...
+)
 
-sd_formula(sub = "", ...)
+sd_formula(sub_val = "", ...)
 }
 \arguments{
 \item{x}{Numeric vector of raw data values.}
@@ -18,12 +27,12 @@ sd_formula(sub = "", ...)
 
 \item{s2}{Numeric scalar: sample variance (\eqn{s^2}).}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
+formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to
+report no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
-Only one character allowed. Only used when calculating SS from raw data
-(\code{x}).}
+\item{sym_x}{Character scalar. Symbol to represent x in formula when
+calculating from raw data (default: "X").}
 
 \item{SS.f}{Formula to use for sum of squares calculation (either
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
@@ -51,7 +60,7 @@ is provided, will simply show the final calculation (\eqn{\sqrt(s^2)}).
 \examples{
 # Simple usage: generate raw data, produce results
 (x <- sample(x = 1:10, size = 20, replace = TRUE))
-solve_s(x = x, sub = 'X')
+solve_s(x = x, sub_val = 'X')
 
 # Alternatively, provide SS and n
 solve_s(SS = 100, n = 10)
@@ -68,5 +77,5 @@ solve_s(SS = 100)
 s_formula()
 
 # Can set parameters to change symbols used:
-s_formula(sub = "Y")
+s_formula(sub_val = "Y")
 }

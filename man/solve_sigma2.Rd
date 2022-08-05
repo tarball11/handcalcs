@@ -5,9 +5,17 @@
 \alias{sigma2_formula}
 \title{Population Variance}
 \usage{
-solve_sigma2(x, SS, n, sub = "", sym = "X", SS.f = solve_sum_squares, ...)
+solve_sigma2(
+  x,
+  SS,
+  n,
+  sub_val = "",
+  sym_x = "X",
+  SS.f = solve_sum_squares,
+  ...
+)
 
-sigma2_formula(sub = "", ...)
+sigma2_formula(sub_val = "", ...)
 }
 \arguments{
 \item{x}{Numeric vector of raw data values.}
@@ -16,12 +24,12 @@ sigma2_formula(sub = "", ...)
 
 \item{n}{Numeric scalar: sample size.}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the population variance (e.g.,
+\eqn{\sigma^2_{x}}). Leave empty to report no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
-Only one character allowed. Only used when calculating SS from raw data
-(\code{x}).}
+\item{sym_x}{Character scalar. Symbol to represent x in formula when
+calculating from raw data (default: "X").}
 
 \item{SS.f}{Formula to use for sum of squares calculation (either
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
@@ -38,15 +46,15 @@ formula (\code{formula}) in LaTeX format. \code{sigma2_formula} returns
 just the bare formula in LaTeX format as a character string.
 }
 \description{
-Calculates population variance (\eqn{\sigma^2 = SS / n}) either from a set of raw
-values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
+Calculates population variance (\eqn{\sigma^2 = SS / n}) either from a set of
+raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
 (\code{n}). If providing raw data, it will include the calculation of SS in
 the solution string.
 }
 \examples{
 # Simple usage: generate raw data, produce results
 (x <- sample(x = 1:10, size = 20, replace = TRUE))
-solve_sigma2(x = x, sub = 'X')
+solve_sigma2(x = x, sub_val = 'X')
 
 # Alternatively, provide SS and n
 solve_sigma2(SS = 100, n = 10)
@@ -60,6 +68,6 @@ solve_sigma2(SS = 100)
 sigma2_formula()
 
 # Can set parameters to change symbols used:
-sigma2_formula(sub = "Y")
+sigma2_formula(sub_val = "Y")
 
 }

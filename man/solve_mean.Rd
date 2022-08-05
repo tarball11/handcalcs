@@ -5,18 +5,22 @@
 \alias{mean_formula}
 \title{Arithmetic Mean}
 \usage{
-solve_mean(x, sub = "", sym = "X", ...)
+solve_mean(x, sub_val = "", sym_x = "X", sub_x = "", ...)
 
-mean_formula(sub = "", sym = "X", ...)
+mean_formula(sub_val = "", sym_x = "X", sub_x = "", ...)
 }
 \arguments{
-\item{x}{Numeric vector.}
+\item{x}{Numeric vector of values for which to calculate the mean.}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
+formula, in this case the mean (e.g., \eqn{M_{x}}). Leave empty to report
+no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
-Only one character allowed.}
+\item{sym_x}{Character scalar. Symbol to represent x in formula (default:
+"X").}
+
+\item{sub_x}{Character scalar. Subscript for x in the formula (e.g.,
+\eqn{X_{D}})}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}

@@ -10,13 +10,13 @@ solve_sigma(
   SS,
   n,
   sigma2,
-  sub = "",
-  sym = "X",
+  sub_val = "",
+  sym_x = "X",
   SS.f = solve_sum_squares,
   ...
 )
 
-sigma_formula(sub = "", ...)
+sigma_formula(sub_val = "", ...)
 }
 \arguments{
 \item{x}{Numeric vector of raw data values.}
@@ -27,12 +27,12 @@ sigma_formula(sub = "", ...)
 
 \item{sigma2}{Numeric scalar: population variance (\eqn{sigma^2}).}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
+formula, in this case the population standard deviation (e.g.,
+\eqn{\sigma_{x}}). Leave empty to report no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
-Only one character allowed. Only used when calculating SS from raw data
-(\code{x}).}
+\item{sym_x}{Character scalar. Symbol to represent x in formula when
+calculating from raw data (default: "X").}
 
 \item{SS.f}{Formula to use for sum of squares calculation (either
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
@@ -78,5 +78,5 @@ solve_sigma(SS = 100)
 sigma_formula()
 
 # Can set parameters to change symbols used:
-sigma_formula(sub = "Y")
+sigma_formula(sub_val = "Y")
 }

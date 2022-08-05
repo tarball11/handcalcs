@@ -13,11 +13,11 @@
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
 #' @param sigma2 Numeric scalar: population variance (\eqn{sigma^2}).
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed. Only used when calculating SS from raw data
-#'   (\code{x}).
+#' @param sub_val Character scalar. Subscript for the value to be calculated in the
+#'   formula, in this case the population standard deviation (e.g.,
+#'   \eqn{\sigma_{x}}). Leave empty to report no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula when
+#'   calculating from raw data (default: "X").
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -52,13 +52,13 @@
 #' sigma_formula()
 #'
 #' # Can set parameters to change symbols used:
-#' sigma_formula(sub = "Y")
+#' sigma_formula(sub_val = "Y")
 solve_sigma <- function(x,
 												SS,
 												n,
 												sigma2,
-												sub = "",
-												sym = "X",
+												sub_val = "",
+												sym_x = "X",
 												SS.f = solve_sum_squares,
 												...) {
 
@@ -67,8 +67,8 @@ solve_sigma <- function(x,
 								SS = SS,
 								n = n,
 								variance = sigma2,
-								sub = sub,
-								sym = sym,
+								sub_val = sub_val,
+								sym_x = sym_x,
 								SS.f = SS.f,
 								...)
 }
@@ -80,11 +80,11 @@ solve_sigma <- function(x,
 #'
 #' @export
 #'
-sigma_formula <- function(sub = "",
+sigma_formula <- function(sub_val = "",
 													...) {
 
 	std_dev_formula(mode = 'population',
-									sub = sub,
+									sub_val = sub_val,
 									...)
 }
 
@@ -102,11 +102,11 @@ sigma_formula <- function(sub = "",
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
 #' @param s2 Numeric scalar: sample variance (\eqn{s^2}).
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed. Only used when calculating SS from raw data
-#'   (\code{x}).
+#' @param sub_val Character scalar. Subscript for the value to be calculated in the
+#'   formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to
+#'   report no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula when
+#'   calculating from raw data (default: "X").
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -124,7 +124,7 @@ sigma_formula <- function(sub = "",
 #' @examples
 #' # Simple usage: generate raw data, produce results
 #' (x <- sample(x = 1:10, size = 20, replace = TRUE))
-#' solve_s(x = x, sub = 'X')
+#' solve_s(x = x, sub_val = 'X')
 #'
 #' # Alternatively, provide SS and n
 #' solve_s(SS = 100, n = 10)
@@ -141,13 +141,13 @@ sigma_formula <- function(sub = "",
 #' s_formula()
 #'
 #' # Can set parameters to change symbols used:
-#' s_formula(sub = "Y")
+#' s_formula(sub_val = "Y")
 solve_sd <- function(x,
 										 SS,
 										 n,
 										 s2,
-										 sub = "",
-										 sym = "X",
+										 sub_val = "",
+										 sym_x = "X",
 										 SS.f = solve_sum_squares,
 										 ...) {
 
@@ -156,8 +156,8 @@ solve_sd <- function(x,
 								SS = SS,
 								n = n,
 								variance = s2,
-								sub = sub,
-								sym = sym,
+								sub_val = sub_val,
+								sym_x = sym_x,
 								SS.f = SS.f,
 								...)
 }
@@ -167,11 +167,11 @@ solve_sd <- function(x,
 #'
 #' @export
 #'
-sd_formula <- function(sub = "",
+sd_formula <- function(sub_val = "",
 													...) {
 
 	std_dev_formula(mode = 'sample',
-									sub = sub,
+									sub_val = sub_val,
 									...)
 }
 
@@ -182,8 +182,8 @@ solve_std_dev <- function(mode,
 													SS,
 													n,
 													variance,
-													sub = "",
-													sym = "X",
+													sub_val = "",
+													sym_x = "X",
 													SS.f = solve_sum_squares,
 													...) {
 
@@ -193,8 +193,8 @@ solve_std_dev <- function(mode,
 	if(missing(x) & (missing(SS) | missing(n)) & missing(variance)) {
 		stop('Must supply x, SS and n, or variance')
 	}
-	stopifnot(is.character(sub), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(sub_val), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -212,8 +212,8 @@ solve_std_dev <- function(mode,
 															x = x,
 															SS = SS,
 															n = n,
-															sub = sub,
-															sym = sym,
+															sub_val = sub_val,
+															sym_x = sym_x,
 															show_summation = opts$show_summation,
 															abbrev_sum = opts$abbrev_sum,
 															round_interim = opts$round_interim,
@@ -235,7 +235,7 @@ solve_std_dev <- function(mode,
 
 	# Get base formula without LaTeX math/aligned blocks
 	std_dev.f <- std_dev_formula(mode = mode,
-															 sub = sub,
+															 sub_val = sub_val,
 															 use_aligned = opts$use_aligned,
 															 add_math = FALSE,
 															 add_aligned = FALSE)
@@ -282,14 +282,14 @@ solve_std_dev <- function(mode,
 # Function doing the hard work of producing the base formula for the
 # population/sample standard deviation:
 std_dev_formula <- function(mode,
-														sub = "",
+														sub_val = "",
 														...) {
 
 	# Must know proper mode for calculation
 	stopifnot(mode %in% c('population', 'sample'))
 
 	# Check argument validity
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -300,9 +300,9 @@ std_dev_formula <- function(mode,
 
 	# Create the solution string, with rounded values (minimally displayed)
 	if(mode == "population") {
-		solution<- lglue("\\sigma_{<<sub>>} <<equals>> \\sqrt{\\sigma^2}")
+		solution<- lglue("\\sigma_{<<sub_val>>} <<equals>> \\sqrt{\\sigma^2}")
 	} else {
-		solution<- lglue("s_{<<sub>>} <<equals>> \\sqrt{s^2}")
+		solution<- lglue("s_{<<sub_val>>} <<equals>> \\sqrt{s^2}")
 	}
 
 	# Add LaTeX math code, if desired.

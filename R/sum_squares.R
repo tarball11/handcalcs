@@ -14,10 +14,11 @@
 #'
 #'
 #' @param x Numeric vector.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed.
+#' @param sub_val Character scalar. Subscript for the value to be calculated in
+#'   the formula, in this case the sum of squares (e.g., \eqn{SS_{x}}). Leave
+#'   empty to report no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula (default:
+#'   "X").
 #' @param SS.lst List of values produced by \code{solve_sum_squares} or
 #'   \code{solve_sum_squares2}. Be sure to use the table function that
 #'   corresponds to the solution function.
@@ -51,9 +52,9 @@
 #' # Can override the default values for rounding interim and final values:
 #' solve_sum_squares(x, round_interim = 2, round_final = 2)
 #'
-#' # The value of sub can be long, but not sym.
+#' # The value of sub_val can be long, but not sym_x.
 #' \dontrun{
-#' solve_sum_squares(x, sub = "Donuts", sym = "Donuts")
+#' solve_sum_squares(x, sub_val = "Donuts", sym_x = "Donuts")
 #' }
 #'
 #' # If you just want the bare formula as a string, use a formula function():
@@ -61,17 +62,17 @@
 #' sum_squares_formula2()
 #'
 #' # Can set parameters to change symbols used:
-#' sum_squares_formula(sub = "Y", sym = "Y")
+#' sum_squares_formula(sub_val = "Y", sym_x = "Y")
 #'
 solve_sum_squares <- function(x,
-                              sub = "",
-                              sym = "X",
+                              sub_val = "",
+                              sym_x = "X",
 															...) {
 
   # Check argument validity
   stopifnot(is.numeric(x), any(!is.na(x)))
-  stopifnot(is.character(sub), length(sub) == 1)
-  stopifnot(is.character(sym), nchar(sym) == 1)
+  stopifnot(is.character(sub_val), length(sub_val) == 1)
+  stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -97,8 +98,8 @@ solve_sum_squares <- function(x,
   SS <- rnd(sum(DevSq), opts$round_final)
 
   # Get base formula without LaTeX math/aligned blocks
-  SS.formula <- sum_squares_formula(sub = sub,
-  																	sym = sym,
+  SS.formula <- sum_squares_formula(sub_val = sub_val,
+  																	sym_x = sym_x,
   																	show_summation = opts$show_summation,
   																	use_aligned = opts$use_aligned,
   																	add_math = FALSE,
@@ -145,12 +146,12 @@ solve_sum_squares <- function(x,
 #'
 #' @export
 #'
-sum_squares_formula <- function(sub = "",
-                                sym = "X",
+sum_squares_formula <- function(sub_val = "",
+                                sym_x = "X",
                                 ...) {
   # Check argument validity
-  stopifnot(is.character(sub), length(sub) == 1)
-  stopifnot(is.character(sym))
+  stopifnot(is.character(sub_val), length(sub_val) == 1)
+  stopifnot(is.character(sym_x))
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -160,8 +161,8 @@ sum_squares_formula <- function(sub = "",
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
   solution <- lglue(
-  	"SS_{<<sub>>} <<equals>> \\sum(<<sym>> - M_{<<sub>>})^{2}",
-  	if(opts$show_summation) {"\\\\ <<equals>> (<<sym>>_{1} - M_{<<sub>>})^2 + (<<sym>>_{2} - M_{<<sub>>})^2 + \\cdots + (<<sym>>_{n} - M_{<<sub>>})^2"})
+  	"SS_{<<sub_val>>} <<equals>> \\sum(<<sym_x>> - M_{<<sub_val>>})^{2}",
+  	if(opts$show_summation) {"\\\\ <<equals>> (<<sym_x>>_{1} - M_{<<sub_val>>})^2 + (<<sym_x>>_{2} - M_{<<sub_val>>})^2 + \\cdots + (<<sym_x>>_{n} - M_{<<sub_val>>})^2"})
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
@@ -176,8 +177,8 @@ sum_squares_formula <- function(sub = "",
 #' @export
 #'
 sum_squares_table <- function(SS.lst,
-															sub = "",
-															sym = "X",
+															sub_val = "",
+															sym_x = "X",
 															...) {
 
 	# Get list of options (allowing user to override defaults) for rounding
@@ -189,9 +190,9 @@ sum_squares_table <- function(SS.lst,
 								 DevSq = SS.lst$DevSq) %>%
 		gt::gt() %>%
 		gt::cols_label(
-			x = lglue('$$<<sym>>$$'),
-			Dev = lglue('$$(<<sym>> - M_{<<sub>>})$$'),
-			DevSq = lglue('$$(<<sym>> - M_{<<sub>>})^2$$')) %>%
+			x = lglue('$$<<sym_x>>$$'),
+			Dev = lglue('$$(<<sym_x>> - M_{<<sub_val>>})$$'),
+			DevSq = lglue('$$(<<sym_x>> - M_{<<sub_val>>})^2$$')) %>%
 		gt::grand_summary_rows(
 			columns = c(x, Dev, DevSq),
 			fns = list("$$\\sum$$" = ~fmt(sum(.),
@@ -206,14 +207,14 @@ sum_squares_table <- function(SS.lst,
 #'
 #' @export
 solve_sum_squares2 <- function(x,
-                               sub = "",
-                               sym = "X",
+                               sub_val = "",
+                               sym_x = "X",
 															 ...) {
 
   # Check argument validity
   stopifnot(is.numeric(x), any(!is.na(x)))
-  stopifnot(is.character(sub), length(sub) == 1)
-  stopifnot(is.character(sym), nchar(sym) == 1)
+  stopifnot(is.character(sub_val), length(sub_val) == 1)
+  stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -241,8 +242,8 @@ solve_sum_squares2 <- function(x,
   SS <- rnd(Sum_XSq - Sq_SumX_n, opts$round_final)
 
   # Get base formula without LaTeX math/aligned blocks
-  SS.formula <- sum_squares_formula2(sub = sub,
-  																	 sym = sym,
+  SS.formula <- sum_squares_formula2(sub_val = sub_val,
+  																	 sym_x = sym_x,
   																	 show_summation = opts$show_summation,
   																	 use_aligned = opts$use_aligned,
   																	 add_math = FALSE,
@@ -291,12 +292,12 @@ solve_sum_squares2 <- function(x,
 #'
 #' @export
 #'
-sum_squares_formula2 <- function(sub = "",
-                                 sym = "X",
+sum_squares_formula2 <- function(sub_val = "",
+                                 sym_x = "X",
 																 ...) {
   # Check argument validity
-  stopifnot(is.character(sub), length(sub) == 1)
-  stopifnot(is.character(sym), nchar(sym) == 1)
+  stopifnot(is.character(sub_val), length(sub_val) == 1)
+  stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -306,8 +307,8 @@ sum_squares_formula2 <- function(sub = "",
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
   solution <- lglue(
-  	"SS_{<<sub>>} <<equals>> \\sum{(<<sym>>^2)} - \\frac{(\\sum{<<sym>>})^2}{N}",
-  	if(opts$show_summation) {"\\\\ <<equals>> (<<sym>>_{1}^2 + <<sym>>_{2}^2 + \\cdots + <<sym>>_{n}^2) - \\frac{(<<sym>>_{1} + <<sym>>_{2} + \\cdots + <<sym>>_{n})^2}{N}"})
+  	"SS_{<<sub_val>>} <<equals>> \\sum{(<<sym_x>>^2)} - \\frac{(\\sum{<<sym_x>>})^2}{N}",
+  	if(opts$show_summation) {"\\\\ <<equals>> (<<sym_x>>_{1}^2 + <<sym_x>>_{2}^2 + \\cdots + <<sym_x>>_{n}^2) - \\frac{(<<sym_x>>_{1} + <<sym_x>>_{2} + \\cdots + <<sym_x>>_{n})^2}{N}"})
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
@@ -321,7 +322,7 @@ sum_squares_formula2 <- function(sub = "",
 #' @export
 #'
 sum_squares_table2 <- function(SS.lst,
-															 sym = "X",
+															 sym_x = "X",
 															 ...) {
 
 	# Get list of options (allowing user to override defaults) for rounding
@@ -332,8 +333,8 @@ sum_squares_table2 <- function(SS.lst,
 								 XSq = SS.lst$XSq) %>%
 		gt::gt() %>%
 		gt::cols_label(
-			x = lglue('$$<<sym>>$$'),
-			XSq = lglue('$$<<sym>>^2$$')) %>%
+			x = lglue('$$<<sym_x>>$$'),
+			XSq = lglue('$$<<sym_x>>^2$$')) %>%
 		gt::grand_summary_rows(
 			columns = c(x, XSq),
 			fns = list("$$\\sum$$" = ~fmt(sum(.),

@@ -1,10 +1,11 @@
 #' Range: calculate value (with rounding) and present solutions
 #'
 #' @param x Numeric vector.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed.
+#' @param sub_val Character scalar. Subscript for the value to be calculated the
+#'   formula, in this case the range (e.g., \eqn{Range_{x}}). Leave empty to report
+#'   no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula (default:
+#'   "X").
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -31,13 +32,13 @@
 #' range_formula()
 #'
 solve_range <- function(x,
-												sub = "",
-												sym = "X",
+												sub_val = "",
+												sym_x = "X",
 												...) {
 	# Check argument validity; Disallow missing values
 	stopifnot(is.numeric(x), any(!is.na(x)))
-	stopifnot(is.character(sub), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(sub_val), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -53,8 +54,8 @@ solve_range <- function(x,
 	Range <- rnd(x_max - x_min, opts$round_final)
 
 	# Get base formula without LaTeX math/aligned blocks
-	Range.formula <- range_formula(sub = sub,
-																 sym = sym,
+	Range.formula <- range_formula(sub_val = sub_val,
+																 sym_x = sym_x,
 																 use_aligned = opts$use_aligned,
 																 add_math = FALSE,
 																 add_aligned = FALSE)
@@ -80,12 +81,12 @@ solve_range <- function(x,
 #'
 #' @export
 #'
-range_formula <- function(sub = "",
-													sym = "X",
+range_formula <- function(sub_val = "",
+													sym_x = "X",
 													...) {
 	# Check argument validity
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -94,7 +95,7 @@ range_formula <- function(sub = "",
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	solution<- lglue("\\text{Range}_{<<sub>>} <<equals>> <<sym>>_{max} - <<sym>>_{min}")
+	solution<- lglue("\\text{Range}_{<<sub_val>>} <<equals>> <<sym_x>>_{max} - <<sym_x>>_{min}")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)

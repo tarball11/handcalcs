@@ -4,13 +4,14 @@
 \alias{solve_median}
 \title{Median: calculate value (with rounding) and present solutions}
 \usage{
-solve_median(x, sub = "", ...)
+solve_median(x, sub_val = "", ...)
 }
 \arguments{
 \item{x}{Numeric vector.}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
+formula, in this case the median (e.g., \eqn{Median_{x}}). Leave empty to report
+no subscript.}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}

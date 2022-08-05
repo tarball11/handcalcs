@@ -15,10 +15,11 @@
 #' @param z Numeric scalar. Z-score to convert to a raw score (x).
 #' @param M Numeric scalar. Mean of distribution.
 #' @param SD Numeric scalar. Standard Deviation of distribution.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "x").
-#'   Only one character allowed.
+#' @param sub_val Character scalar. Subscript for the value to be calculated in the
+#'   formula, in this case the *z*-score (e.g., \eqn{z_{x}}). Leave empty to report
+#'   no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula (default:
+#'   "X").
 #' @param population Logical. Is this a population, rather than a sample? This
 #'   is only relevant for displaying the formula in the solutions, which will
 #'   use Greek letters to denote the population mean (\eqn{\mu}) and standard
@@ -64,8 +65,8 @@
 solve_x_to_z <- function(x,
 												 M,
 												 SD,
-												 sub = "",
-												 sym = "x",
+												 sub_val = "",
+												 sym_x = "x",
 												 population = FALSE,
 												 ...) {
 
@@ -73,8 +74,8 @@ solve_x_to_z <- function(x,
 	stopifnot(is.numeric(x), length(x) == 1)
 	stopifnot(is.numeric(M), length(M) == 1)
 	stopifnot(is.numeric(SD), length(SD) == 1, SD > 0)
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -92,8 +93,8 @@ solve_x_to_z <- function(x,
 	z <- rnd(M_diff / SD, opts$round_z)
 
 	# Get base formula without LaTeX math/aligned blocks
-	Z.formula <- x_to_z_formula(sub = sub,
-															sym = sym,
+	Z.formula <- x_to_z_formula(sub_val = sub_val,
+															sym_x = sym_x,
 															population = population,
 															use_aligned = opts$use_aligned,
 															add_math = FALSE,
@@ -131,13 +132,13 @@ solve_x_to_z <- function(x,
 #'
 #' @export
 #'
-x_to_z_formula <- function(sub = "",
-													 sym = "x",
+x_to_z_formula <- function(sub_val = "",
+													 sym_x = "x",
 													 population = FALSE,
 													 ...) {
 	# Check argument validity
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -149,7 +150,7 @@ x_to_z_formula <- function(sub = "",
 	M.sym <- ifelse(population, '\\mu', 'M')
 	SD.sym <- ifelse(population, '\\sigma', 's')
 
-	solution <- lglue("z_{<<sub>>} <<equals>> \\frac{<<sym>> - <<M.sym>>}{<<SD.sym>>}")
+	solution <- lglue("z_{<<sub_val>>} <<equals>> \\frac{<<sym_x>> - <<M.sym>>}{<<SD.sym>>}")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -167,8 +168,8 @@ x_to_z_formula <- function(sub = "",
 solve_z_to_x <- function(z,
 												 M,
 												 SD,
-												 sub = "",
-												 sym = "x",
+												 sub_val = "",
+												 sym_x = "x",
 												 population = FALSE,
 												 ...) {
 
@@ -176,8 +177,8 @@ solve_z_to_x <- function(z,
 	stopifnot(is.numeric(z), length(z) == 1)
 	stopifnot(is.numeric(M), length(M) == 1)
 	stopifnot(is.numeric(SD), length(SD) == 1, SD > 0)
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -195,8 +196,8 @@ solve_z_to_x <- function(z,
 	x <- rnd(zSD + M, opts$round_interim)
 
 	# Get base formula without LaTeX math/aligned blocks
-	X.formula <- z_to_x_formula(sub = sub,
-															sym = sym,
+	X.formula <- z_to_x_formula(sub_val = sub_val,
+															sym_x = sym_x,
 															population = population,
 															use_aligned = opts$use_aligned,
 															add_math = FALSE,
@@ -236,13 +237,13 @@ solve_z_to_x <- function(z,
 #'
 #' @export
 #'
-z_to_x_formula <- function(sub = "",
-													 sym = "x",
+z_to_x_formula <- function(sub_val = "",
+													 sym_x = "x",
 													 population = FALSE,
 													 ...) {
 	# Check argument validity
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -254,7 +255,7 @@ z_to_x_formula <- function(sub = "",
 	M.sym <- ifelse(population, '\\mu', 'M')
 	SD.sym <- ifelse(population, '\\sigma', 's')
 
-	solution <- lglue("<<sym>>_{<<sub>>} <<equals>> z<<SD.sym>> + <<M.sym>>")
+	solution <- lglue("<<sym_x>>_{<<sub_val>>} <<equals>> z<<SD.sym>> + <<M.sym>>")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)

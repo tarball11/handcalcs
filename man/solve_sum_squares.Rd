@@ -9,26 +9,27 @@
 \alias{sum_squares_table2}
 \title{Sum of Squares}
 \usage{
-solve_sum_squares(x, sub = "", sym = "X", ...)
+solve_sum_squares(x, sub_val = "", sym_x = "X", ...)
 
-sum_squares_formula(sub = "", sym = "X", ...)
+sum_squares_formula(sub_val = "", sym_x = "X", ...)
 
-sum_squares_table(SS.lst, sub = "", sym = "X", ...)
+sum_squares_table(SS.lst, sub_val = "", sym_x = "X", ...)
 
-solve_sum_squares2(x, sub = "", sym = "X", ...)
+solve_sum_squares2(x, sub_val = "", sym_x = "X", ...)
 
-sum_squares_formula2(sub = "", sym = "X", ...)
+sum_squares_formula2(sub_val = "", sym_x = "X", ...)
 
-sum_squares_table2(SS.lst, sym = "X", ...)
+sum_squares_table2(SS.lst, sym_x = "X", ...)
 }
 \arguments{
 \item{x}{Numeric vector.}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the sum of squares (e.g., \eqn{SS_{x}}). Leave
+empty to report no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
-Only one character allowed.}
+\item{sym_x}{Character scalar. Symbol to represent x in formula (default:
+"X").}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}
@@ -77,9 +78,9 @@ solve_sum_squares2(x)
 # Can override the default values for rounding interim and final values:
 solve_sum_squares(x, round_interim = 2, round_final = 2)
 
-# The value of sub can be long, but not sym.
+# The value of sub_val can be long, but not sym_x.
 \dontrun{
-solve_sum_squares(x, sub = "Donuts", sym = "Donuts")
+solve_sum_squares(x, sub_val = "Donuts", sym_x = "Donuts")
 }
 
 # If you just want the bare formula as a string, use a formula function():
@@ -87,6 +88,6 @@ sum_squares_formula()
 sum_squares_formula2()
 
 # Can set parameters to change symbols used:
-sum_squares_formula(sub = "Y", sym = "Y")
+sum_squares_formula(sub_val = "Y", sym_x = "Y")
 
 }

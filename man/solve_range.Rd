@@ -5,18 +5,19 @@
 \alias{range_formula}
 \title{Range: calculate value (with rounding) and present solutions}
 \usage{
-solve_range(x, sub = "", sym = "X", ...)
+solve_range(x, sub_val = "", sym_x = "X", ...)
 
-range_formula(sub = "", sym = "X", ...)
+range_formula(sub_val = "", sym_x = "X", ...)
 }
 \arguments{
 \item{x}{Numeric vector.}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated the
+formula, in this case the range (e.g., \eqn{Range_{x}}). Leave empty to report
+no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
-Only one character allowed.}
+\item{sym_x}{Character scalar. Symbol to represent x in formula (default:
+"X").}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}

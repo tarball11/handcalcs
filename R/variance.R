@@ -1,18 +1,18 @@
 #' Population Variance
 #'
-#' Calculates population variance (\eqn{\sigma^2 = SS / n}) either from a set of raw
-#' values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
+#' Calculates population variance (\eqn{\sigma^2 = SS / n}) either from a set of
+#' raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
 #' (\code{n}). If providing raw data, it will include the calculation of SS in
 #' the solution string.
 #'
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed. Only used when calculating SS from raw data
-#'   (\code{x}).
+#' @param sub_val Character scalar. Subscript for the value to be calculated in
+#'   the formula, in this case the population variance (e.g.,
+#'   \eqn{\sigma^2_{x}}). Leave empty to report no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula when
+#'   calculating from raw data (default: "X").
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -30,7 +30,7 @@
 #' @examples
 #' # Simple usage: generate raw data, produce results
 #' (x <- sample(x = 1:10, size = 20, replace = TRUE))
-#' solve_sigma2(x = x, sub = 'X')
+#' solve_sigma2(x = x, sub_val = 'X')
 #'
 #' # Alternatively, provide SS and n
 #' solve_sigma2(SS = 100, n = 10)
@@ -44,13 +44,13 @@
 #' sigma2_formula()
 #'
 #' # Can set parameters to change symbols used:
-#' sigma2_formula(sub = "Y")
+#' sigma2_formula(sub_val = "Y")
 #'
 solve_sigma2 <- function(x,
 												 SS,
 												 n,
-												 sub = "",
-												 sym = "X",
+												 sub_val = "",
+												 sym_x = "X",
 												 SS.f = solve_sum_squares,
 												 ...) {
 
@@ -58,8 +58,8 @@ solve_sigma2 <- function(x,
 								 x = x,
 								 SS = SS,
 								 n = n,
-								 sub = sub,
-								 sym = sym,
+								 sub_val = sub_val,
+								 sym_x = sym_x,
 								 SS.f = SS.f,
 								 ...)
 }
@@ -68,11 +68,11 @@ solve_sigma2 <- function(x,
 #'
 #' @export
 #'
-sigma2_formula <- function(sub = "",
+sigma2_formula <- function(sub_val = "",
 													 ...) {
 
 	variance_formula(mode = 'population',
-									 sub = sub,
+									 sub_val = sub_val,
 									 ...)
 }
 
@@ -87,11 +87,11 @@ sigma2_formula <- function(sub = "",
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed. Only used when calculating SS from raw data
-#'   (\code{x}).
+#' @param sub_val Character scalar. Subscript for the value to be calculated in
+#'   the formula, in this case the sample variance (e.g., \eqn{s^2_{x}}). Leave
+#'   empty to report no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula when
+#'   calculating from raw data (default: "X").
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
 #'   from raw data (\code{x}).
@@ -109,7 +109,7 @@ sigma2_formula <- function(sub = "",
 #' @examples
 #' # Simple usage: generate raw data, produce results
 #' (x <- sample(x = 1:10, size = 20, replace = TRUE))
-#' solve_s2(x = x, sub = 'X')
+#' solve_s2(x = x, sub_val = 'X')
 #'
 #' # Alternatively, provide SS and n
 #' solve_s2(SS = 100, n = 10)
@@ -123,21 +123,21 @@ sigma2_formula <- function(sub = "",
 #' s2_formula()
 #'
 #' # Can set parameters to change symbols used:
-#' s2_formula(sub = "Y")
+#' s2_formula(sub_val = "Y")
 #'
 solve_s2 <- function(x,
 										 SS,
 										 n,
-										 sub = "",
-										 sym = "X",
+										 sub_val = "",
+										 sym_x = "X",
 										 SS.f = solve_sum_squares,
 										 ...) {
 	solve_variance(mode = 'sample',
 								 x = x,
 								 SS = SS,
 								 n = n,
-								 sub = sub,
-								 sym = sym,
+								 sub_val = sub_val,
+								 sym_x = sym_x,
 								 SS.f = SS.f,
 								 ...)
 }
@@ -146,10 +146,10 @@ solve_s2 <- function(x,
 #'
 #' @export
 #'
-s2_formula <- function(sub = "",
+s2_formula <- function(sub_val = "",
 											 ...) {
 	variance_formula(mode = 'sample',
-									 sub = sub,
+									 sub_val = sub_val,
 									 ...)
 }
 
@@ -159,8 +159,8 @@ solve_variance <- function(mode,
 													 x,
 													 SS,
 													 n,
-													 sub = "",
-													 sym = "X",
+													 sub_val = "",
+													 sym_x = "X",
 													 SS.f = solve_sum_squares,
 													 ...) {
 	# Must know proper mode for calculation
@@ -169,8 +169,8 @@ solve_variance <- function(mode,
 	if(missing(x) & (missing(SS) | missing(n))) {
 		stop('Must supply either x or SS and n')
 	}
-	stopifnot(is.character(sub), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(sub_val), length(sub_val) == 1)
+	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -187,8 +187,8 @@ solve_variance <- function(mode,
 		stopifnot(is.numeric(x), any(!is.na(x)))
 
 		SS.lst <- SS.f(x = x,
-									 sub = sub,
-									 sym = sym,
+									 sub_val = sub_val,
+									 sym_x = sym_x,
 									 show_summation = opts$show_summation,
 									 abbrev_sum = opts$abbrev_sum,
 									 round_interim = opts$round_interim,
@@ -211,7 +211,7 @@ solve_variance <- function(mode,
 
 	# Get base formula without LaTeX math/aligned blocks
 	var.f <- variance_formula(mode = mode,
-														sub = sub,
+														sub_val = sub_val,
 														use_aligned = opts$use_aligned,
 														add_math = FALSE,
 														add_aligned = FALSE)
@@ -261,14 +261,14 @@ solve_variance <- function(mode,
 # Function doing the hard work of producing the base formula for the
 # population/sample variance:
 variance_formula <- function(mode,
-														 sub = "",
+														 sub_val = "",
 														 ...) {
 
 	# Must know proper mode for calculation
 	stopifnot(mode %in% c('population', 'sample'))
 
 	# Check argument validity
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -279,9 +279,9 @@ variance_formula <- function(mode,
 
 	# Create the solution string, with rounded values (minimally displayed)
 	if(mode == "population") {
-		solution<- lglue("\\sigma^2_{<<sub>>} <<equals>> \\frac{SS_{<<sub>>}}{N}")
+		solution<- lglue("\\sigma^2_{<<sub_val>>} <<equals>> \\frac{SS_{<<sub_val>>}}{N}")
 	} else {
-		solution<- lglue("s^2_{<<sub>>} <<equals>> \\frac{SS_{<<sub>>}}{N - 1}")
+		solution<- lglue("s^2_{<<sub_val>>} <<equals>> \\frac{SS_{<<sub_val>>}}{N - 1}")
 	}
 
 	# Add LaTeX math code, if desired.

@@ -5,11 +5,14 @@
 #' string, starting with the bare formula. If you just want the bare formula,
 #' use \code{mean_formula()}.
 #'
-#' @param x Numeric vector.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
-#' @param sym Character scalar. Symbol to represent x in formula (default: "X").
-#'   Only one character allowed.
+#' @param x Numeric vector of values for which to calculate the mean.
+#' @param sub_val Character scalar. Subscript for the value to be calculated in the
+#'   formula, in this case the mean (e.g., \eqn{M_{x}}). Leave empty to report
+#'   no subscript.
+#' @param sym_x Character scalar. Symbol to represent x in formula (default:
+#'   "X").
+#' @param sub_x Character scalar. Subscript for x in the formula (e.g.,
+#'   \eqn{X_{D}})
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -46,14 +49,16 @@
 #' mean_formula(sub = "Y", sym = "Y")
 #'
 solve_mean <- function(x,
-                       sub = "",
-                       sym = "X",
+                       sub_val = "",
+                       sym_x = "X",
+											 sub_x = "",
                        ...) {
 
 	# Check argument validity
   stopifnot(is.numeric(x), any(!is.na(x)))
-  stopifnot(is.character(as.character(sub)), length(sub) == 1)
-  stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
+	stopifnot(is.character(sym_x))
+	stopifnot(is.character(sub_x))
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -69,8 +74,9 @@ solve_mean <- function(x,
   M <- rnd(SumX / n, opts$round_final)
 
   # Get base formula without LaTeX math/aligned blocks
-  M.formula <- mean_formula(sub = sub,
-  													sym = sym,
+  M.formula <- mean_formula(sub_val = sub_val,
+  													sym_x = sym_x,
+  													sub_x = sub_x,
   													show_summation = opts$show_summation,
   													use_aligned = opts$use_aligned,
   													add_math = FALSE,
@@ -110,12 +116,14 @@ solve_mean <- function(x,
 #'
 #' @export
 #'
-mean_formula <- function(sub = "",
-                         sym = "X",
+mean_formula <- function(sub_val = "",
+                         sym_x = "X",
+												 sub_x = "",
                          ...) {
   # Check argument validity
-	stopifnot(is.character(as.character(sub)), length(sub) == 1)
-	stopifnot(is.character(sym), nchar(sym) == 1)
+	stopifnot(is.character(as.character(sub_val)), length(sub_val) == 1)
+	stopifnot(is.character(sym_x))
+	stopifnot(is.character(sub_x))
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -124,12 +132,15 @@ mean_formula <- function(sub = "",
   # Use the appropriate equals sign for an aligned environment
   equals <- ifelse(opts$use_aligned, "&=", "=")
 
-  solution<- lglue(
-  	"M_{<<sub>>} <<equals>> \\frac{\\sum{<<sym>>}}{n}",
-  	if(opts$show_summation) {
-  		"\\\\ <<equals>> \\frac{<<sym>>_{1} + <<sym>>_{2} + \\cdots + <<sym>>_{n}}{n}"
-  	})
+  # Create the subscripts for the summation sequence:
+  sum_seq = c('1', '2', 'n')
+  sub_x_seq <- if(nchar(sub_x) == 0) sum_seq else lglue("<<sub_x>>_{<<sum_seq>>}")
 
+  solution <- lglue(
+  	"M_{<<sub_val>>} <<equals>> \\frac{\\sum{<<sym_x>>_{<<sub_x>>}}}{n}",
+  	if(opts$show_summation) {
+  		"\\\\ <<equals>> \\frac{<<sym_x>>_{<<sub_x_seq[1]>>} + <<sym_x>>_{<<sub_x_seq[2]>>} + \\cdots + <<sym_x>>_{<<sub_x_seq[3]>>}}{n}"
+  	})
 
   # Add LaTeX math code, if desired.
   if (opts$add_aligned) solution <- add_aligned(solution)
@@ -142,8 +153,9 @@ mean_formula <- function(sub = "",
 #' Median: calculate value (with rounding) and present solutions
 #'
 #' @param x Numeric vector.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
+#' @param sub_val Character scalar. Subscript for the value to be calculated in the
+#'   formula, in this case the median (e.g., \eqn{Median_{x}}). Leave empty to report
+#'   no subscript.
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -163,11 +175,11 @@ mean_formula <- function(sub = "",
 #' Med == median(x)
 #'
 solve_median <- function(x,
-                         sub = "",
+                         sub_val = "",
                          ...) {
   # Check argument validity; Disallow missing values
   stopifnot(is.numeric(x), any(!is.na(x)))
-  stopifnot(is.character(sub), length(sub) == 1)
+  stopifnot(is.character(sub_val), length(sub_val) == 1)
 
   # Get list of options (allowing user to override defaults) for rounding
   # behavior and for presenting solutions in LaTeX environment.
@@ -182,7 +194,7 @@ solve_median <- function(x,
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-    "\\text{Median}_{<<sub>>} <<equals>> \\mathbf{<<Med>>}",
+    "\\text{Median}_{<<sub_val>>} <<equals>> \\mathbf{<<Med>>}",
     Med = fmt(Med, get_digits(Med, opts$round_final))
   )
 
@@ -197,8 +209,9 @@ solve_median <- function(x,
 #' Mode: calculate value (with rounding) and present solutions
 #'
 #' @param x Numeric vector.
-#' @param sub Character scalar. Name of numeric vector (reported as subscript in
-#'   solutions). Leave empty to report no subscript.
+#' @param sub_val Character scalar. Subscript for the value to be calculated in the
+#'   formula, in this case the mode (e.g., \eqn{Mode_{x}}). Leave empty to
+#'   report no subscript.
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
@@ -216,11 +229,11 @@ solve_median <- function(x,
 #' solve_mode(x, round_interim = 2)$Mode
 #'
 solve_mode <- function(x,
-                       sub = "",
+											 sub_val = "",
                        ...) {
   # Check argument validity; Disallow missing values
   stopifnot(is.numeric(x), any(!is.na(x)))
-  stopifnot(is.character(sub), length(sub) == 1)
+  stopifnot(is.character(sub_val), length(sub_val) == 1)
 
 
   # Get list of options (allowing user to override defaults) for rounding
@@ -238,7 +251,7 @@ solve_mode <- function(x,
 
   # Create the solution string, with rounded values (minimally displayed)
   solution <- glue_solution(
-    "\\text{Mode}_{<<sub>>} <<equals>> \\mathbf{<<Mode>>}",
+    "\\text{Mode}_{<<sub_val>>} <<equals>> \\mathbf{<<Mode>>}",
     Mode = paste(Mode, collapse = ", ")
   )
 
@@ -362,7 +375,7 @@ weighted_mean_formula <- function(...) {
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	solution<- lglue("M_{weighted} <<equals>> \\frac{\\sum{M_{i}n_{i}}}{\\sum{n_{i}}}",
+	solution<- lglue("M_{\\text{weighted}} <<equals>> \\frac{\\sum{M_{i}n_{i}}}{\\sum{n_{i}}}",
 									 if(opts$show_summation) {"\\\\ <<equals>> \\frac{<<Num>>}{<<Denom>>}"},
 									 Num = "(M_{1})(n_{1}) + (M_{2})(n_{2}) + \\cdots + (M_{k})(n_{k})",
 									 Denom = "n_{1} + n_{2} + \\cdots + n_{k}")

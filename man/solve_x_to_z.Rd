@@ -7,13 +7,13 @@
 \alias{z_to_x_formula}
 \title{Converting Raw Scores to Z-scores}
 \usage{
-solve_x_to_z(x, M, SD, sub = "", sym = "x", population = FALSE, ...)
+solve_x_to_z(x, M, SD, sub_val = "", sym_x = "x", population = FALSE, ...)
 
-x_to_z_formula(sub = "", sym = "x", population = FALSE, ...)
+x_to_z_formula(sub_val = "", sym_x = "x", population = FALSE, ...)
 
-solve_z_to_x(z, M, SD, sub = "", sym = "x", population = FALSE, ...)
+solve_z_to_x(z, M, SD, sub_val = "", sym_x = "x", population = FALSE, ...)
 
-z_to_x_formula(sub = "", sym = "x", population = FALSE, ...)
+z_to_x_formula(sub_val = "", sym_x = "x", population = FALSE, ...)
 }
 \arguments{
 \item{x}{Numeric scalar. Raw score to convert to a z-score.}
@@ -22,11 +22,12 @@ z_to_x_formula(sub = "", sym = "x", population = FALSE, ...)
 
 \item{SD}{Numeric scalar. Standard Deviation of distribution.}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
+formula, in this case the \emph{z}-score (e.g., \eqn{z_{x}}). Leave empty to report
+no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "x").
-Only one character allowed.}
+\item{sym_x}{Character scalar. Symbol to represent x in formula (default:
+"X").}
 
 \item{population}{Logical. Is this a population, rather than a sample? This
 is only relevant for displaying the formula in the solutions, which will

@@ -5,9 +5,9 @@
 \alias{s2_formula}
 \title{Sample Variance}
 \usage{
-solve_s2(x, SS, n, sub = "", sym = "X", SS.f = solve_sum_squares, ...)
+solve_s2(x, SS, n, sub_val = "", sym_x = "X", SS.f = solve_sum_squares, ...)
 
-s2_formula(sub = "", ...)
+s2_formula(sub_val = "", ...)
 }
 \arguments{
 \item{x}{Numeric vector of raw data values.}
@@ -16,12 +16,12 @@ s2_formula(sub = "", ...)
 
 \item{n}{Numeric scalar: sample size.}
 
-\item{sub}{Character scalar. Name of numeric vector (reported as subscript in
-solutions). Leave empty to report no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the sample variance (e.g., \eqn{s^2_{x}}). Leave
+empty to report no subscript.}
 
-\item{sym}{Character scalar. Symbol to represent x in formula (default: "X").
-Only one character allowed. Only used when calculating SS from raw data
-(\code{x}).}
+\item{sym_x}{Character scalar. Symbol to represent x in formula when
+calculating from raw data (default: "X").}
 
 \item{SS.f}{Formula to use for sum of squares calculation (either
 solve_sum_squares or solve_sum_squares2). Only used when calculating SS
@@ -46,7 +46,7 @@ string.
 \examples{
 # Simple usage: generate raw data, produce results
 (x <- sample(x = 1:10, size = 20, replace = TRUE))
-solve_s2(x = x, sub = 'X')
+solve_s2(x = x, sub_val = 'X')
 
 # Alternatively, provide SS and n
 solve_s2(SS = 100, n = 10)
@@ -60,6 +60,6 @@ solve_s2(SS = 100)
 s2_formula()
 
 # Can set parameters to change symbols used:
-s2_formula(sub = "Y")
+s2_formula(sub_val = "Y")
 
 }
