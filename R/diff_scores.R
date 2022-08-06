@@ -303,11 +303,20 @@ solve_sum_squares_diff <- function(x_D,
 																	 sym_x = "X",
 																	 ...) {
 
-	solve_sum_squares(x = x_D,
-										sub_val = "D",
-										sym_x = sym_x,
-										sub_x = "D",
-										...)
+	l <-solve_sum_squares(x = x_D,
+												sub_val = "D",
+												sym_x = sym_x,
+												sub_x = "D",
+												...)
+
+	list(x_D = l$x,
+			 M_D = l$M,
+			 n = l$n,
+			 Dev = l$Dev,
+			 DevSq = l$DevSq,
+			 SS_D = l$SS,
+			 solution = l$solution,
+			 formula = l$formula)
 }
 
 #' @rdname solve_sum_squares_diff
@@ -317,11 +326,21 @@ solve_sum_squares_diff <- function(x_D,
 solve_sum_squares2_diff <- function(x_D,
 																	 sym_x = "X",
 																	 ...) {
-	solve_sum_squares2(x = x_D,
-										 sub_val = "D",
-										 sym_x = sym_x,
-										 sub_x = "D",
-										 ...)
+	l <-solve_sum_squares2(x = x_D,
+												 sub_val = "D",
+												 sym_x = sym_x,
+												 sub_x = "D",
+												 ...)
+	list(x_D = l$x,
+			 n = l$n,
+			 XSq = l$XSq,
+			 Sum_XSq = l$Sum_XSq,
+			 SumX = l$SumX,
+			 Sq_SumX = l$Sq_SumX,
+			 Sq_SumX_n = l$Sq_SumX_n,
+			 SS_D = l$SS,
+			 solution = l$solution,
+			 formula = l$formula)
 }
 
 #' @rdname solve_sum_squares_diff
@@ -334,15 +353,21 @@ solve_s2_diff <- function(x_D,
 													sym_x = "X",
 													SS.f = solve_sum_squares,
 													...) {
-	solve_s2(x = x_D,
-					 SS = SS_D,
-					 n = n,
-					 sub_val = "D",
-					 sym_x = sym_x,
-					 sub_x = "D",
-					 SS.f = SS.f,
-					 ...)
+	l <- solve_s2(x = x_D,
+								SS = SS_D,
+								n = n,
+								sub_val = "D",
+								sym_x = sym_x,
+								sub_x = "D",
+								SS.f = SS.f,
+								...)
 
+	list(x_D = l$x,
+			 SS_D = l$SS,
+			 n = l$n,
+			 s2_D = l$s2,
+			 solution = l$solution,
+			 formula = l$formula)
 }
 
 #' @rdname solve_sum_squares_diff
@@ -357,13 +382,20 @@ solve_sd_diff <- function(x_D,
 													SS.f = solve_sum_squares,
 													...) {
 
-	solve_sd(x = x_D,
-					 SS = SS_D,
-					 n = n,
-					 s2 = s2_D,
-					 sub_val = "D",
-					 sym_x = sym_x,
-					 sub_x = "D",
-					 SS.f = SS.f,
-					 ...)
+	l <- solve_sd(x = x_D,
+								SS = SS_D,
+								n = n,
+								s2 = s2_D,
+								sub_val = "D",
+								sym_x = sym_x,
+								sub_x = "D",
+								SS.f = SS.f,
+								...)
+	list(x_D = l$x,
+			 SS_D = l$SS,
+			 n = l$n,
+			 s2_D = l$s2,
+			 s_D = l$s,
+			 solution = l$solution,
+			 formula = l$formula)
 }
