@@ -7,12 +7,12 @@
 #' @param sym_x Character scalar. Symbol to represent x in formula (default:
 #'   "X").
 #' @param ... Additional arguments to override default behaviors (see
-#'   \code{\link{handcalcs_defaults}}).
+#'   [handcalcs_defaults()]).
 #'
-#' @return \code{solve_range()} returns a list with the interim calculations
-#'   (\code{x_max}, \code{x_min}), the final value (\code{Range}), the solution
-#'   string (\code{solution}), and the bare formula (\code{formula}) in LaTeX
-#'   format. \code{range_formula} returns just the bare formula in LaTeX format
+#' @return `solve_range()` returns a list with the interim calculations
+#'   (`x_max`, `x_min`), the final value (`Range`), the solution
+#'   string (`solution`), and the bare formula (`formula`) in LaTeX
+#'   format. `range_formula()` returns just the bare formula in LaTeX format
 #'   as a character string.
 #'
 #' @export

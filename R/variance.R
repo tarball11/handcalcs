@@ -1,9 +1,9 @@
 #' Population Variance
 #'
 #' Calculates population variance (\eqn{\sigma^2 = SS / n}) either from a set of
-#' raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
-#' (\code{n}). If providing raw data, it will include the calculation of SS in
-#' the solution string.
+#' raw values (`x`) OR from the sum of squares (`SS`) and sample size (`n`). If
+#' providing raw data, it will include the calculation of SS in the solution
+#' string.
 #'
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
@@ -17,15 +17,15 @@
 #'   calculating from raw data (e.g., \eqn{X_{D}})
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
-#'   from raw data (\code{x}).
+#'   from raw data (`x`).
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]
 #'
 #' @return \code{solve_sigma2()} returns a list with the interim values and
-#'   calculations (\code{x}, \code{SS}, \code{n}), the final value
-#'   (\code{sigma2}), the solution string (\code{solution}), and the bare
-#'   formula (\code{formula}) in LaTeX format. \code{sigma2_formula} returns
-#'   just the bare formula in LaTeX format as a character string.
+#'   calculations (`x`, `SS`, `n`), the final value (`sigma2`), the solution
+#'   string (`solution`), and the bare formula (`formula`) in LaTeX format.
+#'   `sigma2_formula` returns just the bare formula in LaTeX format as a
+#'   character string.
 #'
 #' @export
 #'
@@ -83,10 +83,9 @@ sigma2_formula <- function(sub_val = "",
 
 #' Sample Variance
 #'
-#' Calculates sample variance (\eqn{s^2}) either from a set of raw values
-#' (\code{x}) OR from the sum of squares (\code{SS}) and sample size (\code{n}).
-#' If providing raw data, it will include the calculation of SS in the solution
-#' string.
+#' Calculates sample variance (\eqn{s^2}) either from a set of raw values (`x`)
+#' OR from the sum of squares (`SS`) and sample size (`n`). If providing raw
+#' data, it will include the calculation of SS in the solution string.
 #'
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
@@ -98,17 +97,17 @@ sigma2_formula <- function(sub_val = "",
 #'   calculating from raw data (default: "X").
 #' @param sub_x Character scalar. Subscript for x in the formula when
 #'   calculating from raw data (e.g., \eqn{X_{D}})
-#' @param SS.f Formula to use for sum of squares calculation (either
+#' @param SS.f Function to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
-#'   from raw data (\code{x}).
+#'   from raw data (`x`).
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return \code{solve_s2()} returns a list with the interim values and
-#'   calculations (\code{x}, \code{SS}, \code{n}), the final value (\code{s2}),
-#'   the solution string (\code{solution}), and the bare formula
-#'   (\code{formula}) in LaTeX format. \code{s2_formula} returns just the bare
-#'   formula in LaTeX format as a character string.
+#'   calculations (`x`, `SS`, `n`), the final value (both as `s2` and as `SD2`),
+#'   the solution string (`solution`), and the bare formula (`formula`) in LaTeX
+#'   format. `s2_formula` returns just the bare formula in LaTeX format as a
+#'   character string.
 #'
 #' @export
 #'
@@ -257,15 +256,16 @@ solve_variance <- function(mode,
 	if (opts$add_math) solution <- add_math(solution)
 
 	# Return list containing both values and solution string
+	# Names are specific to the mode; NULL values are removed
 	list(x = if(missing(x)) NULL else x,
 			 SS = SS,
 			 n = n,
-			 variance = variance,
+			 sigma2 = if(mode == 'population') variance else NULL,
+			 s2 = if(mode == 'population') NULL else variance,
+			 SD2 = if(mode == 'population') NULL else variance,
 			 solution = solution,
 			 formula = var.f) %>%
-		rlang::set_names(gsub('variance',
-													ifelse(mode == 'population', 'sigma2', 's2'),
-													names(.)))
+		purrr::compact()
 }
 
 # Function doing the hard work of producing the base formula for the

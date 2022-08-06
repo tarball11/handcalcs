@@ -9,16 +9,16 @@ solve_median(x, sub_val = "", ...)
 \arguments{
 \item{x}{Numeric vector.}
 
-\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
-formula, in this case the median (e.g., \eqn{Median_{x}}). Leave empty to report
-no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the median (e.g., \eqn{Median_{x}}). Leave empty
+to report no subscript.}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}
 }
 \value{
-A list with the median value (\code{Med}) and the solution
-(\code{solution}) in LaTeX format.
+A list with the median value (\code{Med}) and the solution (\code{solution}) in
+LaTeX format.
 }
 \description{
 Median: calculate value (with rounding) and present solutions

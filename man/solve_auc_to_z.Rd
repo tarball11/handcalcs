@@ -32,7 +32,7 @@ being provided:
 \item{\code{above}}{Value of \code{a} is the area above the value of \code{z} to be
 calculated.}
 
-\item{\code{above}}{Value of \code{a} is the area below the value of \code{z} to be
+\item{\code{below}}{Value of \code{a} is the area below the value of \code{z} to be
 calculated.}
 
 \item{\code{between}}{Value of \code{a} is the area between two values of \code{z}.

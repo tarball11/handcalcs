@@ -23,7 +23,7 @@ specify ascending or descending sort.}
 \item{font_size}{Numeric scalar. Font size (in pixels).}
 
 \item{...}{Additional arguments to override default behaviors (see
-\code{\link{handcalcs_defaults}}).}
+\code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 }
 \value{
 A gt object.

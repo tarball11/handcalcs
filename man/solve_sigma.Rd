@@ -28,8 +28,8 @@ sigma_formula(sub_val = "", ...)
 
 \item{sigma2}{Numeric scalar: population variance (\eqn{sigma^2}).}
 
-\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
-formula, in this case the population standard deviation (e.g.,
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the population standard deviation (e.g.,
 \eqn{\sigma_{x}}). Leave empty to report no subscript.}
 
 \item{sym_x}{Character scalar. Symbol to represent x in formula when
@@ -47,20 +47,19 @@ from raw data (\code{x}).}
 }
 \value{
 \code{solve_sigma2()} returns a list with the interim values and
-calculations (\code{x}, \code{SS}, \code{n}, \code{sigma2}), the final
-value (\code{sigma}), the solution string (\code{solution}), and the bare
-formula (\code{formula}) in LaTeX format. \code{sigma_formula} returns just
-the bare formula in LaTeX format as a character string.
+calculations (\code{x}, \code{SS}, \code{n}, \code{sigma2}), the final value (\code{sigma}), the
+solution string (\code{solution}), and the bare formula (\code{formula}) in LaTeX
+format. \code{sigma_formula} returns just the bare formula in LaTeX format as a
+character string.
 }
 \description{
 Calculates population standard deviation (\eqn{\sigma = \sqrt(SS / n)})
-either from a set of raw values (\code{x}) OR from the sum of squares
-(\code{SS}) and sample size (\code{n}), OR from the population variance
-(\code{sigma2}). If providing raw data, it will include the calculation of SS
-in the solution string. If providing \code{SS} and \code{n}, it will include
-the calculation of the population variance in the solution string. Otherwise,
-if only \code{sigma2} is provided, will simply show the final calculation
-(\eqn{\sqrt(\sigma^2)}).
+either from a set of raw values (\code{x}) OR from the sum of squares (\code{SS}) and
+sample size (\code{n}), OR from the population variance (\code{sigma2}). If providing
+raw data, it will include the calculation of SS in the solution string. If
+providing \code{SS} and \code{n}, it will include the calculation of the population
+variance in the solution string. Otherwise, if only \code{sigma2} is provided,
+will simply show the final calculation (\eqn{\sqrt(\sigma^2)}).
 }
 \examples{
 # Simple usage: generate raw data, produce results

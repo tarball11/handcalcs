@@ -18,11 +18,10 @@ names M and n, one vector per subgroup (see examples).}
 }
 \value{
 \code{solve_weighted_mean()} returns a list with vectors for the
-means (\code{M}) and sample sizes (\code{n}), the interim calculations
-(\code{Sum_M_x_n}, \code{Sum_n}), the final value (\code{M_w}), the
-solution string (\code{solution}), and the bare formula (\code{formula}) in
-LaTeX format. \code{weighted_mean_formula} returns just the bare formula in
-LaTeX format as a character string.
+means (\code{M}) and sample sizes (\code{n}), the interim calculations (\code{Sum_M_x_n},
+\code{Sum_n}), the final value (\code{M_w}), the solution string (\code{solution}), and
+the bare formula (\code{formula}) in LaTeX format. \code{weighted_mean_formula}
+returns just the bare formula in LaTeX format as a character string.
 }
 \description{
 Calculate value of weighted (aka overall) mean (with rounding) and present

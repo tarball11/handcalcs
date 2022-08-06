@@ -1,20 +1,19 @@
 #' Population Standard Deviation
 #'
 #' Calculates population standard deviation (\eqn{\sigma = \sqrt(SS / n)})
-#' either from a set of raw values (\code{x}) OR from the sum of squares
-#' (\code{SS}) and sample size (\code{n}), OR from the population variance
-#' (\code{sigma2}). If providing raw data, it will include the calculation of SS
-#' in the solution string. If providing \code{SS} and \code{n}, it will include
-#' the calculation of the population variance in the solution string. Otherwise,
-#' if only \code{sigma2} is provided, will simply show the final calculation
-#' (\eqn{\sqrt(\sigma^2)}).
+#' either from a set of raw values (`x`) OR from the sum of squares (`SS`) and
+#' sample size (`n`), OR from the population variance (`sigma2`). If providing
+#' raw data, it will include the calculation of SS in the solution string. If
+#' providing `SS` and `n`, it will include the calculation of the population
+#' variance in the solution string. Otherwise, if only `sigma2` is provided,
+#' will simply show the final calculation (\eqn{\sqrt(\sigma^2)}).
 #'
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
 #' @param sigma2 Numeric scalar: population variance (\eqn{sigma^2}).
-#' @param sub_val Character scalar. Subscript for the value to be calculated in the
-#'   formula, in this case the population standard deviation (e.g.,
+#' @param sub_val Character scalar. Subscript for the value to be calculated in
+#'   the formula, in this case the population standard deviation (e.g.,
 #'   \eqn{\sigma_{x}}). Leave empty to report no subscript.
 #' @param sym_x Character scalar. Symbol to represent x in formula when
 #'   calculating from raw data (default: "X").
@@ -22,15 +21,15 @@
 #'   calculating from raw data (e.g., \eqn{X_{D}})
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
-#'   from raw data (\code{x}).
+#'   from raw data (`x`).
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return \code{solve_sigma2()} returns a list with the interim values and
-#'   calculations (\code{x}, \code{SS}, \code{n}, \code{sigma2}), the final
-#'   value (\code{sigma}), the solution string (\code{solution}), and the bare
-#'   formula (\code{formula}) in LaTeX format. \code{sigma_formula} returns just
-#'   the bare formula in LaTeX format as a character string.
+#'   calculations (`x`, `SS`, `n`, `sigma2`), the final value (`sigma`), the
+#'   solution string (`solution`), and the bare formula (`formula`) in LaTeX
+#'   format. `sigma_formula` returns just the bare formula in LaTeX format as a
+#'   character string.
 #'
 #' @export
 #'
@@ -95,19 +94,20 @@ sigma_formula <- function(sub_val = "",
 #' Sample Standard Deviation
 #'
 #' Calculates sample standard deviation (\eqn{s = \sqrt[SS / (n - 1)]}) either
-#' from a set of raw values (\code{x}) OR from the sum of squares (\code{SS})
-#' and sample size (\code{n}), OR from the sample variance (\code{s2}). If
-#' providing raw data, it will include the calculation of SS in the solution
-#' string. If providing \code{SS} and \code{n}, it will include the calculation
-#' of the sample variance in the solution string. Otherwise, if only \code{s2}
-#' is provided, will simply show the final calculation (\eqn{\sqrt(s^2)}).
+#' from a set of raw values (`x`) OR from the sum of squares (`SS`) and sample
+#' size (`n`), OR from the sample variance (`s2`). If providing raw data, it
+#' will include the calculation of SS in the solution string. If providing `SS`
+#' and `n`, it will include the calculation of the sample variance in the
+#' solution string. Otherwise, if only `s2` is provided, will simply show the
+#' final calculation (\eqn{\sqrt(s^2)}).
 #'
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
-#' @param s2 Numeric scalar: sample variance (\eqn{s^2}).
-#' @param sub_val Character scalar. Subscript for the value to be calculated in the
-#'   formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to
+#' @param s2,SD2  Numeric scalar: sample variance (\eqn{s^2}). May name it
+#'   either as `s2` or `SD2`.
+#' @param sub_val Character scalar. Subscript for the value to be calculated in
+#'   the formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to
 #'   report no subscript.
 #' @param sym_x Character scalar. Symbol to represent x in formula when
 #'   calculating from raw data (default: "X").
@@ -115,15 +115,15 @@ sigma_formula <- function(sub_val = "",
 #'   calculating from raw data (e.g., \eqn{X_{D}})
 #' @param SS.f Formula to use for sum of squares calculation (either
 #'   solve_sum_squares or solve_sum_squares2). Only used when calculating SS
-#'   from raw data (\code{x}).
+#'   from raw data (`x`).
 #' @param ... Additional arguments to override default behaviors (see
 #'   \code{\link{handcalcs_defaults}}).
 #'
 #' @return \code{solve_sd()} returns a list with the interim values and
-#'   calculations (\code{x}, \code{SS}, \code{n}, \code{s2}), the final value
-#'   (\code{s}), the solution string (\code{solution}), and the bare formula
-#'   (\code{formula}) in LaTeX format. \code{sigma2_formula} returns just the
-#'   bare formula in LaTeX format as a character string.
+#'   calculations (`x`, `SS`, `n`, `s2`), the final value (both as `s` and as
+#'   `SD`), the solution string (`solution`), and the bare formula (`formula`)
+#'   in LaTeX format. `sigma2_formula` returns just the bare formula in LaTeX
+#'   format as a character string.
 #'
 #' @export
 #'
@@ -152,11 +152,15 @@ solve_sd <- function(x,
 										 SS,
 										 n,
 										 s2,
+										 SD2,
 										 sub_val = "",
 										 sym_x = "X",
 										 sub_x = "",
 										 SS.f = solve_sum_squares,
 										 ...) {
+
+	# If SD2 is supplied instead of s2, pass that along as variance.
+	if(missing(s2) & !missing(SD2)) s2 <- SD2
 
 	solve_std_dev(mode = 'sample',
 								x = x,
@@ -176,7 +180,7 @@ solve_sd <- function(x,
 #' @export
 #'
 sd_formula <- function(sub_val = "",
-													...) {
+											 ...) {
 
 	std_dev_formula(mode = 'sample',
 									sub_val = sub_val,
@@ -267,26 +271,26 @@ solve_std_dev <- function(mode,
 		std_dev.fmt = ifelse(opts$round_to == 'sigfigs',
 												 std_dev,
 												 fmt(std_dev, get_digits(std_dev, opts$round_final)))
-		)
+	)
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
 	if (opts$add_math) solution <- add_math(solution)
 
 	# Return list containing both values and solution string
+	# Names are specific to the mode; NULL values are removed
 	list(x = if(missing(x)) NULL else x,
 			 SS = if(missing(SS)) NULL else SS,
 			 n = if(missing(n)) NULL else n,
-			 variance = variance,
-			 std_dev = std_dev,
+			 sigma2 = if(mode == 'population') variance else NULL,
+			 sigma = if(mode == 'population') std_dev else NULL,
+			 s2 = if(mode == 'population') NULL else variance,
+			 SD2 = if(mode == 'population') NULL else variance,
+			 s = if(mode == 'population') NULL else std_dev,
+			 SD = if(mode == 'population') NULL else std_dev,
 			 solution = solution,
 			 formula = std_dev.f) %>%
-		rlang::set_names(gsub('variance',
-													ifelse(mode == 'population', 'sigma2', 's2'),
-													names(.))) %>%
-		rlang::set_names(gsub('std_dev',
-													ifelse(mode == 'population', 'sigma', 's'),
-													names(.)))
+		purrr::compact()
 }
 
 # Function doing the hard work of producing the base formula for the

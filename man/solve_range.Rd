@@ -20,13 +20,13 @@ no subscript.}
 "X").}
 
 \item{...}{Additional arguments to override default behaviors (see
-\code{\link{handcalcs_defaults}}).}
+\code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 }
 \value{
 \code{solve_range()} returns a list with the interim calculations
 (\code{x_max}, \code{x_min}), the final value (\code{Range}), the solution
 string (\code{solution}), and the bare formula (\code{formula}) in LaTeX
-format. \code{range_formula} returns just the bare formula in LaTeX format
+format. \code{range_formula()} returns just the bare formula in LaTeX format
 as a character string.
 }
 \description{

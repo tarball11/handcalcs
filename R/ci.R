@@ -3,7 +3,7 @@
 #' Calculates confidence intervals around a sample mean when the population
 #' standard deviation (\eqn{\sigma}) is known: \eqn{M \pm (z_{1 -
 #' \alpha/2})(\sigma_{M})}. May either provide `sigma_M`, or that value can be
-#' calculated from `sigma` and `N`.
+#' calculated from `sigma` and `n`.
 #'
 #' Note that the critical value of *z* (`z_crit`) is rounded to the value of
 #' `round_z` instead of the value of `round_interim` or `round_final` (see
@@ -12,9 +12,9 @@
 #' @param M Numeric scalar. Sample mean.
 #' @param sigma Numeric scalar. Population standard deviation. Required if
 #'   sigma_M is not provided.
-#' @param N Numeric scalar. Sample size. Required if sigma_M is not provided.
+#' @param n Numeric scalar. Sample size. Required if sigma_M is not provided.
 #' @param sigma_M Numeric scalar. Standard error of the mean. If not provided,
-#'   will be calculated from `sigma` and `N` (using [solve_sigma_M()]) and
+#'   will be calculated from `sigma` and `n` (using [solve_sigma_M()]) and
 #'   included in the solution string.
 #' @param level Numeric scalar. Confidence level; defaults to 0.95 (95%
 #'   confidence intervals).
@@ -22,7 +22,7 @@
 #'   [handcalcs_defaults()]
 #'
 #' @return `solve_ci_z()` returns a list with the provided values (`M`, `sigma`,
-#'   `N`, `sigma_M`), the interim calculations (`sigma_M`, `z_crit`,
+#'   `n`, `sigma_M`), the interim calculations (`sigma_M`, `z_crit`,
 #'   `marg_err`), the final value (`CI_lower`, `CI_upper`, as well as a named
 #'   vector containing both values `CI`), the solution string (`solution`), and
 #'   the bare formula (`formula`) in LaTeX format. `ci_z_formula()` returns just
@@ -37,19 +37,19 @@
 #' # Defaults to 95% CIs, but other levels can be specified:
 #' solve_ci_z(M = 5, sigma_M = 0.2, level = 0.99)
 #'
-#' # Will calculate sigma_M if sigma and N are provided, and include the
+#' # Will calculate sigma_M if sigma and n are provided, and include the
 #' # calculation in the solution string
-#' solve_ci_z(M = 5, sigma = 2, N = 100)
+#' solve_ci_z(M = 5, sigma = 2, n = 100)
 #'
-#' # Note: if sigma_M is provided, will ignore sigma and N values
-#' solve_ci_z(M = 5, sigma = 2, N = 100, sigma_M = 4)
+#' # Note: if sigma_M is provided, will ignore sigma and n values
+#' solve_ci_z(M = 5, sigma = 2, n = 100, sigma_M = 4)
 #'
 #' # If you just want the formula:
 #' ci_z_formula()
 #'
 solve_ci_z <- function(M,
 											 sigma,
-											 N,
+											 n,
 											 sigma_M,
 											 level = 0.95,
 											 ...) {
@@ -57,8 +57,8 @@ solve_ci_z <- function(M,
 	stopifnot(is.numeric(M), length(M) == 1)
 	stopifnot(is.numeric(level), length(level) == 1, level > 0, level < 1)
 
-	if(missing(sigma_M) & (missing(sigma) | missing(N))) {
-		stop('Must supply either sigma_M or sigma and N')
+	if(missing(sigma_M) & (missing(sigma) | missing(n))) {
+		stop('Must supply either sigma_M or sigma and n')
 	}
 
 	# Get list of options (allowing user to override defaults) for rounding
@@ -68,15 +68,15 @@ solve_ci_z <- function(M,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate sigma_M from sigma and N
+	# Calculate sigma_M from sigma and n
 	if(missing(sigma_M)) {
-		stopifnot(is.numeric(sigma), is.numeric(N))
-		stopifnot(length(sigma) == 1, length(N) == 1)
-		stopifnot(sigma > 0, N > 0)
-		stopifnot(round(N) == N)
+		stopifnot(is.numeric(sigma), is.numeric(n))
+		stopifnot(length(sigma) == 1, length(n) == 1)
+		stopifnot(sigma > 0, n > 0)
+		stopifnot(round(n) == n)
 
 		sigma_M.lst <- solve_sigma_M(sigma = sigma,
-																 N = N,
+																 n = n,
 																 round_interim = opts$round_interim,
 																 round_final = opts$round_interim,
 																 add_math = FALSE,
@@ -139,7 +139,7 @@ solve_ci_z <- function(M,
 	# Interpretation is included if requested
 	list(M = M,
 			 sigma = if(missing(sigma)) NULL else sigma,
-			 N = if(missing(N)) NULL else N,
+			 n = if(missing(n)) NULL else n,
 			 sigma_M = sigma_M,
 			 level = level,
 			 z_crit = z_crit,
@@ -187,7 +187,7 @@ ci_z_formula <- function(level = 0.95,
 #' Calculates confidence intervals around a sample mean wwhen the population
 #' standard deviation (\eqn{\sigma}) must be estimated using the sample standard
 #' deviation (\eqn{s}, aka `SD`) \eqn{M \pm (t_{1 - \alpha/2})(s_{M})}. May
-#' either provide `s_M`, or that value can be calculated from `SD` and `N`.
+#' either provide `s_M`, or that value can be calculated from `SD` and `n`.
 #'
 #' Note that the critical value of *t* (`t_crit`) is rounded to the value of
 #' `round_t` instead of the value of `round_interim` or `round_final` (see
@@ -196,10 +196,10 @@ ci_z_formula <- function(level = 0.95,
 #' @param M Numeric scalar. Sample mean.
 #' @param SD Numeric scalar. Population standard deviation. Required if s_M
 #'   is not provided.
-#' @param N Numeric scalar. Sample size. Required if s_M is not provided.
-#' @param df Numeric scalar. Degrees of freedom. Required if N is not provided.
+#' @param n Numeric scalar. Sample size. Required if s_M is not provided.
+#' @param df Numeric scalar. Degrees of freedom. Required if n is not provided.
 #' @param s_M Numeric scalar. Standard error of the mean. If not provided, will
-#'   be calculated from `SD` and `N` (using [solve_s_M()]) and included in
+#'   be calculated from `SD` and `n` (using [solve_s_M()]) and included in
 #'   the solution string.
 #' @param level Numeric scalar. Confidence level; defaults to 0.95 (95%
 #'   confidence intervals).
@@ -207,7 +207,7 @@ ci_z_formula <- function(level = 0.95,
 #'   [handcalcs_defaults()]
 #'
 #' @return `solve_ci_t()` returns a list with the provided values (`M`, `SD`,
-#'   `N`, `s_M`), the interim calculations (`s_M`, `t_crit`, `marg_err`), the
+#'   `n`, `s_M`), the interim calculations (`s_M`, `t_crit`, `marg_err`), the
 #'   final value (`CI_lower`, `CI_upper`, as well as a named vector containing
 #'   both values `CI`), the solution string (`solution`), and the bare formula
 #'   (`formula`) in LaTeX format. `ci_t_formula()` returns just the bare formula
@@ -222,19 +222,19 @@ ci_z_formula <- function(level = 0.95,
 #' # Defaults to 95% CIs, but other levels can be specified:
 #' solve_ci_t(M = 5, s_M = 0.2, level = 0.99)
 #'
-#' # Will calculate s_M if SD and N are provided, and include the
+#' # Will calculate s_M if SD and n are provided, and include the
 #' # calculation in the solution string
-#' solve_ci_t(M = 5, SD = 2, N = 100)
+#' solve_ci_t(M = 5, SD = 2, n = 100)
 #'
-#' # Note: if s_M is provided, will ignore SD and N values
-#' solve_ci_t(M = 5, SD = 2, N = 100, s_M = 4)
+#' # Note: if s_M is provided, will ignore SD and n values
+#' solve_ci_t(M = 5, SD = 2, n = 100, s_M = 4)
 #'
 #' # If you just want the formula:
 #' ci_t_formula()
 #'
 solve_ci_t <- function(M,
 											 SD,
-											 N,
+											 n,
 											 df,
 											 s_M,
 											 level = 0.95,
@@ -243,10 +243,10 @@ solve_ci_t <- function(M,
 	stopifnot(is.numeric(M), length(M) == 1)
 	stopifnot(is.numeric(level), length(level) == 1, level > 0, level < 1)
 
-	if(missing(s_M) & (missing(SD) | missing(N))) {
-		stop('Must supply either s_M or SD and N.f')
+	if(missing(s_M) & (missing(SD) | missing(n))) {
+		stop('Must supply either s_M or SD and n.')
 	}
-	if(missing(N) & missing(df)) stop('Must supply either N or df.')
+	if(missing(n) & missing(df)) stop('Must supply either n or df.')
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -255,15 +255,15 @@ solve_ci_t <- function(M,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate s_M from SD and N
+	# Calculate s_M from SD and n
 	if(missing(s_M)) {
-		stopifnot(is.numeric(SD), is.numeric(N))
-		stopifnot(length(SD) == 1, length(N) == 1)
-		stopifnot(SD > 0, N > 0)
-		stopifnot(round(N) == N)
+		stopifnot(is.numeric(SD), is.numeric(n))
+		stopifnot(length(SD) == 1, length(n) == 1)
+		stopifnot(SD > 0, n > 0)
+		stopifnot(round(n) == n)
 
 		s_M.lst <- solve_s_M(SD = SD,
-												 N = N,
+												 n = n,
 												 round_interim = opts$round_interim,
 												 round_final = opts$round_interim,
 												 add_math = FALSE,
@@ -278,7 +278,7 @@ solve_ci_t <- function(M,
 
 	stopifnot(is.numeric(s_M), length(s_M) == 1, s_M > 0)
 
-	if(missing(df)) df <- N - 1
+	if(missing(df)) df <- n - 1
 	stopifnot(is.numeric(df), length(df) == 1, df > 0)
 
 	# Round initial values
@@ -329,7 +329,7 @@ solve_ci_t <- function(M,
 	list(M = M,
 			 SD = if(missing(SD)) NULL else SD,
 			 s = if(missing(SD)) NULL else SD,
-			 N = if(missing(N)) NULL else N,
+			 n = if(missing(n)) NULL else n,
 			 df = df,
 			 s_M = s_M,
 			 level = level,

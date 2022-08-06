@@ -12,9 +12,9 @@ mean_formula(sub_val = "", sym_x = "X", sub_x = "", ...)
 \arguments{
 \item{x}{Numeric vector of values for which to calculate the mean.}
 
-\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
-formula, in this case the mean (e.g., \eqn{M_{x}}). Leave empty to report
-no subscript.}
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the mean (e.g., \eqn{M_{x}}). Leave empty to
+report no subscript.}
 
 \item{sym_x}{Character scalar. Symbol to represent x in formula (default:
 "X").}
@@ -27,10 +27,9 @@ no subscript.}
 }
 \value{
 \code{solve_mean()} returns a list with the interim calculations
-(\code{SumX}, \code{n}), the final value (\code{M}), the solution string
-(\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
-\code{mean_formula} returns just the bare formula in LaTeX format as a
-character string.
+(\code{SumX}, \code{n}), the final value (\code{M}), the solution string (\code{solution}), and
+the bare formula (\code{formula}) in LaTeX format. \code{mean_formula} returns just
+the bare formula in LaTeX format as a character string.
 }
 \description{
 Calculate value of arithmetic mean (with rounding) and present solutions.

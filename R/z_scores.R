@@ -1,12 +1,12 @@
 #' Converting Raw Scores to Z-scores
 #'
 #' Functions to convert raw scores to z-scores and vice versa.
-#' \code{solve_x_to_z()} takes a raw score (`x`), along with the distribution's
+#' `solve_x_to_z()` takes a raw score (`x`), along with the distribution's
 #' mean (`M`) and standard deviation (`SD`), and calculates the standard score
-#' (`z`). \code{solve_z_to_x()} takes a z-score (`z`), along with the
+#' (`z`). `solve_z_to_x()` takes a z-score (`z`), along with the
 #' distribution's mean (`M`) and standard deviation (`SD`), and calculates the
 #' raw score (`x`). If you just want the bare formula for either step, use
-#' \code{x_to_z_formula()} or \code{z_to_x_formula()}.
+#' `x_to_z_formula()` or `z_to_x_formula()`.
 #'
 #' Note that *z*-scores are rounded to the value of `round_z` instead of the
 #' value of `round_interim` or `round_final` (see [handcalcs_defaults()]).
@@ -25,18 +25,18 @@
 #'   use Greek letters to denote the population mean (\eqn{\mu}) and standard
 #'   deviation (\eqn{\sigma}).
 #' @param ... Additional arguments to override default behaviors (see
-#'   \code{\link{handcalcs_defaults}}).
+#'   [handcalcs_defaults()]).
 #'
-#' @return \code{solve_x_to_z()} returns a list with the given values, the
-#'   interim calculations (\code{M_diff}), the final value (\code{z}), the
-#'   solution string (\code{solution}), and the bare formula (\code{formula}) in
+#' @return `solve_x_to_z()` returns a list with the given values, the
+#'   interim calculations (`M_diff`), the final value (`z`), the
+#'   solution string (`solution`), and the bare formula (`formula`) in
 #'   LaTeX format.
 #'
-#'   \code{solve_z_to_x()} returns a list with the given values, the interim
-#'   calculations (\code{zSD}), the final value (\code{x}), the solution string
-#'   (\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
+#'   `solve_z_to_x()` returns a list with the given values, the interim
+#'   calculations (`zSD`), the final value (`x`), the solution string
+#'   (`solution`), and the bare formula (`formula`) in LaTeX format.
 #'
-#'   The two formula functions (\code{x_to_z_formula}, \code{z_to_x_formula})
+#'   The two formula functions (`x_to_z_formula()`, `z_to_x_formula()`)
 #'   return just the bare formula in LaTeX format as a character string.
 #'
 #' @export

@@ -5,7 +5,7 @@
 \alias{t_one_sample_formula}
 \title{One-sample \emph{t}-test}
 \usage{
-solve_t_one_sample(M, mu, SD, N, s_M, ...)
+solve_t_one_sample(M, mu, SD, n, s_M, ...)
 
 t_one_sample_formula(...)
 }
@@ -17,10 +17,10 @@ t_one_sample_formula(...)
 \item{SD}{Numeric scalar. Sample standard deviation. Required if s_M is not
 provided.}
 
-\item{N}{Numeric scalar. Sample size. Required if s_M is not provided.}
+\item{n}{Numeric scalar. Sample size. Required if s_M is not provided.}
 
 \item{s_M}{Numeric scalar. Standard error of the mean. If not provided, will
-be calculated from \code{SD} and \code{N} (using \code{\link[=solve_s_M]{solve_s_M()}}) and included in the
+be calculated from \code{SD} and \code{n} (using \code{\link[=solve_s_M]{solve_s_M()}}) and included in the
 solution string.}
 
 \item{...}{Additional arguments to override default behaviors (see
@@ -28,7 +28,7 @@ solution string.}
 }
 \value{
 \code{solve_t_one_sample()} returns a list with the provided values (\code{M},
-\code{mu}, \code{SD}, \code{N}), the interim calculations (\code{df}, \code{s_M}, \code{M_diff}), the
+\code{mu}, \code{SD}, \code{n}), the interim calculations (\code{df}, \code{s_M}, \code{M_diff}), the
 final value (\code{t_obt}), the solution string (\code{solution}), and the bare
 formula (\code{formula}) in LaTeX format. \code{t_one_sample_formula()} returns just
 the bare formula in LaTeX format as a character string.
@@ -44,7 +44,7 @@ Note that \code{t_obt} values are rounded to the value of \code{round_t} instead
 value of \code{round_final} (see \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).
 }
 \examples{
-solve_t_one_sample(M = 6, mu = 5, SD = 2, N = 100)
+solve_t_one_sample(M = 6, mu = 5, SD = 2, n = 100)
 
 # If you just want the formula:
 t_one_sample_formula()

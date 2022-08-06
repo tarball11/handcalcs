@@ -67,7 +67,7 @@ glue_solution <- function(..., .envir = parent.frame()) {
 #'   `summation()`, which defaults to the value of `abbrev_sum` set globally.
 #'
 #' @return String containing the (possibly abbreviated) sequence. For instance,
-#'   \code{summation(1:4)} would return "1 + 2 + 3 + 4".
+#'   `summation(1:4)` would return "1 + 2 + 3 + 4".
 #' @export
 #'
 #' @examples

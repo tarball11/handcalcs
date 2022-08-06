@@ -1,7 +1,7 @@
 #' Show Raw Data
 #'
-#' Produces a simple table (\code{gt} object) of raw data by putting the data
-#' into rows (using specified \code{width}). Note: raw data will be rounded to
+#' Produces a simple table (`gt` object) of raw data by putting the data
+#' into rows (using specified `width`). Note: raw data will be rounded to
 #' the value of round_interim (either supplied as an option, or consulting the
 #' global default value).
 #'
@@ -11,7 +11,7 @@
 #'   specify ascending or descending sort.
 #' @param font_size Numeric scalar. Font size (in pixels).
 #' @param ... Additional arguments to override default behaviors (see
-#'   \code{\link{handcalcs_defaults}}).
+#'   [handcalcs_defaults()]).
 #'
 #' @return A gt object.
 #' @export

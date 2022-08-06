@@ -35,11 +35,11 @@ empty to report no subscript.}
 \eqn{X_{D}})}
 
 \item{...}{Additional arguments to override default behaviors (see
-\code{\link{handcalcs_defaults}}).}
+\code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 
 \item{SS.lst}{List of values produced by \code{solve_sum_squares} or
-\code{solve_sum_squares2}. Be sure to use the table function that
-corresponds to the solution function.}
+\code{solve_sum_squares2}. Be sure to use the table function that corresponds to
+the solution function.}
 }
 \value{
 The two solutions functions (\code{solve_sum_squares},
@@ -55,17 +55,16 @@ which can be rendered into HTML or PDF.
 }
 \description{
 Calculate value of sum of squares (with rounding) and present solutions.
-\code{solve_sum_squares()} produces the interim calculations and a full
-solution string, starting with the bare formula. If you just want the bare
-formula, use \code{sum_squares_formula()}. To generate the table
-demonstrating the calculations, use \code{sum_squares_table}.
+\code{solve_sum_squares()} produces the interim calculations and a full solution
+string, starting with the bare formula. If you just want the bare formula,
+use \code{sum_squares_formula()}. To generate the table demonstrating the
+calculations, use \code{sum_squares_table}.
 }
 \details{
 The standard functions use the conceptual formula: \deqn{SS = \sum(X - M)^2}.
 
-The '2' functions (\code{solve_sum_squares2}, \code{sum_squares_formula2})
-use the alternative computational formula: \deqn{SS = \sum(X^2) - [(\sum
-X)^2] / n}
+The '2' functions (\code{solve_sum_squares2}, \code{sum_squares_formula2}) use the
+alternative computational formula: \deqn{SS = \sum(X^2) - [(\sum X)^2] / n}
 }
 \examples{
 # The formulas will return similar results when rounding is minimal

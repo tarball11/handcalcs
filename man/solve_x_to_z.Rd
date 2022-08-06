@@ -35,7 +35,7 @@ use Greek letters to denote the population mean (\eqn{\mu}) and standard
 deviation (\eqn{\sigma}).}
 
 \item{...}{Additional arguments to override default behaviors (see
-\code{\link{handcalcs_defaults}}).}
+\code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 
 \item{z}{Numeric scalar. Z-score to convert to a raw score (x).}
 }
@@ -49,7 +49,7 @@ LaTeX format.
 calculations (\code{zSD}), the final value (\code{x}), the solution string
 (\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
 
-The two formula functions (\code{x_to_z_formula}, \code{z_to_x_formula})
+The two formula functions (\code{x_to_z_formula()}, \code{z_to_x_formula()})
 return just the bare formula in LaTeX format as a character string.
 }
 \description{

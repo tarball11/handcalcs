@@ -10,6 +10,7 @@ solve_sd(
   SS,
   n,
   s2,
+  SD2,
   sub_val = "",
   sym_x = "X",
   sub_x = "",
@@ -26,10 +27,11 @@ sd_formula(sub_val = "", ...)
 
 \item{n}{Numeric scalar: sample size.}
 
-\item{s2}{Numeric scalar: sample variance (\eqn{s^2}).}
+\item{s2, SD2}{Numeric scalar: sample variance (\eqn{s^2}). May name it
+either as \code{s2} or \code{SD2}.}
 
-\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
-formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to
 report no subscript.}
 
 \item{sym_x}{Character scalar. Symbol to represent x in formula when
@@ -47,19 +49,19 @@ from raw data (\code{x}).}
 }
 \value{
 \code{solve_sd()} returns a list with the interim values and
-calculations (\code{x}, \code{SS}, \code{n}, \code{s2}), the final value
-(\code{s}), the solution string (\code{solution}), and the bare formula
-(\code{formula}) in LaTeX format. \code{sigma2_formula} returns just the
-bare formula in LaTeX format as a character string.
+calculations (\code{x}, \code{SS}, \code{n}, \code{s2}), the final value (both as \code{s} and as
+\code{SD}), the solution string (\code{solution}), and the bare formula (\code{formula})
+in LaTeX format. \code{sigma2_formula} returns just the bare formula in LaTeX
+format as a character string.
 }
 \description{
 Calculates sample standard deviation (\eqn{s = \sqrt[SS / (n - 1)]}) either
-from a set of raw values (\code{x}) OR from the sum of squares (\code{SS})
-and sample size (\code{n}), OR from the sample variance (\code{s2}). If
-providing raw data, it will include the calculation of SS in the solution
-string. If providing \code{SS} and \code{n}, it will include the calculation
-of the sample variance in the solution string. Otherwise, if only \code{s2}
-is provided, will simply show the final calculation (\eqn{\sqrt(s^2)}).
+from a set of raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample
+size (\code{n}), OR from the sample variance (\code{s2}). If providing raw data, it
+will include the calculation of SS in the solution string. If providing \code{SS}
+and \code{n}, it will include the calculation of the sample variance in the
+solution string. Otherwise, if only \code{s2} is provided, will simply show the
+final calculation (\eqn{\sqrt(s^2)}).
 }
 \examples{
 # Simple usage: generate raw data, produce results

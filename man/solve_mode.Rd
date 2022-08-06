@@ -9,16 +9,16 @@ solve_mode(x, sub_val = "", ...)
 \arguments{
 \item{x}{Numeric vector.}
 
-\item{sub_val}{Character scalar. Subscript for the value to be calculated in the
-formula, in this case the mode (e.g., \eqn{Mode_{x}}). Leave empty to
+\item{sub_val}{Character scalar. Subscript for the value to be calculated in
+the formula, in this case the mode (e.g., \eqn{Mode_{x}}). Leave empty to
 report no subscript.}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link{handcalcs_defaults}}).}
 }
 \value{
-A list with the mode value(s) (\code{Mode}) and the solution
-(\code{solution}) in LaTeX format.
+A list with the mode value(s) (\code{Mode}) and the solution (\code{solution})
+in LaTeX format.
 }
 \description{
 Mode: calculate value (with rounding) and present solutions

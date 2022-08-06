@@ -6,15 +6,15 @@
 #'
 #' \describe{
 #'
-#' \item{\code{above}}{Calculates the area above the given value of `z`.}
+#' \item{`above`}{Calculates the area above the given value of `z`.}
 #'
-#' \item{\code{below}}{Calculates the area above the given value of `z`.}
+#' \item{`below`}{Calculates the area above the given value of `z`.}
 #'
-#' \item{\code{between}}{Calculates the area under the curve between two values
+#' \item{`between`}{Calculates the area under the curve between two values
 #' of `z`. When a single value of `z` is provided, calculates the area under the
 #' curve between the positive and negative equivalent values of `z`.}
 #'
-#' \item{\code{tails}}{Calculates the area under the curve more extreme (i.e.,
+#' \item{`tails`}{Calculates the area under the curve more extreme (i.e.,
 #' in the tails) of the two values of `z`. Note that when two values are
 #' provided, one must be positive and one negative. When a single value of `z`
 #' is provided, calculates the area under the curve more extreme than the
@@ -198,16 +198,16 @@ solve_z_to_auc <- function(z,
 #'
 #' \describe{
 #'
-#' \item{\code{above}}{Value of `a` is the area above the value of `z` to be
+#' \item{`above`}{Value of `a` is the area above the value of `z` to be
 #' calculated.}
 #'
-#' \item{\code{above}}{Value of `a` is the area below the value of `z` to be
+#' \item{`below`}{Value of `a` is the area below the value of `z` to be
 #' calculated.}
 #'
-#' \item{\code{between}}{Value of `a` is the area between two values of `z`.
+#' \item{`between`}{Value of `a` is the area between two values of `z`.
 #' Always returns a positive and negative value of `z`.}
 #'
-#' \item{\code{tails}}{Value of `a` is the area more extreme than two values of
+#' \item{`tails`}{Value of `a` is the area more extreme than two values of
 #' `z` (i.e., in the tails). (Note: this is the total area in the tails, not
 #' just in one tail.) Always returns a positive and negative value of `z`.}
 #'

@@ -9,52 +9,52 @@
 #' environment), you can provide the named value as an argument to any solution
 #' function. If you wish to change the global defaults (applied to all
 #' functions), set the corresponding value of the named list ("handcalcs") in
-#' \code{options()}.
+#' [options()].
 #'
 #'
 #' \describe{
 #'
-#' \item{\code{round_to}}{Round based on the number of digits past the decimal
+#' \item{`round_to`}{Round based on the number of digits past the decimal
 #' ('decimal'), or based on the number of significant figures ('sigfig'). Note:
 #' this parameter can only be set as a global default, not within individual
 #' functions.}
 #'
-#' \item{\code{round_interim}}{Number of digits to round for interim
-#' calculations (default = 4). Note: It is strongly recommended that you change
-#' this value if you are using sigfigs instead of decimals for rounding.}
+#' \item{`round_interim`}{Number of digits to round for interim calculations
+#' (default = 4). Note: It is strongly recommended that you change this value if
+#' you are using sigfigs instead of decimals for rounding.}
 #'
-#' \item{\code{round_final}}{Number of digits to round for final result (default
-#' = 4). Note: It is strongly recommended that you change this value if you are
+#' \item{`round_final`}{Number of digits to round for final result (default =
+#' 4). Note: It is strongly recommended that you change this value if you are
 #' using sigfigs instead of decimals for rounding.}
 #'
-#' \item{\code{round_z}}{Number of digits to round values of `z`, such as for
+#' \item{`round_z`}{Number of digits to round values of `z`, such as for
 #' *z*-scores (default = 2). This is primarily useful to ensure that the *z*
 #' values being reported conform to the values presented in a z-table. Note that
 #' this overrides `round_interim` and `round_final`.}
 #'
-#' \item{\code{round_t}}{Number of digits to round values of `t`, such as for
+#' \item{`round_t`}{Number of digits to round values of `t`, such as for
 #' critical values of *t* (default = 3). This is primarily useful to ensure that
 #' the *t* values being reported conform to the values presented in a t-table.
 #' Note that this overrides `round_interim` and `round_final`.}
 #'
-#' \item{\code{add_math}}{Enclose solution string in LaTeX math block (`$$`;
-#' default = TRUE)? If set to `FALSE`, must manually include the math block tags
-#' in order for the solution to render properly.}
+#' \item{`add_math`}{Enclose solution string in LaTeX math block (`$$`; default
+#' = TRUE)? If set to `FALSE`, must manually include the math block tags in
+#' order for the solution to render properly.}
 #'
-#' \item{\code{add_aligned}}{Enclose solution in LaTeX aligned block
+#' \item{`add_aligned`}{Enclose solution in LaTeX aligned block
 #' (`\begin{aligned}`) (default = TRUE)? If set to `FALSE`, allows for multiple
 #' solutions to be set in the same aligned environment.}
 #'
-#' \item{\code{use_aligned}}{Use "&=" instead of "=" in solution string to
-#' generate aligned equations (default = TRUE).}
+#' \item{`use_aligned`}{Use "&=" instead of "=" in solution string to generate
+#' aligned equations (default = TRUE).}
 #'
-#' \item{\code{show_summation}}{Logical. Should explicit summation steps (e.g.,
-#' for sum of squares) be made explicit? If true, will include a step after a
+#' \item{`show_summation`}{Logical. Should explicit summation steps (e.g., for
+#' sum of squares) be made explicit? If true, will include a step after a
 #' formula shows \eqn{\Sum{X}} that makes the summation explicit (e.g.,
 #' \eqn{X_{1} + X_{2} + ... + X_{n}}). If false, will skip that step. (See
 #' [summation()].)}
 #'
-#' \item{\code{abbrev_sum}}{Numeric scalar (default = 6). If `show_summation` is
+#' \item{`abbrev_sum`}{Numeric scalar (default = 6). If `show_summation` is
 #' TRUE, at what length of `x` should it abbreviate the explicit summation
 #' within the solution using an ellipsis? If the length of `x` is greater than
 #' or equal to `abbrev_sum`, it will abbreviate the summation sequence (e.g., "1

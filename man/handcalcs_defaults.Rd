@@ -20,7 +20,7 @@ manually, (e.g., if you wish to present multiple equations within the same
 environment), you can provide the named value as an argument to any solution
 function. If you wish to change the global defaults (applied to all
 functions), set the corresponding value of the named list ("handcalcs") in
-\code{options()}.
+\code{\link[=options]{options()}}.
 
 \describe{
 
@@ -29,12 +29,12 @@ functions), set the corresponding value of the named list ("handcalcs") in
 this parameter can only be set as a global default, not within individual
 functions.}
 
-\item{\code{round_interim}}{Number of digits to round for interim
-calculations (default = 4). Note: It is strongly recommended that you change
-this value if you are using sigfigs instead of decimals for rounding.}
+\item{\code{round_interim}}{Number of digits to round for interim calculations
+(default = 4). Note: It is strongly recommended that you change this value if
+you are using sigfigs instead of decimals for rounding.}
 
-\item{\code{round_final}}{Number of digits to round for final result (default
-= 4). Note: It is strongly recommended that you change this value if you are
+\item{\code{round_final}}{Number of digits to round for final result (default =
+4). Note: It is strongly recommended that you change this value if you are
 using sigfigs instead of decimals for rounding.}
 
 \item{\code{round_z}}{Number of digits to round values of \code{z}, such as for
@@ -47,19 +47,19 @@ critical values of \emph{t} (default = 3). This is primarily useful to ensure th
 the \emph{t} values being reported conform to the values presented in a t-table.
 Note that this overrides \code{round_interim} and \code{round_final}.}
 
-\item{\code{add_math}}{Enclose solution string in LaTeX math block (\verb{$$};
-default = TRUE)? If set to \code{FALSE}, must manually include the math block tags
-in order for the solution to render properly.}
+\item{\code{add_math}}{Enclose solution string in LaTeX math block (\verb{$$}; default
+= TRUE)? If set to \code{FALSE}, must manually include the math block tags in
+order for the solution to render properly.}
 
 \item{\code{add_aligned}}{Enclose solution in LaTeX aligned block
 (\verb{\\begin\{aligned\}}) (default = TRUE)? If set to \code{FALSE}, allows for multiple
 solutions to be set in the same aligned environment.}
 
-\item{\code{use_aligned}}{Use "&=" instead of "=" in solution string to
-generate aligned equations (default = TRUE).}
+\item{\code{use_aligned}}{Use "&=" instead of "=" in solution string to generate
+aligned equations (default = TRUE).}
 
-\item{\code{show_summation}}{Logical. Should explicit summation steps (e.g.,
-for sum of squares) be made explicit? If true, will include a step after a
+\item{\code{show_summation}}{Logical. Should explicit summation steps (e.g., for
+sum of squares) be made explicit? If true, will include a step after a
 formula shows \eqn{\Sum{X}} that makes the summation explicit (e.g.,
 \eqn{X_{1} + X_{2} + ... + X_{n}}). If false, will skip that step. (See
 \code{\link[=summation]{summation()}}.)}

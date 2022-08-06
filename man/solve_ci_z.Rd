@@ -5,7 +5,7 @@
 \alias{ci_z_formula}
 \title{Confidence Intervals Around Sample Mean (using \emph{z} distribution)}
 \usage{
-solve_ci_z(M, sigma, N, sigma_M, level = 0.95, ...)
+solve_ci_z(M, sigma, n, sigma_M, level = 0.95, ...)
 
 ci_z_formula(level = 0.95, ...)
 }
@@ -15,10 +15,10 @@ ci_z_formula(level = 0.95, ...)
 \item{sigma}{Numeric scalar. Population standard deviation. Required if
 sigma_M is not provided.}
 
-\item{N}{Numeric scalar. Sample size. Required if sigma_M is not provided.}
+\item{n}{Numeric scalar. Sample size. Required if sigma_M is not provided.}
 
 \item{sigma_M}{Numeric scalar. Standard error of the mean. If not provided,
-will be calculated from \code{sigma} and \code{N} (using \code{\link[=solve_sigma_M]{solve_sigma_M()}}) and
+will be calculated from \code{sigma} and \code{n} (using \code{\link[=solve_sigma_M]{solve_sigma_M()}}) and
 included in the solution string.}
 
 \item{level}{Numeric scalar. Confidence level; defaults to 0.95 (95\%
@@ -29,7 +29,7 @@ confidence intervals).}
 }
 \value{
 \code{solve_ci_z()} returns a list with the provided values (\code{M}, \code{sigma},
-\code{N}, \code{sigma_M}), the interim calculations (\code{sigma_M}, \code{z_crit},
+\code{n}, \code{sigma_M}), the interim calculations (\code{sigma_M}, \code{z_crit},
 \code{marg_err}), the final value (\code{CI_lower}, \code{CI_upper}, as well as a named
 vector containing both values \code{CI}), the solution string (\code{solution}), and
 the bare formula (\code{formula}) in LaTeX format. \code{ci_z_formula()} returns just
@@ -39,7 +39,7 @@ the bare formula in LaTeX format as a character string.
 Calculates confidence intervals around a sample mean when the population
 standard deviation (\eqn{\sigma}) is known: \eqn{M \pm (z_{1 -
 \alpha/2})(\sigma_{M})}. May either provide \code{sigma_M}, or that value can be
-calculated from \code{sigma} and \code{N}.
+calculated from \code{sigma} and \code{n}.
 }
 \details{
 Note that the critical value of \emph{z} (\code{z_crit}) is rounded to the value of
@@ -53,12 +53,12 @@ solve_ci_z(M = 5, sigma_M = 0.2)
 # Defaults to 95\% CIs, but other levels can be specified:
 solve_ci_z(M = 5, sigma_M = 0.2, level = 0.99)
 
-# Will calculate sigma_M if sigma and N are provided, and include the
+# Will calculate sigma_M if sigma and n are provided, and include the
 # calculation in the solution string
-solve_ci_z(M = 5, sigma = 2, N = 100)
+solve_ci_z(M = 5, sigma = 2, n = 100)
 
-# Note: if sigma_M is provided, will ignore sigma and N values
-solve_ci_z(M = 5, sigma = 2, N = 100, sigma_M = 4)
+# Note: if sigma_M is provided, will ignore sigma and n values
+solve_ci_z(M = 5, sigma = 2, n = 100, sigma_M = 4)
 
 # If you just want the formula:
 ci_z_formula()

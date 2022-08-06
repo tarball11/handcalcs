@@ -44,16 +44,16 @@ from raw data (\code{x}).}
 }
 \value{
 \code{solve_sigma2()} returns a list with the interim values and
-calculations (\code{x}, \code{SS}, \code{n}), the final value
-(\code{sigma2}), the solution string (\code{solution}), and the bare
-formula (\code{formula}) in LaTeX format. \code{sigma2_formula} returns
-just the bare formula in LaTeX format as a character string.
+calculations (\code{x}, \code{SS}, \code{n}), the final value (\code{sigma2}), the solution
+string (\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
+\code{sigma2_formula} returns just the bare formula in LaTeX format as a
+character string.
 }
 \description{
 Calculates population variance (\eqn{\sigma^2 = SS / n}) either from a set of
-raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size
-(\code{n}). If providing raw data, it will include the calculation of SS in
-the solution string.
+raw values (\code{x}) OR from the sum of squares (\code{SS}) and sample size (\code{n}). If
+providing raw data, it will include the calculation of SS in the solution
+string.
 }
 \examples{
 # Simple usage: generate raw data, produce results

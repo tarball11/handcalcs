@@ -3,15 +3,15 @@
 #' Calculates and provides solutions for the standard error of the mean (aka
 #' standard deviation of the sampling distribution of the mean) when the
 #' population standard deviation (\eqn{\sigma}) is known (\eqn{\sigma_{M} = \sigma
-#' / \sqrt (N)}).
+#' / \sqrt (n)}).
 #'
 #' @param sigma Numeric scalar. Population standard deviation.
-#' @param N Numeric scalar. Sample size.
+#' @param n Numeric scalar. Sample size.
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]
 #'
 #' @return `solve_sigma_M()` returns a list with the provided values (`sigma`,
-#'   `N`), the interim calculations (`sqrtN`), the final value (`sigma_M`), the
+#'   `n`), the interim calculations (`sqrt_n`), the final value (`sigma_M`), the
 #'   solution string (`solution`), and the bare formula (`formula`) in LaTeX
 #'   format. `sigma_M_formula()` returns just the bare formula in LaTeX format
 #'   as a character string.
@@ -19,21 +19,21 @@
 #' @export
 #'
 #' @examples
-#' solve_sigma_M(sigma = 5, N = 25)
-#' solve_sigma_M(sigma = 5, N = 50)
-#' solve_sigma_M(sigma = 5, N = 100)
+#' solve_sigma_M(sigma = 5, n = 25)
+#' solve_sigma_M(sigma = 5, n = 50)
+#' solve_sigma_M(sigma = 5, n = 100)
 #'
 #' # If you just want the bare formula as a string, use a formula function():
 #' sigma_M_formula()
 #'
 solve_sigma_M<- function(sigma,
-												 N,
+												 n,
 												 ...) {
 
 	# Check argument validity:
-	stopifnot(is.numeric(sigma), is.numeric(N))
-	stopifnot(length(sigma) == 1, length(N) == 1)
-	stopifnot(sigma > 0, N > 0)
+	stopifnot(is.numeric(sigma), is.numeric(n))
+	stopifnot(length(sigma) == 1, length(n) == 1)
+	stopifnot(sigma > 0, n > 0)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -46,8 +46,8 @@ solve_sigma_M<- function(sigma,
 	sigma <- rnd(sigma, opts$round_interim)
 
 	# Calculate sigma_M:
-	sqrtN <- rnd(sqrt(N), opts$round_interim)
-	sigma_M <- rnd((sigma/sqrtN), opts$round_final)
+	sqrt_n <- rnd(sqrt(n), opts$round_interim)
+	sigma_M <- rnd((sigma/sqrt_n), opts$round_final)
 
 	# Get base formula without LaTeX math/aligned blocks
 	sigma_M.f <- sigma_M_formula(use_aligned = opts$use_aligned,
@@ -57,8 +57,8 @@ solve_sigma_M<- function(sigma,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		sigma_M.f,
-		"<<equals>> \\frac{<<sigma>>}{\\sqrt{<<N>>}} = \\frac{<<sigma>>}{<<sqrtN>>} = \\mathbf{<<sigma_M>>}",
-		sqrtN = fmt(sqrtN, get_digits(sqrtN, opts$round_interim)),
+		"<<equals>> \\frac{<<sigma>>}{\\sqrt{<<n>>}} = \\frac{<<sigma>>}{<<sqrt_n>>} = \\mathbf{<<sigma_M>>}",
+		sqrt_n = fmt(sqrt_n, get_digits(sqrt_n, opts$round_interim)),
 		# Round based on the final calculated value unless round_to is set to
 		# 'sigfigs', in which case just present the final rounded value as is.
 		sigma_M = ifelse(opts$round_to == 'sigfigs',
@@ -71,8 +71,8 @@ solve_sigma_M<- function(sigma,
 
 	# Return list containing both values and solution string
 	list(sigma = sigma,
-			 N = N,
-			 sqrtN = sqrtN,
+			 n = n,
+			 sqrt_n = sqrt_n,
 			 sigma_M = sigma_M,
 			 solution = solution,
 			 formula = sigma_M.f)
@@ -92,7 +92,7 @@ sigma_M_formula <- function(...) {
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
 	# Create the formula string:
-	solution<- lglue("\\sigma_{M} <<equals>> \\frac{\\sigma}{\\sqrt{N}}")
+	solution<- lglue("\\sigma_{M} <<equals>> \\frac{\\sigma}{\\sqrt{n}}")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -115,22 +115,22 @@ sigma_M_formula <- function(...) {
 #' @param mu Numeric scalar. Population mean.
 #' @param sigma Numeric scalar. Population standard deviation. Required if
 #'   sigma_M is not provided.
-#' @param N Numeric scalar. Sample size. Required if sigma_M is not provided.
+#' @param n Numeric scalar. Sample size. Required if sigma_M is not provided.
 #' @param sigma_M Numeric scalar. Standard error of the mean. If not provided,
-#'   will be calculated from `sigma` and `N` (using [solve_sigma_M()]) and
+#'   will be calculated from `sigma` and `n` (using [solve_sigma_M()]) and
 #'   included in the solution string.
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]
 #'
 #' @return `solve_z_one_sample()` returns a list with the provided values (`M`, `mu`,
-#'   `sigma`, `N`), the interim calculations (`sigma_M`, `M_diff`), the final
+#'   `sigma`, `n`), the interim calculations (`sigma_M`, `M_diff`), the final
 #'   value (`z_obt`), the solution string (`solution`), and the bare formula
 #'   (`formula`) in LaTeX format. `z_one_sample_formula()` returns just the bare
 #'   formula in LaTeX format as a character string.
 #' @export
 #'
 #' @examples
-#' solve_z_one_sample(M = 6, mu = 5, sigma = 2, N = 100)
+#' solve_z_one_sample(M = 6, mu = 5, sigma = 2, n = 100)
 #'
 #' # If you just want the formula:
 #' z_one_sample_formula()
@@ -138,15 +138,15 @@ sigma_M_formula <- function(...) {
 solve_z_one_sample <- function(M,
 															 mu,
 															 sigma,
-															 N,
+															 n,
 															 sigma_M,
 															 ...) {
 
 	stopifnot(is.numeric(M), is.numeric(mu))
 	stopifnot(length(M) == 1, length(mu) == 1)
 
-	if(missing(sigma_M) & (missing(sigma) | missing(N))) {
-		stop('Must supply either sigma_M or sigma and N')
+	if(missing(sigma_M) & (missing(sigma) | missing(n))) {
+		stop('Must supply either sigma_M or sigma and n')
 	}
 
 	# Get list of options (allowing user to override defaults) for rounding
@@ -156,15 +156,15 @@ solve_z_one_sample <- function(M,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate sigma_M from sigma and N
+	# Calculate sigma_M from sigma and n
 	if(missing(sigma_M)) {
-		stopifnot(is.numeric(sigma), is.numeric(N))
-		stopifnot(length(sigma) == 1, length(N) == 1)
-		stopifnot(sigma > 0, N > 0)
-		stopifnot(round(N) == N)
+		stopifnot(is.numeric(sigma), is.numeric(n))
+		stopifnot(length(sigma) == 1, length(n) == 1)
+		stopifnot(sigma > 0, n > 0)
+		stopifnot(round(n) == n)
 
 		sigma_M.lst <- solve_sigma_M(sigma = sigma,
-																 N = N,
+																 n = n,
 																 round_interim = opts$round_interim,
 																 round_final = opts$round_interim,
 																 add_math = FALSE,
@@ -210,7 +210,7 @@ solve_z_one_sample <- function(M,
 	list(M = M,
 			 mu = mu,
 			 sigma = if(missing(sigma)) NULL else sigma,
-			 N = if(missing(N)) NULL else N,
+			 n = if(missing(n)) NULL else n,
 			 sigma_M = sigma_M,
 			 M_diff = M_diff,
 			 z_obt = z_obt,

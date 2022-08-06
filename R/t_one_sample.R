@@ -2,15 +2,15 @@
 #'
 #' Calculates and provides solutions for the standard error of the mean (aka
 #' standard deviation of the sampling distribution of the mean) using the sample
-#' standard deviation (\eqn{s_{M} = s / \sqrt (N)}).
+#' standard deviation (\eqn{s_{M} = s / \sqrt{n}}).
 #'
 #' @param SD Numeric scalar. Sample standard deviation.
-#' @param N Numeric scalar. Sample size.
+#' @param n Numeric scalar. Sample size.
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]
 #'
-#' @return `solve_s_M()` returns a list with the provided values (`SD`, `N`),
-#'   the interim calculations (`sqrtN`), the final value (`s_M`), the solution
+#' @return `solve_s_M()` returns a list with the provided values (`SD`, `n`),
+#'   the interim calculations (`sqrt_n`), the final value (`s_M`), the solution
 #'   string (`solution`), and the bare formula (`formula`) in LaTeX format.
 #'   `s_M_formula()` returns just the bare formula in LaTeX format as a
 #'   character string.
@@ -18,21 +18,21 @@
 #' @export
 #'
 #' @examples
-#' solve_s_M(SD = 5, N = 25)
-#' solve_s_M(SD = 5, N = 50)
-#' solve_s_M(SD = 5, N = 100)
+#' solve_s_M(SD = 5, n = 25)
+#' solve_s_M(SD = 5, n = 50)
+#' solve_s_M(SD = 5, n = 100)
 #'
 #' # If you just want the bare formula as a string, use a formula function():
 #' s_M_formula()
 #'
 solve_s_M<- function(SD,
-										 N,
+										 n,
 										 ...) {
 
 	# Check argument validity:
-	stopifnot(is.numeric(SD), is.numeric(N))
-	stopifnot(length(SD) == 1, length(N) == 1)
-	stopifnot(SD > 0, N > 0)
+	stopifnot(is.numeric(SD), is.numeric(n))
+	stopifnot(length(SD) == 1, length(n) == 1)
+	stopifnot(SD > 0, n > 0)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -45,8 +45,8 @@ solve_s_M<- function(SD,
 	SD <- rnd(SD, opts$round_interim)
 
 	# Calculate s_M:
-	sqrtN <- rnd(sqrt(N), opts$round_interim)
-	s_M <- rnd((SD/sqrtN), opts$round_final)
+	sqrt_n <- rnd(sqrt(n), opts$round_interim)
+	s_M <- rnd((SD/sqrt_n), opts$round_final)
 
 	# Get base formula without LaTeX math/aligned blocks
 	s_M.f <- s_M_formula(use_aligned = opts$use_aligned,
@@ -56,8 +56,8 @@ solve_s_M<- function(SD,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		s_M.f,
-		"<<equals>> \\frac{<<SD>>}{\\sqrt{<<N>>}} = \\frac{<<SD>>}{<<sqrtN>>} = \\mathbf{<<s_M>>}",
-		sqrtN = fmt(sqrtN, get_digits(sqrtN, opts$round_interim)),
+		"<<equals>> \\frac{<<SD>>}{\\sqrt{<<n>>}} = \\frac{<<SD>>}{<<sqrt_n>>} = \\mathbf{<<s_M>>}",
+		sqrt_n = fmt(sqrt_n, get_digits(sqrt_n, opts$round_interim)),
 		# Round based on the final calculated value unless round_to is set to
 		# 'sigfigs', in which case just present the final rounded value as is.
 		s_M = ifelse(opts$round_to == 'sigfigs',
@@ -71,8 +71,8 @@ solve_s_M<- function(SD,
 	# Return list containing both values and solution string
 	list(SD = SD,
 			 s = SD,
-			 N = N,
-			 sqrtN = sqrtN,
+			 n = n,
+			 sqrt_n = sqrt_n,
 			 s_M = s_M,
 			 solution = solution,
 			 formula = s_M.f)
@@ -92,7 +92,7 @@ s_M_formula <- function(...) {
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
 	# Create the formula string:
-	solution<- lglue("s_{M} <<equals>> \\frac{s}{\\sqrt{N}}")
+	solution<- lglue("s_{M} <<equals>> \\frac{s}{\\sqrt{n}}")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -116,22 +116,22 @@ s_M_formula <- function(...) {
 #'@param mu Numeric scalar. Population mean.
 #'@param SD Numeric scalar. Sample standard deviation. Required if s_M is not
 #'  provided.
-#'@param N Numeric scalar. Sample size. Required if s_M is not provided.
+#'@param n Numeric scalar. Sample size. Required if s_M is not provided.
 #'@param s_M Numeric scalar. Standard error of the mean. If not provided, will
-#'  be calculated from `SD` and `N` (using [solve_s_M()]) and included in the
+#'  be calculated from `SD` and `n` (using [solve_s_M()]) and included in the
 #'  solution string.
 #'@param ... Additional arguments to override default behaviors (see
 #'  [handcalcs_defaults()]
 #'
 #'@return `solve_t_one_sample()` returns a list with the provided values (`M`,
-#'  `mu`, `SD`, `N`), the interim calculations (`df`, `s_M`, `M_diff`), the
+#'  `mu`, `SD`, `n`), the interim calculations (`df`, `s_M`, `M_diff`), the
 #'  final value (`t_obt`), the solution string (`solution`), and the bare
 #'  formula (`formula`) in LaTeX format. `t_one_sample_formula()` returns just
 #'  the bare formula in LaTeX format as a character string.
 #'@export
 #'
 #' @examples
-#' solve_t_one_sample(M = 6, mu = 5, SD = 2, N = 100)
+#' solve_t_one_sample(M = 6, mu = 5, SD = 2, n = 100)
 #'
 #' # If you just want the formula:
 #' t_one_sample_formula()
@@ -139,15 +139,15 @@ s_M_formula <- function(...) {
 solve_t_one_sample <- function(M,
 															 mu,
 															 SD,
-															 N,
+															 n,
 															 s_M,
 															 ...) {
 
 	stopifnot(is.numeric(M), is.numeric(mu))
 	stopifnot(length(M) == 1, length(mu) == 1)
 
-	if(missing(s_M) & (missing(SD) | missing(N))) {
-		stop('Must supply either s_M or SD and N')
+	if(missing(s_M) & (missing(SD) | missing(n))) {
+		stop('Must supply either s_M or SD and n')
 	}
 
 	# Get list of options (allowing user to override defaults) for rounding
@@ -157,15 +157,15 @@ solve_t_one_sample <- function(M,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate s_M from SD and N
+	# Calculate s_M from SD and n
 	if(missing(s_M)) {
-		stopifnot(is.numeric(SD), is.numeric(N))
-		stopifnot(length(SD) == 1, length(N) == 1)
-		stopifnot(SD > 0, N > 0)
-		stopifnot(round(N) == N)
+		stopifnot(is.numeric(SD), is.numeric(n))
+		stopifnot(length(SD) == 1, length(n) == 1)
+		stopifnot(SD > 0, n > 0)
+		stopifnot(round(n) == n)
 
 		s_M.lst <- solve_s_M(SD = SD,
-												 N = N,
+												 n = n,
 												 round_interim = opts$round_interim,
 												 round_final = opts$round_interim,
 												 add_math = FALSE,
@@ -212,7 +212,7 @@ solve_t_one_sample <- function(M,
 			 mu = mu,
 			 SD = if(missing(SD)) NULL else SD,
 			 s = if(missing(SD)) NULL else SD,
-			 N = if(missing(N)) NULL else N,
+			 n = if(missing(n)) NULL else n,
 			 s_M = s_M,
 			 M_diff = M_diff,
 			 t_obt = t_obt,
