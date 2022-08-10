@@ -5,12 +5,13 @@
 \alias{s_M_formula}
 \title{Standard Error of the Mean (Unknown Population Standard Deviation)}
 \usage{
-solve_s_M(SD, n, ...)
+solve_s_M(s, SD, n, ...)
 
 s_M_formula(...)
 }
 \arguments{
-\item{SD}{Numeric scalar. Sample standard deviation.}
+\item{s, SD}{Numeric scalar. Sample standard deviation. May be named either
+\code{s} or \code{SD}.}
 
 \item{n}{Numeric scalar. Sample size.}
 
@@ -18,7 +19,7 @@ s_M_formula(...)
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}}
 }
 \value{
-\code{solve_s_M()} returns a list with the provided values (\code{SD}, \code{n}),
+\code{solve_s_M()} returns a list with the provided values (\code{s}, \code{SD}, \code{n}),
 the interim calculations (\code{sqrt_n}), the final value (\code{s_M}), the solution
 string (\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
 \code{s_M_formula()} returns just the bare formula in LaTeX format as a
@@ -30,9 +31,9 @@ standard deviation of the sampling distribution of the mean) using the sample
 standard deviation (\eqn{s_{M} = s / \sqrt{n}}).
 }
 \examples{
-solve_s_M(SD = 5, n = 25)
-solve_s_M(SD = 5, n = 50)
-solve_s_M(SD = 5, n = 100)
+solve_s_M(s = 5, n = 25)
+solve_s_M(s = 5, n = 50)
+solve_s_M(s = 5, n = 100)
 
 # If you just want the bare formula as a string, use a formula function():
 s_M_formula()

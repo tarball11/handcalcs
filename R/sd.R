@@ -104,8 +104,8 @@ sigma_formula <- function(sub_val = "",
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
-#' @param s2,SD2  Numeric scalar: sample variance (\eqn{s^2}). May name it
-#'   either as `s2` or `SD2`.
+#' @param s2,SD2  Numeric scalar: sample variance (\eqn{s^2}). May be named
+#'   either `s2` or `SD2`.
 #' @param sub_val Character scalar. Subscript for the value to be calculated in
 #'   the formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to
 #'   report no subscript.

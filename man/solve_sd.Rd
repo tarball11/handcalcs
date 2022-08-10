@@ -27,8 +27,8 @@ sd_formula(sub_val = "", ...)
 
 \item{n}{Numeric scalar: sample size.}
 
-\item{s2, SD2}{Numeric scalar: sample variance (\eqn{s^2}). May name it
-either as \code{s2} or \code{SD2}.}
+\item{s2, SD2}{Numeric scalar: sample variance (\eqn{s^2}). May be named
+either \code{s2} or \code{SD2}.}
 
 \item{sub_val}{Character scalar. Subscript for the value to be calculated in
 the formula, in this case the mean (e.g., \eqn{s_{x}}). Leave empty to

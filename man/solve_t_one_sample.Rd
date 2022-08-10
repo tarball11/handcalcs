@@ -5,7 +5,7 @@
 \alias{t_one_sample_formula}
 \title{One-sample \emph{t}-test}
 \usage{
-solve_t_one_sample(M, mu, SD, n, s_M, ...)
+solve_t_one_sample(M, mu, s, SD, n, s_M, ...)
 
 t_one_sample_formula(...)
 }
@@ -14,13 +14,13 @@ t_one_sample_formula(...)
 
 \item{mu}{Numeric scalar. Population mean.}
 
-\item{SD}{Numeric scalar. Sample standard deviation. Required if s_M is not
-provided.}
+\item{s, SD}{Numeric scalar. Sample standard deviation. Required if s_M is not
+provided. May be named either \code{s} or \code{SD}.}
 
 \item{n}{Numeric scalar. Sample size. Required if s_M is not provided.}
 
 \item{s_M}{Numeric scalar. Standard error of the mean. If not provided, will
-be calculated from \code{SD} and \code{n} (using \code{\link[=solve_s_M]{solve_s_M()}}) and included in the
+be calculated from \code{s} and \code{n} (using \code{\link[=solve_s_M]{solve_s_M()}}) and included in the
 solution string.}
 
 \item{...}{Additional arguments to override default behaviors (see
@@ -28,7 +28,7 @@ solution string.}
 }
 \value{
 \code{solve_t_one_sample()} returns a list with the provided values (\code{M},
-\code{mu}, \code{SD}, \code{n}), the interim calculations (\code{df}, \code{s_M}, \code{M_diff}), the
+\code{mu}, \code{s}, \code{SD}, \code{n}), the interim calculations (\code{df}, \code{s_M}, \code{M_diff}), the
 final value (\code{t_obt}), the solution string (\code{solution}), and the bare
 formula (\code{formula}) in LaTeX format. \code{t_one_sample_formula()} returns just
 the bare formula in LaTeX format as a character string.
