@@ -103,7 +103,8 @@ solve_x_to_z <- function(x,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		Z.formula,
-		"<<equals>> \\frac{<<x>> - <<M>>}{<<SD>>}",
+		# Put negative values of M in brackets
+		"<<equals>> \\frac{<<x>> - <<(M)>>}{<<SD>>}",
 		"<<equals>> \\frac{<<M_diff>>}{<<SD>>}",
 		"<<equals>> \\mathbf{<<z>>}",
 		# Round based on the precision of x and the final calculated value unless
@@ -206,7 +207,8 @@ solve_z_to_x <- function(z,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		X.formula,
-		"<<equals>> (<<z>>)(<<SD>>) + <<M>>",
+		# Put negative values of M in brackets
+		"<<equals>> (<<z>>)(<<SD>>) + <<(M)>>",
 		"<<equals>> <<zSD>> + <<M>>",
 		"<<equals>> \\mathbf{<<x>>}",
 		# Round based on the precision of x and the final calculated value unless

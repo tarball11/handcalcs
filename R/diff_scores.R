@@ -66,17 +66,22 @@ solve_diff_score <- function(x_1,
 																		add_math = FALSE,
 																		add_aligned = FALSE)
 	# Format values for solution string:
-	x_1.fmt <- fmt(x_1, get_digits(c(x_1, x_2)))
-	x_2.fmt <- fmt(x_2, get_digits(c(x_1, x_2)))
-	x_D.fmt <- fmt(x_D, get_digits(x_D))
+	x_digits <- get_digits(c(x_1, x_2))
+	x_D_digits <- get_digits(x_D)
 
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		x_D.formula,
 		"<<equals>> <<D.1>>",
 		"<<equals>> <<D.2>>",
-		D.1 = comma_list(lglue("(<<x_2.fmt>> - <<x_1.fmt>>)"), abbrev_at = abbrev_at),
-		D.2 = comma_list(lglue("<<x_D.fmt>>"), abbrev_at = abbrev_at))
+		# Put negative values of x_1 in brackets
+		D.1 = comma_list(lglue("(<<x_2>> - <<[x_1]>>)",
+													 x_2 = fmt(x_2, x_digits),
+													 x_1 = fmt(x_1, x_digits)),
+										 abbrev_at = abbrev_at),
+		D.2 = comma_list(lglue("<<x_D>>",
+													 x_D = fmt(x_D, get_digits(x_D))),
+										 abbrev_at = abbrev_at))
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -213,7 +218,8 @@ solve_mean_diff <- function(x_D,
 		# Create the solution string, with rounded values (minimally displayed)
 		solution <- glue_solution(
 			M_D.formula,
-			"<<equals>> <<M_2>> - <<M_1>>",
+			# Put negative values of M_1 in brackets
+			"<<equals>> <<M_2>> - <<(M_1)>>",
 			"<<equals>> \\mathbf{<<M_D>>}",
 			# Print the final calculated value minimally rounded unless round_to is
 			# set to 'sigfigs', in which case just present the final rounded value as is.

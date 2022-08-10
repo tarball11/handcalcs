@@ -116,10 +116,8 @@ solve_sum_squares <- function(x,
 		if(opts$show_summation) {"<<equals>> <<Sum.2>>"},
 		if(opts$show_summation) {"<<equals>> <<Sum.3>>"},
 		"<<equals>> \\mathbf{<<SS>>}",
-		# Put M in brackets if it's negative (avoid confusion in deviation scores)
-		Sum.1 = summation(lglue("(<<x>> - <<M>>)^2",
-														M = ifelse(M < 0, paste0('[', M, ']'), M)),
-											abbrev_sum = opts$abbrev_sum),
+		# Put x & M in brackets if negative (avoid confusion in deviation scores)
+		Sum.1 = summation(lglue("(<<[x]>> - <<[M]>>)^2"), abbrev_sum = opts$abbrev_sum),
 		Sum.2 = summation(lglue("(<<Dev>>)^2"), abbrev_sum = opts$abbrev_sum),
 		Sum.3 = summation(lglue("<<DevSq>>"), abbrev_sum = opts$abbrev_sum),
 		# Round based on the precision of x and the final calculated value unless
@@ -274,14 +272,13 @@ solve_sum_squares2 <- function(x,
 		"<<equals>> \\mathbf{<<SS>>}",
 		Sum_XSq.1 = summation(lglue("(<<x>>)^2"), abbrev_sum = opts$abbrev_sum),
 		Sum_XSq.2 = summation(lglue("(<<XSq>>)"), abbrev_sum = opts$abbrev_sum),
-		SumX.1 = summation(lglue("[<<x>>]"), abbrev_sum = opts$abbrev_sum),
+		SumX.1 = summation(lglue("<<[x]>>"), abbrev_sum = opts$abbrev_sum),
 		# Round based on the precision of x and the final calculated value unless
 		# round_to is set to 'sigfigs', in which case just present the final rounded
 		# value as is.
 		SS = ifelse(opts$round_to == "sigfigs",
 								SS,
-								fmt(SS, get_digits(c(x, SS), opts$round_final))
-		)
+								fmt(SS, get_digits(c(x, SS), opts$round_final)))
 	)
 
 	# Add LaTeX math code, if desired.

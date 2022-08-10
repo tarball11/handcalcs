@@ -195,7 +195,8 @@ solve_z_one_sample <- function(M,
 
 	solution <- glue_solution(
 		z_obt.solution,
-		"<<equals>> \\frac{<<M>> - <<mu>>}{<<sigma_M>>} = \\frac{<<M_diff>>}{<<sigma_M>>} = \\mathbf{<<z_obt>>}",
+		# Put negative values of mu in brackets
+		"<<equals>> \\frac{<<M>> - <<(mu)>>}{<<sigma_M>>} = \\frac{<<M_diff>>}{<<sigma_M>>} = \\mathbf{<<z_obt>>}",
 		M_diff = fmt(M_diff, get_digits(M_diff, opts$round_interim)),
 		sigma_M = fmt(sigma_M, get_digits(sigma_M, opts$round_interim)),
 		# Print values of 'z_obt' to the precision of opts$round_z unless round_to is

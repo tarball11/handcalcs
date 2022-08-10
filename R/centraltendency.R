@@ -88,7 +88,8 @@ solve_mean <- function(x,
 		if(opts$show_summation) {"<<equals>> \\frac{<<Num>>}{<<n>>}"},
 		"<<equals>> \\frac{<<SumX>>}{<<n>>}",
 		"<<equals>> \\mathbf{<<M>>}",
-		Num = summation(lglue("<<x>>"), abbrev_sum = opts$abbrev_sum),
+		# Put negative values of x in brackets
+		Num = summation(lglue("<<(x)>>"), abbrev_sum = opts$abbrev_sum),
 		SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
 		# Round based on the precision of x and the final calculated value unless
 		# round_to is set to 'sigfigs', in which case just present the final rounded

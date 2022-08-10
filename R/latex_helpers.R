@@ -9,6 +9,35 @@ add_math<- function(solution) {
 	paste0("$$ ", solution, "$$")
 }
 
+# Surrounding a variable name with brackets (or really, any punctuation
+# character) will cause it to be printed with those same brackets.
+# Inspiration taken from https://glue.tidyverse.org/articles/transformers.html
+add_brackets <- function(text, envir) {
+	# Detect the brackets:
+	m_open <- regexpr("^[[:punct:]]+", text)
+	m_close <- regexpr("[[:punct:]]+$", text)
+
+	if (any(m_open != -1)) {
+		open <- regmatches(text, m_open)
+		close <- regmatches(text, m_close)
+
+		# Strip it out of the text (note: m_close must be first!)
+		regmatches(text, m_close) <- ""
+		regmatches(text, m_open) <- ""
+
+		# Get the value
+		res <- eval(parse(text = text, keep.source = FALSE), envir)
+
+		# Use brackets only for negative values
+		open <- ifelse(res < 0, open, "")
+		close <- ifelse(res < 0, close, "")
+		paste0(open, res, close)
+
+	} else {
+		eval(parse(text = text, keep.source = FALSE), envir)
+	}
+}
+
 # LaTeX-friendly glue. (Note: discards NULL values from the ... argument.)
 lglue <- function(..., .envir = parent.frame()) {
 	# glue::glue(..., .envir = .envir, .open = "<<", .close = ">>")
@@ -16,9 +45,11 @@ lglue <- function(..., .envir = parent.frame()) {
 	do.call(eval(parse(text='glue::glue')),
 					args = c(l, list(.envir = .envir,
 													 .open = "<<",
-													 .close = ">>")))
+													 .close = ">>",
+													 .transformer = add_brackets)))
 
 }
+
 
 # Wrapper for glue::glue() to generate solution strings, using defaults useful
 # for LaTeX strings. (Note: discards NULL values from the ... argument.)
@@ -35,7 +66,8 @@ glue_solution <- function(..., .envir = parent.frame()) {
 					args = c(l, list(.envir = .envir,
 													 .sep = " \\\\ ",
 													 .open = "<<",
-													 .close = ">>")))
+													 .close = ">>",
+													 .transformer = add_brackets)))
 }
 
 #' Abbreviate Math Sequences
@@ -121,6 +153,7 @@ summation <- function(values,
 #'
 #' @export
 #'
-comma_list <- function(values, abbrev_at = 6) math_list(values, sep = ", ", abbrev_at = abbrev_at)
-
+comma_list <- function(values, abbrev_at = 6) {
+	math_list(values, sep = ", ", abbrev_at = abbrev_at)
+}
 

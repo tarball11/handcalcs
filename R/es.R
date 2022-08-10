@@ -98,7 +98,8 @@ solve_cohens_d_one_z <- function(M,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		d.formula,
-		"<<equals>> \\frac{<<M>> - <<mu>>}{<<sigma>>} = \\frac{<<M_diff>>}{<<sigma>>} = \\mathbf{<<d>>} <<d.interp>>",
+		# Put negative values of mu in brackets
+		"<<equals>> \\frac{<<M>> - <<(mu)>>}{<<sigma>>} = \\frac{<<M_diff>>}{<<sigma>>} = \\mathbf{<<d>>} <<d.interp>>",
 		# Round based on the final calculated value unless round_to is set to
 		# 'sigfigs', in which case just present the final rounded value as is.
 		d = ifelse(opts$round_to == 'sigfigs', d, fmt(d, get_digits(d, opts$round_final))))
@@ -210,7 +211,8 @@ solve_cohens_d_one_t <- function(M,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		d.formula,
-		"<<equals>> \\frac{<<M>> - <<mu>>}{<<SD>>} = \\frac{<<M_diff>>}{<<SD>>} = \\mathbf{<<d>>} <<d.interp>>",
+		# Put negative values of mu in brackets
+		"<<equals>> \\frac{<<M>> - <<(mu)>>}{<<SD>>} = \\frac{<<M_diff>>}{<<SD>>} = \\mathbf{<<d>>} <<d.interp>>",
 		# Round based on the final calculated value unless round_to is set to
 		# 'sigfigs', in which case just present the final rounded value as is.
 		d = ifelse(opts$round_to == 'sigfigs', d, fmt(d, get_digits(d, opts$round_final))))
@@ -325,7 +327,8 @@ solve_cohens_d_paired_t <- function(M_D,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		d.formula,
-		"<<equals>> \\frac{<<M_D>> - <<mu_D>>}{<<SD_D>>} = \\frac{<<M_diff>>}{<<SD_D>>} = \\mathbf{<<d>>} <<d.interp>>",
+		# Put negative values of mu_D in brackets
+		"<<equals>> \\frac{<<M_D>> - <<(mu_D)>>}{<<SD_D>>} = \\frac{<<M_diff>>}{<<SD_D>>} = \\mathbf{<<d>>} <<d.interp>>",
 		# Round based on the final calculated value unless round_to is set to
 		# 'sigfigs', in which case just present the final rounded value as is.
 		d = ifelse(opts$round_to == 'sigfigs', d, fmt(d, get_digits(d, opts$round_final))))
@@ -462,7 +465,8 @@ solve_cohens_d_indep_t <- function(M_1,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		d.formula,
-		"<<equals>> \\frac{<<M_1>> - <<M_2>>}{\\sqrt{<<SD2_p>>}} = \\frac{<<M_diff>>}{<<SD_p>>} = \\mathbf{<<d>>} <<d.interp>>",
+		# Put negative values of M_2 in brackets
+		"<<equals>> \\frac{<<M_1>> - <<(M_2)>>}{\\sqrt{<<SD2_p>>}} = \\frac{<<M_diff>>}{<<SD_p>>} = \\mathbf{<<d>>} <<d.interp>>",
 		# Round based on the final calculated value unless round_to is set to
 		# 'sigfigs', in which case just present the final rounded value as is.
 		d = ifelse(opts$round_to == 'sigfigs', d, fmt(d, get_digits(d, opts$round_final))))
