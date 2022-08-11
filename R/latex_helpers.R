@@ -9,28 +9,23 @@ add_math<- function(solution) {
 	paste0("$$ ", solution, "$$")
 }
 
-# Surrounding a variable name with brackets (or really, any punctuation
-# character) will cause it to be printed with those same brackets.
+# Surrounding a variable name with parentheses, square brackets, or curly
+# brackets will cause it to be printed with those same brackets.
 # Inspiration taken from https://glue.tidyverse.org/articles/transformers.html
 add_brackets <- function(text, envir) {
-	# Detect the brackets:
-	m_open <- regexpr("^[[:punct:]]+", text)
-	m_close <- regexpr("[[:punct:]]+$", text)
 
-	if (any(m_open != -1)) {
-		open <- regmatches(text, m_open)
-		close <- regmatches(text, m_close)
+	m <- stringr::str_match(text, "^([\\(\\[\\{]+)(\\w*)([\\)\\]\\}]+)$")
+	if(any(!is.na(m[,2]))) {
 
-		# Strip it out of the text (note: m_close must be first!)
-		regmatches(text, m_close) <- ""
-		regmatches(text, m_open) <- ""
+		# Detect the variable name:
+		var <- m[,3]
 
 		# Get the value
-		res <- eval(parse(text = text, keep.source = FALSE), envir)
+		res <- eval(parse(text = var, keep.source = FALSE), envir)
 
 		# Use brackets only for negative values
-		open <- ifelse(res < 0, open, "")
-		close <- ifelse(res < 0, close, "")
+		open <- ifelse(res < 0, m[,2], "")
+		close <- ifelse(res < 0, m[,4], "")
 		paste0(open, res, close)
 
 	} else {
