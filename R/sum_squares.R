@@ -170,7 +170,7 @@ sum_squares_formula <- function(sub_val = "",
 
 
 	solution <- lglue(
-		"SS_{<<sub_val>>} <<equals>> \\sum(<<sym_x>>_{<<sub_x>>} - M_{<<sub_val>>})^{2}",
+		"\\mathit{SS}_{<<sub_val>>} <<equals>> \\sum(<<sym_x>>_{<<sub_x>>} - M_{<<sub_val>>})^{2}",
 		if(opts$show_summation) {"\\\\ <<equals>> (<<sym_x>>_{<<sub_x_seq[1]>>} - M_{<<sub_val>>})^2 + (<<sym_x>>_{<<sub_x_seq[2]>>} - M_{<<sub_val>>})^2 + \\cdots + (<<sym_x>>_{<<sub_x_seq[3]>>} - M_{<<sub_val>>})^2"})
 
 	# Add LaTeX math code, if desired.
@@ -324,7 +324,7 @@ sum_squares_formula2 <- function(sub_val = "",
 	sub_x_seq <- if(nchar(sub_x) == 0) sum_seq else lglue("<<sub_x>>_{<<sum_seq>>}")
 
 	solution <- lglue(
-		"SS_{<<sub_val>>} <<equals>> \\sum{(<<sym_x>>_{<<sub_x>>}^2)} - \\frac{(\\sum{<<sym_x>>_{<<sub_x>>}})^2}{N}",
+		"\\mathit{SS}_{<<sub_val>>} <<equals>> \\sum{(<<sym_x>>_{<<sub_x>>}^2)} - \\frac{(\\sum{<<sym_x>>_{<<sub_x>>}})^2}{N}",
 		if(opts$show_summation) {"\\\\ <<equals>> (<<sym_x>>_{<<sub_x_seq[1]>>}^2 + <<sym_x>>_{<<sub_x_seq[2]>>}^2 + \\cdots + <<sym_x>>_{<<sub_x_seq[3]>>}^2) - \\frac{(<<sym_x>>_{<<sub_x_seq[1]>>} + <<sym_x>>_{<<sub_x_seq[2]>>} + \\cdots + <<sym_x>>_{<<sub_x_seq[3]>>})^2}{N}"})
 
 	# Add LaTeX math code, if desired.

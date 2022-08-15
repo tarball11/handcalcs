@@ -134,7 +134,7 @@ solve_t_crit <- function(alpha = 0.05,
 
 		solution <- glue_solution(
 			"\\alpha_{\\text{two-tailed}} <<equals>> <<alpha>>",
-			"t_{\\text{crit}} <<equals>> \\mathbf{\\pm<<t_crit>>}",
+			"t_{\\text{crit}(\\mathit{df} = <<df>>)} <<equals>> \\mathbf{\\pm<<t_crit>>}",
 			# Print value of 't' to the precision of opts$round_final unless round_to is
 			# set to 'sigfigs', in which case just present the final rounded value as is.
 			t_crit = ifelse(opts$round_to == 'sigfigs', t_crit, fmt(t_crit, opts$round_t)))
@@ -145,7 +145,7 @@ solve_t_crit <- function(alpha = 0.05,
 
 		solution <- glue_solution(
 			"\\alpha_{\\text{one-tailed}} <<equals>> <<alpha>>",
-			"t_{\\text{crit}} <<equals>> \\mathbf{<<t_crit>>}",
+			"t_{\\text{crit}(\\mathit{df} = <<df>>)} <<equals>> \\mathbf{<<t_crit>>}",
 			# Print value of 't' to the precision of opts$round_final unless round_to is
 			# set to 'sigfigs', in which case just present the final rounded value as is.
 			t_crit = ifelse(opts$round_to == 'sigfigs', t_crit, fmt(t_crit, opts$round_t)))
