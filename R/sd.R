@@ -204,7 +204,7 @@ solve_std_dev <- function(mode,
 	stopifnot(mode %in% c('population', 'sample'))
 
 	if(missing(x) & (missing(SS) | missing(n)) & missing(variance)) {
-		stop('Must supply x, SS and n, or variance')
+		stop('Must supply x, OR SS and n, OR variance.')
 	}
 	stopifnot(is.character(sub_val), length(sub_val) == 1)
 	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
@@ -236,9 +236,16 @@ solve_std_dev <- function(mode,
 															add_aligned = FALSE,
 															use_aligned = opts$use_aligned)
 
+		# Get values from list (some may be NULL):
+		x <- var.lst$x
+		n <- var.lst$n
+		SS <- var.lst$SS
 		variance <- ifelse(mode == 'population', var.lst$sigma2, var.lst$s2)
 		var.solution <- var.lst$solution
 	} else {
+		# Set missing return values to NULL
+		x <- n <- SS <- NULL
+
 		stopifnot(is.numeric(variance))
 		var.lst <- list(variance = variance)
 		var.solution = NULL
@@ -279,9 +286,9 @@ solve_std_dev <- function(mode,
 
 	# Return list containing both values and solution string
 	# Names are specific to the mode; NULL values are removed
-	list(x = if(missing(x)) NULL else x,
-			 SS = if(missing(SS)) NULL else SS,
-			 n = if(missing(n)) NULL else n,
+	list(x = x,
+			 SS = SS,
+			 n = n,
 			 sigma2 = if(mode == 'population') variance else NULL,
 			 sigma = if(mode == 'population') std_dev else NULL,
 			 s2 = if(mode == 'population') NULL else variance,
