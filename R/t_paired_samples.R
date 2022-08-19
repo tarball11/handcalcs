@@ -134,12 +134,12 @@ s_M_D_formula <- function(...) {
 #' always name the arguments.
 #'
 #' @param M_D Numeric scalar. Mean difference of the samples.
-#' @param s_D,SD_D Numeric scalar. Standard deviation of the difference scores.
-#'   Required if s_M_D is not provided. May be named either `s_D` or `SD_D`.
-#' @param n Numeric scalar. Sample size. Required if s_M_D is not provided.
 #' @param s_M_D Numeric scalar. Standard error of the mean difference. If not
 #'   provided, will be calculated from `s_D` and `n` (using [solve_s_M_D()])
 #'   and included in the solution string.
+#' @param s_D,SD_D Numeric scalar. Standard deviation of the difference scores.
+#'   Required if s_M_D is not provided. May be named either `s_D` or `SD_D`.
+#' @param n Numeric scalar. Sample size. Required if s_M_D is not provided.
 #' @param mu_D Numeric scalar. Population mean difference score under the null
 #'   hypothesis (default = 0).
 #' @param ... Additional arguments to override default behaviors (see
@@ -153,16 +153,17 @@ s_M_D_formula <- function(...) {
 #' @export
 #'
 #' @examples
-#' solve_t_paired_samples(M_D = 6, SD_D = 2, n = 100)
+#' solve_t_paired_samples(M_D = 2, s_M_D = 10)
+#' solve_t_paired_samples(M_D = 2, SD_D = 10, n = 100)
 #'
 #' # If you just want the formula:
 #' t_paired_samples_formula()
 #'
 solve_t_paired_samples <- function(M_D,
+																	 s_M_D,
 																	 s_D,
 																	 SD_D,
 																	 n,
-																	 s_M_D,
 																	 mu_D = 0,
 																	 ...) {
 
@@ -207,7 +208,7 @@ solve_t_paired_samples <- function(M_D,
 
 	stopifnot(is.numeric(s_M_D), length(s_M_D) == 1, s_M_D > 0)
 
-	# Calculate z_obt and p:
+	# Calculate M_diff and t_obt:
 	M_diff <- rnd(M_D - mu_D, opts$round_interim)
 	t_obt <- rnd(M_diff/s_M_D, opts$round_t)
 
@@ -245,7 +246,8 @@ solve_t_paired_samples <- function(M_D,
 			 M_diff = M_diff,
 			 t_obt = t_obt,
 			 solution = solution,
-			 formula = t_obt.f)
+			 formula = t_obt.f) %>%
+		purrr::compact()
 }
 
 #' @rdname solve_t_paired_samples
