@@ -1,3 +1,39 @@
+#' Pooled Variance
+#'
+#' Calculates the pooled variance (`s_p2`) for two independent samples from
+#' sample sizes (`n_1` and `n_2`) and either sums of squares for each sample
+#' (`SS_1` and `SS_2`), or both samples' standard deviations (accepting either
+#' `s_1` and `s_2` or `SD_1` and `SD_2`).
+#'
+#' If providing sample sizes and sums of squares, pooled variance will be
+#' calculated as \eqn{s_p^2=\frac{SS_1+SS_2}{n_1+n_2-2}}. If providing sample
+#' sizes and standard deviations, pooled variance will be calculated as
+#' \eqn{s_p^2=\frac{(n_{1}-1)(s_{1}^{2})+(n_{2}-1)(s_{2}^{2})}{n_1+n_2-2}}.
+#'
+#'
+#' @param SS_1 Numeric scalar. Sum of squares of sample 1.
+#' @param SS_2 Numeric scalar. Sum of squares of sample 2.
+#' @param s_1,SD_1 Numeric scalar. Standard deviation of sample 1.
+#' @param s_2,SD_2 Numeric scalar. Standard deviation of sample 2.
+#' @param n_1 Numeric scalar. Sample size of sample 1.
+#' @param n_2 Numeric scalar. Sample size of sample 2.
+#' @param ... Additional arguments to override default behaviors (see
+#'   [handcalcs_defaults()]
+#'
+#' @return `solve_s_p2()` returns a list with the provided values (`SS_1`,
+#'   `SS_2`, `s_1`, `s_2`, `SD_1`, `SD_2` `n_1`, `n_2`), the interim
+#'   calculations (`df_1`, `df_2`, `df` `s_12`, `s_22`, `df_s_12`, `df_s_22`,
+#'   `SS`), the final value (`s_p2`), the solution string (`solution`), and the
+#'   bare formula (`formula`) in LaTeX format (note: empty values are removed
+#'   from the list). `s_p2_formula()` returns just the bare formula in LaTeX
+#'   format as a character string.
+#' @seealso [solve_s_M_diff()], [solve_t_indep_samples()]
+#' @export
+#'
+#' @examples
+#' solve_s_p2(SS_1 = 15, SS_2 = 20, n_1 = 40, n_2 = 50)
+#' solve_s_p2(SD_1 = 5, SD_2 = 6, n_1 = 40, n_2 = 50)
+#'
 solve_s_p2 <- function(SS_1,
 											 SS_2,
 											 s_1,
@@ -162,6 +198,46 @@ s_p2_formula <- function(type = 'SS',
 }
 
 
+#' Standard Error of Difference Between Two Independent Sample Means
+#'
+#' Calculates the standard error of the difference between two independent
+#' sample means (`s_M_diff`), used as the error term in the independent-samples
+#' *t*-test. Requires sample sizes (`n_1` and `n_2`) and either the pooled
+#' variance (`s_p2`), or both samples' standard deviations (accepting either
+#' `s_1` and `s_2` or `SD_1` and `SD_2`).
+#'
+#' The standard error of the mean difference will be calculated using the pooled
+#' variance as
+#' \eqn{s_{M_{1}-M_{2}}=\sqrt{\frac{s_{p}^{2}}{n_{1}}+\frac{s_{p}^{2}}{n_{2}}}}.
+#' If providing sample sizes and standard deviations instead, pooled variance
+#' will be calculated from that information using the `[solve_s_p2()]` function.
+#'
+#' @param s_p2 Numeric scalar. Pooled variance.
+#' @param s_1,SD_1 Numeric scalar. Standard deviation of sample 1.
+#' @param s_2,SD_2 Numeric scalar. Standard deviation of sample 2.
+#' @param n_1 Numeric scalar. Sample size of sample 1.
+#' @param n_2 Numeric scalar. Sample size of sample 2.
+#' @param ... Additional arguments to override default behaviors (see
+#'   [handcalcs_defaults()]
+#'
+#' @return `solve_s_M_diff()` returns a list with the provided values (`s_p2`,
+#'   `s_1`, `s_2`, `SD_1`, `SD_2` `n_1`, `n_2`), the interim calculations (`s_p2_n1`,
+#'   `s_p2_n2`, `s_M_diff2`), the final value (`s_M_diff`), the solution string
+#'   (`solution`), and the bare formula (`formula`) in LaTeX format (note: empty
+#'   values are removed from the list). `s_M_diff_formula()` returns just the
+#'   bare formula in LaTeX format as a character string.
+#'
+#' @seealso [solve_s_p2()], [solve_t_indep_samples()]
+#'
+#' @export
+#'
+#' @examples
+#' solve_s_M_diff(s_p2 = 10, n_1 = 50, n_2 = 48)
+#' solve_s_M_diff(s_1 = 4.5, s_2 = 5, n_1 = 50, n_2 = 48)
+#'
+#' # If providing standard deviation, can use either s_1 and s_2, or SD_1 and SD_2
+#' solve_s_M_diff(SD_1 = 4.5, SD_2 = 5, n_1 = 50, n_2 = 48)
+#'
 solve_s_M_diff <- function(s_p2,
 													 s_1,
 													 s_2,
@@ -264,6 +340,10 @@ solve_s_M_diff <- function(s_p2,
 		purrr::compact()
 }
 
+#' @rdname solve_s_M_diff
+#'
+#' @export
+#'
 s_M_diff_formula <- function(...) {
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -283,6 +363,61 @@ s_M_diff_formula <- function(...) {
 
 }
 
+#' Independent-samples *t*-test
+#'
+#' Calculates and provides solutions for the independent-samples *t*-test (i.e.,
+#' `t_obt`), comparing the calculated difference between two independent sample
+#' means (\eqn{M_{1} - M_{2}}) against the predicted difference under the null
+#' hypothesis (\eqn{\mu_{1} - \mu_{2}}, which is always zero, and thus not an
+#' argument to this function).
+#'
+#' The error term (\eqn{s_{M_{1} - M_{2}}}) can be provided directly (as
+#' `s_M_diff`) along with the two sample means (`M_1` and `M_2`) to calculate
+#' `t_obt` as (\eqn{t_{obt}=\frac{M_{1}-M_{2}}{s_{M_{1}-M_{2}}}}). If the
+#' standard error is not provided, it can be calculated using either the pooled
+#' variance (`s_p2`) and the sample sizes (`n_1` and `n_2`), or both samples'
+#' standard deviations (`s_1` and `s_2` or `SD_1` and `SD_2`) and sample sizes
+#' (`n_1` and `n_2`) using the `[solve_s_M_diff()]` function. In that case,
+#' those calculations will be included in the solution string.
+#'
+#' Note that `t_obt` values are rounded to the value of `round_t` instead of the
+#' value of `round_final` (see [handcalcs_defaults()]).
+#'
+#' @param M_1 Numeric scalar. Mean of sample 1.
+#' @param M_2 Numeric scalar. Mean of sample 2.
+#' @param s_M_diff Numeric scalar. Standard error of the difference between two
+#'   independent sample means. If not provided, can be calculated using the
+#'   other arguments using the `[solve_s_M_diff()]` function.
+#' @param s_p2 Numeric scalar. Pooled variance.
+#' @param s_1,SD_1 Numeric scalar. Standard deviation of sample 1.
+#' @param s_2,SD_2 Numeric scalar. Standard deviation of sample 2.
+#' @param n_1 Numeric scalar. Sample size of sample 1.
+#' @param n_2 Numeric scalar. Sample size of sample 2.
+#' @param ... Additional arguments to override default behaviors (see
+#'   [handcalcs_defaults()]
+#'
+#' @return `solve_t_indep_samples()` returns a list with the provided values
+#'   (`M_1`, `M_2`, `s_M_diff`, `s_p2`, `s_1`, `s_2`, `SD_1`, `SD_2` `n_1`,
+#'   `n_2`), the interim calculations (`M_diff`), the final value (`t_obt`), the
+#'   solution string (`solution`), and the bare formula (`formula`) in LaTeX
+#'   format (note: empty values are removed from the list).
+#'   `t_indep_samples_formula()` returns just the bare formula in LaTeX format
+#'   as a character string.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' solve_t_indep_samples(M_1 = 5, M_2 = 4, s_M_diff = 0.5)
+#'
+#' # If not providing the error term, it can be calculated either from the
+#' # sample sizes and either the pooled variance or sample standard deviations
+#' solve_t_indep_samples(M_1 = 5, M_2 = 4, s_p2 = 5, n_1 = 40, n_2 = 45)
+#' solve_t_indep_samples(M_1 = 5, M_2 = 4, s_1 = 2, s_2 = 3, n_1 = 40, n_2 = 45)
+#'
+#' # Standard deviations can be provided either as s_1 and s_2 or SD_1 and SD_2
+#' solve_t_indep_samples(M_1 = 5, M_2 = 4, s_1 = 2, s_2 = 3, n_1 = 40, n_2 = 45)
+#'
 solve_t_indep_samples <- function(M_1,
 																	M_2,
 																	s_M_diff,
@@ -384,6 +519,10 @@ solve_t_indep_samples <- function(M_1,
 		purrr::compact()
 }
 
+#' @rdname solve_t_indep_samples
+#'
+#' @export
+#'
 t_indep_samples_formula <- function(...) {
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
