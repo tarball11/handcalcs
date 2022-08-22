@@ -5,21 +5,21 @@
 \alias{t_paired_samples_formula}
 \title{Paired-samples \emph{t}-test}
 \usage{
-solve_t_paired_samples(M_D, s_D, SD_D, n, s_M_D, mu_D = 0, ...)
+solve_t_paired_samples(M_D, s_M_D, s_D, SD_D, n, mu_D = 0, ...)
 
 t_paired_samples_formula(...)
 }
 \arguments{
 \item{M_D}{Numeric scalar. Mean difference of the samples.}
 
+\item{s_M_D}{Numeric scalar. Standard error of the mean difference. If not
+provided, will be calculated from \code{s_D} and \code{n} (using \code{\link[=solve_s_M_D]{solve_s_M_D()}}) and
+included in the solution string.}
+
 \item{s_D, SD_D}{Numeric scalar. Standard deviation of the difference scores.
 Required if s_M_D is not provided. May be named either \code{s_D} or \code{SD_D}.}
 
 \item{n}{Numeric scalar. Sample size. Required if s_M_D is not provided.}
-
-\item{s_M_D}{Numeric scalar. Standard error of the mean difference. If not
-provided, will be calculated from \code{s_D} and \code{n} (using \code{\link[=solve_s_M_D]{solve_s_M_D()}})
-and included in the solution string.}
 
 \item{mu_D}{Numeric scalar. Population mean difference score under the null
 hypothesis (default = 0).}
@@ -29,10 +29,11 @@ hypothesis (default = 0).}
 }
 \value{
 \code{solve_t_paired_samples()} returns a list with the provided values
-(\code{M_D}, \code{mu_D}, \code{s_D}, \code{SD_D}, \code{n}), the interim calculations (\code{df}, \code{s_M_D},
-\code{M_diff}), the final value (\code{t_obt}), the solution string (\code{solution}), and
-the bare formula (\code{formula}) in LaTeX format. \code{t_paired_samples_formula()}
-returns just the bare formula in LaTeX format as a character string.
+(\code{M_D}, \code{mu_D}, \code{s_D}, \code{SD_D}, \code{n}), the interim calculations (\code{df},
+\code{s_M_D}, \code{M_diff}), the final value (\code{t_obt}), the solution string
+(\code{solution}), and the bare formula (\code{formula}) in LaTeX format (note: empty
+values are removed from the list). \code{t_paired_samples_formula()} returns
+just the bare formula in LaTeX format as a character string.
 }
 \description{
 Calculates and provides solutions for the paired-samples \emph{t}-test (i.e.,
@@ -49,13 +50,14 @@ the difference scores (\code{SD_D}) and sample size (\code{n}) (\eqn{s_{M_{D}} =
 Note that \code{t_obt} values are rounded to the value of \code{round_t} instead of the
 value of \code{round_final} (see \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).
 
-Also note that, because this value is virtually always zero (the default), this
-function does not follow the same argument order as some other functions to
-avoid issues with unnamed arguments, though it is generally recommended to
-always name the arguments.
+Also note that, because the value of \code{mu_D} is virtually always zero (the
+default), this function does not follow the same argument order as some other
+functions to avoid issues with unnamed arguments, though always naming the
+arguments is the recommended practice.
 }
 \examples{
-solve_t_paired_samples(M_D = 6, SD_D = 2, n = 100)
+solve_t_paired_samples(M_D = 2, s_M_D = 10)
+solve_t_paired_samples(M_D = 2, SD_D = 10, n = 100)
 
 # If you just want the formula:
 t_paired_samples_formula()

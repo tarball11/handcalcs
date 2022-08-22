@@ -22,8 +22,9 @@ be named either \code{s_D} or \code{SD_D}.}
 \code{solve_s_M_D()} returns a list with the provided values (\code{s_D},
 \code{SD_D}, \code{n}), the interim calculations (\code{sqrt_n}), the final value
 (\code{s_M_D}), the solution string (\code{solution}), and the bare formula
-(\code{formula}) in LaTeX format. \code{s_M_D_formula()} returns just the bare
-formula in LaTeX format as a character string.
+(\code{formula}) in LaTeX format (note: empty values are removed from the list).
+\code{s_M_D_formula()} returns just the bare formula in LaTeX format as a
+character string.
 }
 \description{
 Calculates and provides solutions for the standard error of the mean

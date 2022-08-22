@@ -13,9 +13,9 @@
 #' @return `solve_s_M_D()` returns a list with the provided values (`s_D`,
 #'   `SD_D`, `n`), the interim calculations (`sqrt_n`), the final value
 #'   (`s_M_D`), the solution string (`solution`), and the bare formula
-#'   (`formula`) in LaTeX format. `s_M_D_formula()` returns just the bare
-#'   formula in LaTeX format as a character string.
-
+#'   (`formula`) in LaTeX format (note: empty values are removed from the list).
+#'   `s_M_D_formula()` returns just the bare formula in LaTeX format as a
+#'   character string.
 #' @export
 #'
 #' @examples
@@ -128,15 +128,15 @@ s_M_D_formula <- function(...) {
 #' Note that `t_obt` values are rounded to the value of `round_t` instead of the
 #' value of `round_final` (see [handcalcs_defaults()]).
 #'
-#' Also note that, because this value is virtually always zero (the default), this
-#' function does not follow the same argument order as some other functions to
-#' avoid issues with unnamed arguments, though it is generally recommended to
-#' always name the arguments.
+#' Also note that, because the value of `mu_D` is virtually always zero (the
+#' default), this function does not follow the same argument order as some other
+#' functions to avoid issues with unnamed arguments, though always naming the
+#' arguments is the recommended practice.
 #'
 #' @param M_D Numeric scalar. Mean difference of the samples.
 #' @param s_M_D Numeric scalar. Standard error of the mean difference. If not
-#'   provided, will be calculated from `s_D` and `n` (using [solve_s_M_D()])
-#'   and included in the solution string.
+#'   provided, will be calculated from `s_D` and `n` (using [solve_s_M_D()]) and
+#'   included in the solution string.
 #' @param s_D,SD_D Numeric scalar. Standard deviation of the difference scores.
 #'   Required if s_M_D is not provided. May be named either `s_D` or `SD_D`.
 #' @param n Numeric scalar. Sample size. Required if s_M_D is not provided.
@@ -146,10 +146,11 @@ s_M_D_formula <- function(...) {
 #'   [handcalcs_defaults()]
 #'
 #' @return `solve_t_paired_samples()` returns a list with the provided values
-#'   (`M_D`, `mu_D`, `s_D`, `SD_D`, `n`), the interim calculations (`df`, `s_M_D`,
-#'   `M_diff`), the final value (`t_obt`), the solution string (`solution`), and
-#'   the bare formula (`formula`) in LaTeX format. `t_paired_samples_formula()`
-#'   returns just the bare formula in LaTeX format as a character string.
+#'   (`M_D`, `mu_D`, `s_D`, `SD_D`, `n`), the interim calculations (`df`,
+#'   `s_M_D`, `M_diff`), the final value (`t_obt`), the solution string
+#'   (`solution`), and the bare formula (`formula`) in LaTeX format (note: empty
+#'   values are removed from the list). `t_paired_samples_formula()` returns
+#'   just the bare formula in LaTeX format as a character string.
 #' @export
 #'
 #' @examples
