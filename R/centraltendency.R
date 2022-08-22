@@ -61,7 +61,7 @@ solve_mean <- function(x,
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
-	opts<- get_handcalcs_opts(...)
+	opts <- get_handcalcs_opts(...)
 
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
