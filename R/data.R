@@ -1,6 +1,6 @@
 #' Show Raw Data
 #'
-#' Produces a simple table (`gt` object) of raw data by putting the data
+#' Produces a simple table (`[gt::gt()]` object) of raw data by putting the data
 #' into rows (using specified `width`). Note: raw data will be rounded to
 #' the value of round_interim (either supplied as an option, or consulting the
 #' global default value).

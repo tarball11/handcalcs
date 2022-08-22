@@ -29,7 +29,7 @@ specify ascending or descending sort.}
 A gt object.
 }
 \description{
-Produces a simple table (\code{gt} object) of raw data by putting the data
+Produces a simple table (\verb{[gt::gt()]} object) of raw data by putting the data
 into rows (using specified \code{width}). Note: raw data will be rounded to
 the value of round_interim (either supplied as an option, or consulting the
 global default value).
