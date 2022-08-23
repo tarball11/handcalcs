@@ -15,6 +15,7 @@ get_freq_tbl(
   pr = FALSE,
   x_name = "x",
   font_size = 12,
+  solutions = TRUE,
   ...
 )
 }
@@ -49,6 +50,10 @@ FALSE)? Note: values will be rounded to the value of round_final.}
 
 \item{font_size}{Numeric scalar. Font size of table in points (as rendered by
 \verb{[gt::gt()]}).}
+
+\item{solutions}{If \code{TRUE} (the default), renders the table as expected. If
+\code{FALSE}, will show all of the requested columns, but will not display any
+of the calculated values.}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}

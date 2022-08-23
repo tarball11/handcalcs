@@ -33,6 +33,9 @@
 #'   "x").
 #' @param font_size Numeric scalar. Font size of table in points (as rendered by
 #'   `[gt::gt()]`).
+#' @param solutions If `TRUE` (the default), renders the table as expected. If
+#'   `FALSE`, will show all of the requested columns, but will not display any
+#'   of the calculated values.
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]).
 #'
@@ -71,11 +74,13 @@ get_freq_tbl<- function(x,
 												pr = FALSE,
 												x_name = "x",
 												font_size = 12,
+												solutions = TRUE,
 												...) {
 
 	# Check argument validity
 	stopifnot(length(x) > 0)
 	stopifnot(is.logical(grouped))
+	stopifnot(is.logical(solutions))
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -142,11 +147,14 @@ get_freq_tbl<- function(x,
 		gt::gt(rowname_col = "x") %>%
 		# Change the name of the x column, if necessary
 		gt::tab_stubhead(label = x_name) %>%
-		# Style the column labels
+		# Overall table style/size
 		gt::tab_options(table.font.size = font_size) %>%
+		gt::cols_width(tidyselect::any_of(c('f', 'cf')) ~ gt::px(40),
+									 tidyselect::any_of(c('rf', 'c%', 'pr')) ~ gt::px(60)) %>%
+		# Style the column labels
 		gt::tab_style(style = gt::cell_text(style = "italic",
 																				weight = "bold",
-																				align = "center"),
+																				align = "right"),
 									locations = list(gt::cells_stubhead(), gt::cells_column_labels())) %>%
 		gt::cols_align(align = 'right') %>%
 		gt::grand_summary_rows(
@@ -156,10 +164,10 @@ get_freq_tbl<- function(x,
 			formatter = gt::fmt_number,
 			decimals = 0)
 
-	# Format the columns with decimals
-	if(rf) freq.gt <- freq.gt %>% gt::fmt_number(rf, decimals = opts$round_interim)
-	if(cp) freq.gt <- freq.gt %>% gt::fmt_number(`c%`, decimals = opts$round_final)
-	if(pr) freq.gt <- freq.gt %>% gt::fmt_number(pr, decimals = opts$round_final)
+	# Format the columns with decimals (if presenting solutions)
+	if(rf & solutions) freq.gt <- freq.gt %>% gt::fmt_number(rf, decimals = opts$round_interim)
+	if(cp & solutions) freq.gt <- freq.gt %>% gt::fmt_number(`c%`, decimals = opts$round_final)
+	if(pr & solutions) freq.gt <- freq.gt %>% gt::fmt_number(pr, decimals = opts$round_final)
 
 	# Include rf in summary row if appropriate
 	if(rf) {
@@ -172,6 +180,15 @@ get_freq_tbl<- function(x,
 				decimals = opts$round_interim)
 	}
 
-	freq.gt
+	# Blank everything out if hiding solutions
+	# (yes I know it is inefficient to put this at the end, but it ensures that
+	# the columns/rows are all present)
+	if(!solutions) {
+		freq.gt %>%
+			gt::fmt(columns = everything(), fns = function(x) "")
+	} else {
+		freq.gt
+	}
+
 }
 
