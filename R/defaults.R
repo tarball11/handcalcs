@@ -50,7 +50,7 @@
 #'
 #' \item{`show_summation`}{Logical. Should explicit summation steps (e.g., for
 #' sum of squares) be made explicit? If true, will include a step after a
-#' formula shows \eqn{\Sum{X}} that makes the summation explicit (e.g.,
+#' formula shows \eqn{\sum{X}} that makes the summation explicit (e.g.,
 #' \eqn{X_{1} + X_{2} + ... + X_{n}}). If false, will skip that step. (See
 #' [summation()].)}
 #'
