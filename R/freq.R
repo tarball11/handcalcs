@@ -40,6 +40,14 @@
 #' get_freq_tbl(x, grouped = TRUE)
 #' get_freq_tbl(x, grouped = TRUE, width = 2, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
 #'
+#' # Also works on non-numeric data:
+#' x <- sample(x = LETTERS, size = 20, replace = TRUE)
+#' get_freq_tbl(x, grouped = FALSE)
+#'
+#' # When x is a factor, will include zeros for missing levels
+#' x <- factor(x, levels = LETTERS)
+#' get_freq_tbl(x, grouped = FALSE)
+#'
 get_freq_tbl<- function(x,
 												grouped = TRUE,
 												start = 0,
@@ -52,7 +60,7 @@ get_freq_tbl<- function(x,
 												...) {
 
 	# Check argument validity
-	stopifnot(is.numeric(x), length(x) > 0)
+	stopifnot(length(x) > 0)
 	stopifnot(is.logical(grouped))
 
 	# Get list of options (allowing user to override defaults) for rounding
@@ -61,6 +69,7 @@ get_freq_tbl<- function(x,
 
 
 	if(grouped) {
+		if(!is.numeric(x)) stop("Cannot have a grouped frequency table with non-numeric data.")
 		stopifnot(is.numeric(width), length(width) == 1)
 		stopifnot(is.numeric(start), length(start) == 1)
 
@@ -82,9 +91,20 @@ get_freq_tbl<- function(x,
 			dplyr::mutate(x = forcats::fct_inorder(x))
 
 	} else {
+		# Generate frequencies:
 		freq.tbl <- tibble::tibble(x) %>%
-			dplyr::count(x, name = 'f') %>%
-			tidyr::complete(x = seq(min(x), max(x)), fill = list(f=0))
+			dplyr::count(x, name = 'f')
+
+		# Add missing values to sequence
+		if(is.factor(x)) {
+			# For factors, add missing levels
+			freq.tbl <- freq.tbl %>%
+				tidyr::complete(x = levels(x), fill = list(f=0))
+		} else if(is.numeric(x) & all(x == floor(x))) {
+			# For numbers that are effectively integers, fill in the missing values
+			freq.tbl <- freq.tbl %>%
+				tidyr::complete(x = seq(min(x), max(x)), fill = list(f=0))
+		}
 	}
 
 	# Add additional columns
@@ -98,9 +118,12 @@ get_freq_tbl<- function(x,
 	if(cp) freq.tbl <- freq.tbl %>% dplyr::mutate(`c%` = fmt(`c%`, opts$round_final))
 	if(pr) freq.tbl <- freq.tbl %>% dplyr::mutate(pr = fmt(pr, opts$round_final))
 
+	# Sort ascending for factors, descending for numeric
+	if(is.factor(x)) freq.tbl <- dplyr::arrange(freq.tbl, x)
+	if(is.numeric(x)) freq.tbl <- dplyr::arrange(freq.tbl, dplyr::desc(x))
+
 	# Convert to gt, add formatting
 	freq.tbl %>%
-		dplyr::arrange(dplyr::desc(x)) %>%
 		gt::gt() %>%
 		gt::tab_options(table.font.size = font_size) %>%
 		gt::tab_style(style = gt::cell_text(style = "italic"),

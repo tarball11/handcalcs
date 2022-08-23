@@ -68,4 +68,12 @@ get_freq_tbl(x, grouped = FALSE, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 
 get_freq_tbl(x, grouped = TRUE)
 get_freq_tbl(x, grouped = TRUE, width = 2, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
 
+# Also works on non-numeric data:
+x <- sample(x = LETTERS, size = 20, replace = TRUE)
+get_freq_tbl(x, grouped = FALSE)
+
+# When x is a factor, will include zeros for missing levels
+x <- factor(x, levels = LETTERS)
+get_freq_tbl(x, grouped = FALSE)
+
 }
