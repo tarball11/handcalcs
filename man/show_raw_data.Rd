@@ -7,6 +7,7 @@
 show_raw_data(
   x,
   width = 10,
+  return_type = c("gt", "kable"),
   sort_x = c("none", "asc", "desc"),
   font_size = 12,
   ...
@@ -17,6 +18,9 @@ show_raw_data(
 
 \item{width}{Numeric scalar. Width of table to be produced.}
 
+\item{return_type}{Determines what type of object to return: either "gt" or
+"kable".}
+
 \item{sort_x}{Character. Should data be sorted before being displayed? Can
 specify ascending or descending sort.}
 
@@ -26,12 +30,13 @@ specify ascending or descending sort.}
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 }
 \value{
-A gt object.
+Depends on \code{return_type}: Either a \verb{[gt::gt()]} object
+(\code{return_type='gt'}), or a \verb{[knitr::kable()]} object (\code{return_type='gt'}).
 }
 \description{
 Produces a simple table (\verb{[gt::gt()]} object) of raw data by putting the data
-into rows (using specified \code{width}). Note: raw data will be rounded to
-the value of round_interim (either supplied as an option, or consulting the
+into rows (using specified \code{width}). Note: raw data will be rounded to the
+value of round_interim (either supplied as an option, or consulting the
 global default value).
 }
 \examples{

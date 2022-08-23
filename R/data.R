@@ -1,19 +1,22 @@
 #' Show Raw Data
 #'
 #' Produces a simple table (`[gt::gt()]` object) of raw data by putting the data
-#' into rows (using specified `width`). Note: raw data will be rounded to
-#' the value of round_interim (either supplied as an option, or consulting the
+#' into rows (using specified `width`). Note: raw data will be rounded to the
+#' value of round_interim (either supplied as an option, or consulting the
 #' global default value).
 #'
 #' @param x Numeric vector.
 #' @param width Numeric scalar. Width of table to be produced.
+#' @param return_type Determines what type of object to return: either "gt" or
+#'   "kable".
 #' @param sort_x Character. Should data be sorted before being displayed? Can
 #'   specify ascending or descending sort.
 #' @param font_size Numeric scalar. Font size (in pixels).
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]).
 #'
-#' @return A gt object.
+#' @return Depends on `return_type`: Either a `[gt::gt()]` object
+#'   (`return_type='gt'`), or a `[knitr::kable()]` object (`return_type='gt'`).
 #' @export
 #'
 #' @examples
@@ -30,6 +33,7 @@
 #'
 show_raw_data<- function(x,
 												 width = 10,
+												 return_type = c('gt', 'kable'),
 												 sort_x = c('none', 'asc', 'desc'),
 												 font_size = 12,
 												 ...) {
@@ -40,6 +44,8 @@ show_raw_data<- function(x,
 	stopifnot(is.numeric(font_size), font_size >= 2)
 
 	sort_x <- match.arg(sort_x)
+	return_type <- match.arg(return_type)
+	if(missing(return_type)) return_type == 'gt'
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -66,13 +72,19 @@ show_raw_data<- function(x,
 	padding = (n_row * width) - l
 	if(padding > 0) x = c(x, rep(NA, padding))
 
-	# Split into rows, then convert into gt object.
-	split(x, 1:width) %>%
-		tibble::as_tibble() %>%
-		gt::gt() %>%
-		gt::tab_options(table.font.size = font_size,
-										column_labels.hidden = TRUE) %>%
-		gt::cols_align(align = 'right') %>%
-		gt::opt_table_lines('all') %>%
-		gt::sub_missing(missing_text = '')
+	# Split into rows, then convert into appropriate object.
+	df <- split(x, 1:width) %>%
+		tibble::as_tibble()
+
+	if(return_type == 'gt') {
+		gt::gt(df) %>%
+			gt::tab_options(table.font.size = font_size,
+											column_labels.hidden = TRUE) %>%
+			gt::cols_align(align = 'right') %>%
+			gt::opt_table_lines('all') %>%
+			gt::sub_missing(missing_text = '')
+	} else {
+		knitr::kable(df, format='latex', row.names=FALSE, col.names = NULL, booktabs=TRUE) %>%
+			kableExtra::kable_styling(position = "center", latex_options = 'HOLD_position')
+	}
 }
