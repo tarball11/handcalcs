@@ -1,7 +1,16 @@
 #' Frequency Tables
 #'
-#' Produces both ungrouped and grouped frequency tables (as a `[gt::gt()]`
+#' Produces both ungrouped and grouped frequency tables (as a `[gt::gt()]` table
 #' object) from a set of raw data.
+#'
+#' By default, just calculates frequencies. Optionally, can include additional
+#' columns for relative frequency (`rf`), cumulative frequency (`cf`),
+#' cumulative percentage (`cp`), and percentile rank (`pr`). Additional
+#' customization options for the `[gt::gt()]` table object are also available.
+#'
+#' Note that only numeric vectors can be used with the grouped option. Also note
+#' that numeric vectors are sorted descending, whereas character vectors and
+#' factors are sorted ascending.
 #'
 #' @param x Numeric vector.
 #' @param grouped Logical. Should this be a grouped frequency table?
@@ -20,6 +29,8 @@
 #'   round_final.
 #' @param pr Logical. Should a column for percentile rank be included (default =
 #'   FALSE)? Note: values will be rounded to the value of round_final.
+#' @param x_name Character scalar. Name of x column in stub head (default =
+#'   "x").
 #' @param font_size Numeric scalar. Font size of table in points (as rendered by
 #'   `[gt::gt()]`).
 #' @param ... Additional arguments to override default behaviors (see
@@ -33,29 +44,32 @@
 #' x <- sample(x = 1:20, size = 20, replace = TRUE)
 #'
 #' # Ungrouped:
-#' get_freq_tbl(x, grouped = FALSE)
+#' get_freq_tbl(x, grouped = FALSE, round_interim = 3)
 #' get_freq_tbl(x, grouped = FALSE, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
 #'
 #' # Grouped:
 #' get_freq_tbl(x, grouped = TRUE)
-#' get_freq_tbl(x, grouped = TRUE, width = 2, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
+#' get_freq_tbl(x, grouped = TRUE, width = 3, start = 0, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
 #'
 #' # Also works on non-numeric data:
 #' x <- sample(x = LETTERS, size = 20, replace = TRUE)
 #' get_freq_tbl(x, grouped = FALSE)
+#' get_freq_tbl(x, grouped = FALSE, cf = TRUE, cp = TRUE, pr = TRUE)
 #'
 #' # When x is a factor, will include zeros for missing levels
-#' x <- factor(x, levels = LETTERS)
+#' x <- factor(sample(x = LETTERS, size = 20, replace = TRUE), levels = LETTERS)
 #' get_freq_tbl(x, grouped = FALSE)
+#' get_freq_tbl(x, grouped = FALSE, cf = TRUE, cp = TRUE, pr = TRUE)
 #'
 get_freq_tbl<- function(x,
 												grouped = TRUE,
-												start = 0,
+												start,
 												width = 5,
 												rf = TRUE,
 												cf = FALSE,
 												cp = FALSE,
 												pr = FALSE,
+												x_name = "x",
 												font_size = 12,
 												...) {
 
@@ -71,23 +85,29 @@ get_freq_tbl<- function(x,
 	if(grouped) {
 		if(!is.numeric(x)) stop("Cannot have a grouped frequency table with non-numeric data.")
 		stopifnot(is.numeric(width), length(width) == 1)
-		stopifnot(is.numeric(start), length(start) == 1)
 
+		# Set the default lower bound of the lowest interval if not provided
+		if(missing(start)) start <- min(x)
+
+		# Sequence of lower bounds
 		lower <- seq(start, max(x)+1, width)
 
+		# Figure out which interval each x value would fall into
 		freq.tbl <- tibble::tibble(x = x,
 															 lb = lower[findInterval(x,
 															 												lower-0.5,
 															 												left.open = TRUE,
 															 												rightmost.closed = TRUE)]) %>%
-			dplyr::count(lb) %>%
+			# Generate frequencies
+			dplyr::count(lb, name = 'f') %>%
 			dplyr::full_join(tibble::tibble(lb = lower), by='lb') %>%
+			# Identify upper and lower bounds, then combine into intervals col
 			dplyr::mutate(ub = lb + width - 1,
-										n = ifelse(is.na(n), 0, n),
-										intervals = paste(lb, ub, sep='-'),
-										center = (ub + lb)/2) %>%
+										f = ifelse(is.na(f), 0, f),
+										intervals = paste(lb, ub, sep='-')) %>%
 			dplyr::arrange(lb) %>%
-			dplyr::select(x = intervals, f = n) %>%
+			# Just need the x (intervals) and f columns
+			dplyr::select(x = intervals, f) %>%
 			dplyr::mutate(x = forcats::fct_inorder(x))
 
 	} else {
@@ -100,7 +120,7 @@ get_freq_tbl<- function(x,
 			# For factors, add missing levels
 			freq.tbl <- freq.tbl %>%
 				tidyr::complete(x = levels(x), fill = list(f=0))
-		} else if(is.numeric(x) & all(x == floor(x))) {
+		} else if(is.numeric(x) && all(x == floor(x))) {
 			# For numbers that are effectively integers, fill in the missing values
 			freq.tbl <- freq.tbl %>%
 				tidyr::complete(x = seq(min(x), max(x)), fill = list(f=0))
@@ -113,22 +133,45 @@ get_freq_tbl<- function(x,
 	if(cp) freq.tbl <- freq.tbl %>% dplyr::mutate(`c%` = rnd(cf/sum(f)*100, opts$round_interim))
 	if(pr) freq.tbl <- freq.tbl %>% dplyr::mutate(pr = dplyr::lag(`c%`, default=0))
 
-	# Format the columns with decimals
-	if(rf) freq.tbl <- freq.tbl %>% dplyr::mutate(rf = fmt(rf, opts$round_interim))
-	if(cp) freq.tbl <- freq.tbl %>% dplyr::mutate(`c%` = fmt(`c%`, opts$round_final))
-	if(pr) freq.tbl <- freq.tbl %>% dplyr::mutate(pr = fmt(pr, opts$round_final))
-
-	# Sort ascending for factors, descending for numeric
-	if(is.factor(x)) freq.tbl <- dplyr::arrange(freq.tbl, x)
+	# Sort numeric vectors descending
 	if(is.numeric(x)) freq.tbl <- dplyr::arrange(freq.tbl, dplyr::desc(x))
 
 	# Convert to gt, add formatting
-	freq.tbl %>%
-		gt::gt() %>%
+	freq.gt <- freq.tbl %>%
+		# Set the x column as the label
+		gt::gt(rowname_col = "x") %>%
+		# Change the name of the x column, if necessary
+		gt::tab_stubhead(label = x_name) %>%
+		# Style the column labels
 		gt::tab_options(table.font.size = font_size) %>%
-		gt::tab_style(style = gt::cell_text(style = "italic"),
-									locations = gt::cells_column_labels()) %>%
-		gt::cols_align(align = 'right')
+		gt::tab_style(style = gt::cell_text(style = "italic",
+																				weight = "bold",
+																				align = "center"),
+									locations = list(gt::cells_stubhead(), gt::cells_column_labels())) %>%
+		gt::cols_align(align = 'right') %>%
+		gt::grand_summary_rows(
+			columns = c(f),
+			fns = list(Total = ~sum(.)),
+			missing_text = "",
+			formatter = gt::fmt_number,
+			decimals = 0)
 
+	# Format the columns with decimals
+	if(rf) freq.gt <- freq.gt %>% gt::fmt_number(rf, decimals = opts$round_interim)
+	if(cp) freq.gt <- freq.gt %>% gt::fmt_number(`c%`, decimals = opts$round_final)
+	if(pr) freq.gt <- freq.gt %>% gt::fmt_number(pr, decimals = opts$round_final)
+
+	# Include rf in summary row if appropriate
+	if(rf) {
+		freq.gt <- freq.gt %>%
+			gt::grand_summary_rows(
+				columns = c(rf),
+				fns = list(Total = ~sum(.)),
+				missing_text = "",
+				formatter = gt::fmt_number,
+				decimals = opts$round_interim)
+	}
+
+	freq.gt
 }
 

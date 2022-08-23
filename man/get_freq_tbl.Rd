@@ -7,12 +7,13 @@
 get_freq_tbl(
   x,
   grouped = TRUE,
-  start = 0,
+  start,
   width = 5,
   rf = TRUE,
   cf = FALSE,
   cp = FALSE,
   pr = FALSE,
+  x_name = "x",
   font_size = 12,
   ...
 )
@@ -43,6 +44,9 @@ round_final.}
 \item{pr}{Logical. Should a column for percentile rank be included (default =
 FALSE)? Note: values will be rounded to the value of round_final.}
 
+\item{x_name}{Character scalar. Name of x column in stub head (default =
+"x").}
+
 \item{font_size}{Numeric scalar. Font size of table in points (as rendered by
 \verb{[gt::gt()]}).}
 
@@ -53,27 +57,39 @@ FALSE)? Note: values will be rounded to the value of round_final.}
 A gt object.
 }
 \description{
-Produces both ungrouped and grouped frequency tables (as a \verb{[gt::gt()]}
+Produces both ungrouped and grouped frequency tables (as a \verb{[gt::gt()]} table
 object) from a set of raw data.
+}
+\details{
+By default, just calculates frequencies. Optionally, can include additional
+columns for relative frequency (\code{rf}), cumulative frequency (\code{cf}),
+cumulative percentage (\code{cp}), and percentile rank (\code{pr}). Additional
+customization options for the \verb{[gt::gt()]} table object are also available.
+
+Note that only numeric vectors can be used with the grouped option. Also note
+that numeric vectors are sorted descending, whereas character vectors and
+factors are sorted ascending.
 }
 \examples{
 
 x <- sample(x = 1:20, size = 20, replace = TRUE)
 
 # Ungrouped:
-get_freq_tbl(x, grouped = FALSE)
+get_freq_tbl(x, grouped = FALSE, round_interim = 3)
 get_freq_tbl(x, grouped = FALSE, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
 
 # Grouped:
 get_freq_tbl(x, grouped = TRUE)
-get_freq_tbl(x, grouped = TRUE, width = 2, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
+get_freq_tbl(x, grouped = TRUE, width = 3, start = 0, cf = TRUE, cp = TRUE, pr = TRUE, round_final = 2)
 
 # Also works on non-numeric data:
 x <- sample(x = LETTERS, size = 20, replace = TRUE)
 get_freq_tbl(x, grouped = FALSE)
+get_freq_tbl(x, grouped = FALSE, cf = TRUE, cp = TRUE, pr = TRUE)
 
 # When x is a factor, will include zeros for missing levels
-x <- factor(x, levels = LETTERS)
+x <- factor(sample(x = LETTERS, size = 20, replace = TRUE), levels = LETTERS)
 get_freq_tbl(x, grouped = FALSE)
+get_freq_tbl(x, grouped = FALSE, cf = TRUE, cp = TRUE, pr = TRUE)
 
 }
