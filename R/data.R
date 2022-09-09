@@ -7,16 +7,18 @@
 #'
 #' @param x Numeric vector.
 #' @param width Numeric scalar. Width of table to be produced.
-#' @param return_type Determines what type of object to return: either "gt" or
-#'   "kable".
 #' @param sort_x Character. Should data be sorted before being displayed? Can
 #'   specify ascending or descending sort.
+#' @param return_type Determines what type of object to return: either "gt" (for
+#'   a `[(gt::gt()]` object), or "kable" (for a `[(knitr::kable()]` object with
+#'   additional formatting from `[kableExtra::kableExtra()]`).
 #' @param font_size Numeric scalar. Font size (in pixels).
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]).
 #'
 #' @return Depends on `return_type`: Either a `[gt::gt()]` object
-#'   (`return_type='gt'`), or a `[knitr::kable()]` object (`return_type='gt'`).
+#'   (`return_type="gt"`), or a `[knitr::kable()]` object
+#'   (`return_type="kable"`).
 #' @export
 #'
 #' @examples
@@ -33,8 +35,8 @@
 #'
 show_raw_data<- function(x,
 												 width = 10,
-												 return_type = c('gt', 'kable'),
 												 sort_x = c('none', 'asc', 'desc'),
+												 return_type = c('gt', 'kable'),
 												 font_size = 12,
 												 ...) {
 
