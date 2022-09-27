@@ -104,9 +104,7 @@ solve_x_to_z <- function(x,
 	solution <- glue_solution(
 		Z.formula,
 		# Put negative values of M in brackets
-		"<<equals>> \\frac{<<x>> - <<(M)>>}{<<SD>>}",
-		"<<equals>> \\frac{<<M_diff>>}{<<SD>>}",
-		"<<equals>> \\mathbf{<<z>>}",
+		"<<equals>> \\frac{<<x>> - <<(M)>>}{<<SD>>} = \\frac{<<M_diff>>}{<<SD>>} = \\mathbf{<<z>>}",
 		# Round based on the precision of x and the final calculated value unless
 		# round_to is set to 'sigfigs', in which case just present the final rounded
 		# value as is.
@@ -208,9 +206,7 @@ solve_z_to_x <- function(z,
 	solution <- glue_solution(
 		X.formula,
 		# Put negative values of M in brackets
-		"<<equals>> (<<z>>)(<<SD>>) + <<(M)>>",
-		"<<equals>> <<zSD>> + <<M>>",
-		"<<equals>> \\mathbf{<<x>>}",
+		"<<equals>> (<<z>>)(<<SD>>) + <<(M)>> = <<zSD>> + <<M>> = \\mathbf{<<x>>}",
 		# Round based on the precision of x and the final calculated value unless
 		# round_to is set to 'sigfigs', in which case just present the final rounded
 		# value as is.
