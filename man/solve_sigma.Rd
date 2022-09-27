@@ -26,7 +26,7 @@ sigma_formula(sub_val = "", ...)
 
 \item{n}{Numeric scalar: sample size.}
 
-\item{sigma2}{Numeric scalar: population variance (\eqn{sigma^2}).}
+\item{sigma2}{Numeric scalar: population variance (\eqn{\sigma^2}).}
 
 \item{sub_val}{Character scalar. Subscript for the value to be calculated in
 the formula, in this case the population standard deviation (e.g.,

@@ -11,7 +11,7 @@
 #' @param x Numeric vector of raw data values.
 #' @param SS Numeric scalar: sum of squares.
 #' @param n Numeric scalar: sample size.
-#' @param sigma2 Numeric scalar: population variance (\eqn{sigma^2}).
+#' @param sigma2 Numeric scalar: population variance (\eqn{\sigma^2}).
 #' @param sub_val Character scalar. Subscript for the value to be calculated in
 #'   the formula, in this case the population standard deviation (e.g.,
 #'   \eqn{\sigma_{x}}). Leave empty to report no subscript.
