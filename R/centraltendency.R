@@ -334,10 +334,12 @@ solve_weighted_mean <- function(Samples,
 	solution <- glue_solution(
 		M_w.formula,
 		# Show the summation step, if set
-		if(opts$show_summation) {"<<equals>> \\frac{<<Num>>}{<<Denom>>}"},
+		if(opts$show_summation) {"<<equals>> \\frac{<<Num1>>}{<<Denom>>}"},
+		if(opts$show_summation) {"<<equals>> \\frac{<<Num2>>}{<<Sum_n>>}"},
 		"<<equals>> \\frac{<<Sum_M_x_n>>}{<<Sum_n>>}",
 		"<<equals>> \\mathbf{<<M_w>>}",
-		Num = summation(lglue("(<<M>>)(<<n>>)"), abbrev_sum = opts$abbrev_sum),
+		Num1 = summation(lglue("(<<M>>)(<<n>>)"), abbrev_sum = opts$abbrev_sum),
+		Num2 = summation(lglue("(<<M_x_n>>)"), abbrev_sum = opts$abbrev_sum),
 		Denom = summation(lglue("<<n>>"), abbrev_sum = opts$abbrev_sum),
 		Sum_M_x_n = fmt(Sum_M_x_n, get_digits(Sum_M_x_n, opts$round_interim)),
 		# Round based on the precision of x and the final calculated value unless
