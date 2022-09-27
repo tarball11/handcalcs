@@ -36,10 +36,16 @@
 #' @param solutions If `TRUE` (the default), renders the table as expected. If
 #'   `FALSE`, will show all of the requested columns, but will not display any
 #'   of the calculated values.
+#' @param return_type Determines what type of object to return: either "tbl"
+#'   (for a `[tibble::tibble()]` object), "gt" (for a `[(gt::gt()]` object, the default), or
+#'   "kable" (for a `[(knitr::kable()]` object with additional formatting from
+#'   `[kableExtra::kableExtra()]`).
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]).
 #'
-#' @return A gt object.
+#' @return Depends on `return_type`: Either a `[tibble::tibble()]` object
+#'   (`return_type="tbl"`), `[gt::gt()]` object (`return_type="gt"`), or a
+#'   `[knitr::kable()]` object (`return_type="kable"`).
 #' @export
 #'
 #' @examples
@@ -73,8 +79,9 @@ get_freq_tbl<- function(x,
 												cp = FALSE,
 												pr = FALSE,
 												x_name = "x",
-												font_size = 12,
 												solutions = TRUE,
+												return_type = c('gt', 'kable', 'tbl'),
+												font_size = 12,
 												...) {
 
 	# Check argument validity
@@ -82,9 +89,12 @@ get_freq_tbl<- function(x,
 	stopifnot(is.logical(grouped))
 	stopifnot(is.logical(solutions))
 
+	return_type <- match.arg(return_type)
+	if(missing(return_type)) return_type == 'gt'
+
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
-	opts<- get_handcalcs_opts(...)
+	opts <- get_handcalcs_opts(...)
 
 
 	if(grouped) {
@@ -122,9 +132,13 @@ get_freq_tbl<- function(x,
 
 		# Add missing values to sequence
 		if(is.factor(x)) {
-			# For factors, add missing levels
+			# For factors, add missing levels; be sure to retain factor level order
+			x_lvls <- levels(x)
 			freq.tbl <- freq.tbl %>%
-				tidyr::complete(x = levels(x), fill = list(f=0))
+				tidyr::complete(x = levels(x), fill = list(f=0)) %>%
+				dplyr::mutate(x = factor(x, levels = x_lvls)) %>%
+				dplyr::arrange(x)
+
 		} else if(is.numeric(x) && all(x == floor(x))) {
 			# For numbers that are effectively integers, fill in the missing values
 			freq.tbl <- freq.tbl %>%
@@ -135,7 +149,7 @@ get_freq_tbl<- function(x,
 	# Blank out frequencies if hiding solutions:
 	if(!solutions) freq.tbl <- freq.tbl %>% dplyr::mutate(f = NA)
 
-	# Add additional columns
+	# Add additional columns (will be calculated as NA if solutions = TRUE)
 	if(rf) freq.tbl <- freq.tbl %>% dplyr::mutate(rf = rnd(f/sum(f), opts$round_interim))
 	if(cf) freq.tbl <- freq.tbl %>% dplyr::mutate(cf = cumsum(f))
 	if(cp) freq.tbl <- freq.tbl %>% dplyr::mutate(`c%` = rnd(cf/sum(f)*100, opts$round_interim))
@@ -144,48 +158,103 @@ get_freq_tbl<- function(x,
 	# Sort numeric vectors descending
 	if(is.numeric(x)) freq.tbl <- dplyr::arrange(freq.tbl, dplyr::desc(x))
 
-	# Convert to gt, add formatting
-	freq.gt <- freq.tbl %>%
-		# Set the x column as the label
-		gt::gt(rowname_col = "x") %>%
-		# Change the name of the x column, if necessary
-		gt::tab_stubhead(label = x_name) %>%
-		# Overall table style/size
-		gt::tab_options(table.font.size = font_size) %>%
-		gt::cols_width(tidyselect::any_of(c('f', 'cf')) ~ gt::px(40),
-									 tidyselect::any_of(c('rf', 'c%', 'pr')) ~ gt::px(60)) %>%
-		# Style the column labels
-		gt::tab_style(style = gt::cell_text(style = "italic",
-																				weight = "bold",
-																				align = "right"),
-									locations = list(gt::cells_stubhead(), gt::cells_column_labels())) %>%
-		gt::cols_align(align = 'right') %>%
-		gt::grand_summary_rows(
-			columns = c(f),
-			fns = list(Total = ~sum(.)),
-			missing_text = "",
-			formatter = gt::fmt_number,
-			decimals = 0)
 
-	# Format the columns with decimals (if presenting solutions)
-	if(rf & solutions) freq.gt <- freq.gt %>% gt::fmt_number(rf, decimals = opts$round_interim)
-	if(cp & solutions) freq.gt <- freq.gt %>% gt::fmt_number(`c%`, decimals = opts$round_final)
-	if(pr & solutions) freq.gt <- freq.gt %>% gt::fmt_number(pr, decimals = opts$round_final)
-
-	# Include rf in summary row if appropriate
-	if(rf) {
-		freq.gt <- freq.gt %>%
+	if(return_type == 'tbl') {
+		freq.tbl
+	} else if(return_type == 'gt') {
+		# Convert to gt, add formatting
+		freq.gt <- freq.tbl %>%
+			# Set the x column as the label
+			gt::gt(rowname_col = "x") %>%
+			# Change the name of the x column, if necessary
+			gt::tab_stubhead(label = x_name) %>%
+			# Overall table style/size
+			gt::tab_options(table.font.size = font_size) %>%
+			gt::cols_width(tidyselect::any_of(c('f', 'cf')) ~ gt::px(40),
+										 tidyselect::any_of(c('rf', 'c%', 'pr')) ~ gt::px(60)) %>%
+			# Style the column labels
+			gt::tab_style(style = gt::cell_text(style = "italic",
+																					weight = "bold",
+																					align = "right"),
+										locations = list(gt::cells_stubhead(), gt::cells_column_labels())) %>%
+			gt::cols_align(align = 'right') %>%
 			gt::grand_summary_rows(
-				columns = c(rf),
+				columns = c(f),
 				fns = list(Total = ~sum(.)),
 				missing_text = "",
 				formatter = gt::fmt_number,
-				decimals = opts$round_interim)
+				decimals = 0)
+
+		# Format the columns with decimals (if presenting solutions)
+		if(rf & solutions) freq.gt <- freq.gt %>% gt::fmt_number(rf, decimals = opts$round_interim)
+		if(cp & solutions) freq.gt <- freq.gt %>% gt::fmt_number(`c%`, decimals = opts$round_final)
+		if(pr & solutions) freq.gt <- freq.gt %>% gt::fmt_number(pr, decimals = opts$round_final)
+
+		# Include rf in summary row if appropriate
+		if(rf) {
+			freq.gt <- freq.gt %>%
+				gt::grand_summary_rows(
+					columns = c(rf),
+					fns = list(Total = ~sum(.)),
+					missing_text = "",
+					formatter = gt::fmt_number,
+					decimals = opts$round_interim)
+		}
+
+		# Blank everything out if hiding solutions by turning NAs into empty text
+		freq.gt %>%
+			gt::sub_missing(missing_text = "")
+
+	} else if(return_type == 'kable') {
+		# Calculate summary row:
+		summary.tbl <- dplyr::summarize(freq.tbl, x = 'Total', f = sum(f))
+
+		if(rf) summary.tbl$rf <- freq.tbl %>% dplyr::summarize(rf = sum(rf)) %>% dplyr::pull()
+		if(cf) summary.tbl$cf <- ""
+		if(cp) summary.tbl$cp <- ""
+		if(pr) summary.tbl$pr <- ""
+
+		# To simplify joining with summary table, convert all columns to character
+		# (Note: use fmt() for other columns to ensure correct number of decimals)
+		freq.tbl <- dplyr::mutate(freq.tbl, x = as.character(x), f = as.character(f))
+
+		# Format the columns with decimals (if presenting solutions)
+		if(rf) freq.tbl <- dplyr::mutate(freq.tbl, rf = fmt(rf, digits = opts$round_interim))
+		if(cp) freq.tbl <- dplyr::mutate(freq.tbl, `c%` = fmt(`c%`, digits = opts$round_final))
+		if(pr) freq.tbl <- dplyr::mutate(freq.tbl, pr = fmt(pr, digits = opts$round_final))
+
+		summary.tbl <- dplyr::mutate(summary.tbl, f = as.character(f))
+		if(rf) summary.tbl <- dplyr::mutate(summary.tbl, rf = fmt(rf, digits = opts$round_interim))
+
+		# Combine frequency table with summary row
+		full.tbl <- dplyr::bind_rows(freq.tbl, summary.tbl)
+
+		# Replace NA values with empty strings for each column in data
+		freq.kbl <- tidyr::replace_na(full.tbl, list(f = ""))
+
+		if(rf) freq.kbl <- tidyr::replace_na(freq.kbl, list(rf = ""))
+		if(cf) freq.kbl <- tidyr::replace_na(freq.kbl, list(cf = ""))
+		if(cp) freq.kbl <- tidyr::replace_na(freq.kbl, list(cp = ""))
+		if(pr) freq.kbl <- tidyr::replace_na(freq.kbl, list(pr = ""))
+
+		# Add additional formating using kableExtra package:
+		freq.kbl %>%
+			knitr::kable(format='latex',
+									 row.names=FALSE,
+									 booktabs=TRUE,
+									 linesep = "",
+									 align = c('r', 'c', 'c', 'c', 'c', 'c')) %>%
+			kableExtra::kable_styling(position = "center",
+																latex_options = 'HOLD_position') %>%
+			kableExtra::row_spec(0, italic = TRUE) %>%
+			kableExtra::row_spec(1:nrow(freq.kbl), hline_after = TRUE) %>%
+			kableExtra::column_spec(2:(ncol(freq.kbl)-1),
+															width = '2cm',
+															border_left = TRUE) %>%
+			kableExtra::column_spec(ncol(freq.kbl),
+															width = '2cm',
+															border_left = TRUE,
+															border_right = TRUE)
 	}
-
-	# Blank everything out if hiding solutions by turning NAs into empty text
-	freq.gt %>%
-		gt::sub_missing(missing_text = "")
-
 }
 

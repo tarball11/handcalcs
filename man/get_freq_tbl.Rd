@@ -14,8 +14,9 @@ get_freq_tbl(
   cp = FALSE,
   pr = FALSE,
   x_name = "x",
-  font_size = 12,
   solutions = TRUE,
+  return_type = c("gt", "kable", "tbl"),
+  font_size = 12,
   ...
 )
 }
@@ -48,18 +49,25 @@ FALSE)? Note: values will be rounded to the value of round_final.}
 \item{x_name}{Character scalar. Name of x column in stub head (default =
 "x").}
 
-\item{font_size}{Numeric scalar. Font size of table in points (as rendered by
-\verb{[gt::gt()]}).}
-
 \item{solutions}{If \code{TRUE} (the default), renders the table as expected. If
 \code{FALSE}, will show all of the requested columns, but will not display any
 of the calculated values.}
+
+\item{return_type}{Determines what type of object to return: either "tbl"
+(for a \verb{[tibble::tibble()]} object), "gt" (for a \verb{[(gt::gt()]} object, the default), or
+"kable" (for a \verb{[(knitr::kable()]} object with additional formatting from
+\verb{[kableExtra::kableExtra()]}).}
+
+\item{font_size}{Numeric scalar. Font size of table in points (as rendered by
+\verb{[gt::gt()]}).}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).}
 }
 \value{
-A gt object.
+Depends on \code{return_type}: Either a \verb{[tibble::tibble()]} object
+(\code{return_type="tbl"}), \verb{[gt::gt()]} object (\code{return_type="gt"}), or a
+\verb{[knitr::kable()]} object (\code{return_type="kable"}).
 }
 \description{
 Produces both ungrouped and grouped frequency tables (as a \verb{[gt::gt()]} table
