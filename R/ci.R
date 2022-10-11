@@ -184,23 +184,32 @@ ci_z_formula <- function(level = 0.95,
 
 #' Confidence Intervals Around Sample Mean (using *t* distribution)
 #'
-#' Calculates confidence intervals around a sample mean wwhen the population
+#' Calculates confidence intervals around a sample mean when the population
 #' standard deviation (\eqn{\sigma}) must be estimated using the sample standard
 #' deviation (\eqn{s}, aka `SD`) \eqn{M \pm (t_{1 - \alpha/2})(s_{M})}. May
 #' either provide `s_M`, or that value can be calculated from `SD` and `n`.
+#'
+#' Optionally, provide the value of mu (\eqn{mu}, the population standard
+#' deviation under the null hypothesis), which will return the confidence
+#' interval around the mean difference: \eqn{(M - \mu) \pm (t_{1 -
+#' \alpha/2})(s_{M})}.
 #'
 #' Note that the critical value of *t* (`t_crit`) is rounded to the value of
 #' `round_t` instead of the value of `round_interim` or `round_final` (see
 #' [handcalcs_defaults()]).
 #'
 #' @param M Numeric scalar. Sample mean.
-#' @param SD Numeric scalar. Population standard deviation. Required if s_M
-#'   is not provided.
-#' @param n Numeric scalar. Sample size. Required if s_M is not provided.
-#' @param df Numeric scalar. Degrees of freedom. Required if n is not provided.
+#' @param s,SD Numeric scalar. Sample standard deviation. May be named either
+#'   `s` or `SD`. Required if s_M is not provided.
+#' @param n,df Numeric scalar. Must supply either sample size (n) or degrees of
+#'   freedom (df, \eqn{df = n - 1}). Whichever argument is not provided will be
+#'   calculated.
 #' @param s_M Numeric scalar. Standard error of the mean. If not provided, will
-#'   be calculated from `SD` and `n` (using [solve_s_M()]) and included in
-#'   the solution string.
+#'   be calculated from `SD` and `n` (using [solve_s_M()]) and included in the
+#'   solution string.
+#' @param mu Numeric scalar. Population mean under the null hypothesis. If
+#'   provided, will return the confidence interval around the mean difference
+#'   (\eqn{M - \mu}).
 #' @param level Numeric scalar. Confidence level; defaults to 0.95 (95%
 #'   confidence intervals).
 #' @param ... Additional arguments to override default behaviors (see
@@ -212,41 +221,56 @@ ci_z_formula <- function(level = 0.95,
 #'   both values `CI`), the solution string (`solution`), and the bare formula
 #'   (`formula`) in LaTeX format. `ci_t_formula()` returns just the bare formula
 #'   in LaTeX format as a character string.
-
 #' @export
 #'
 #' @examples
 #'
-#' solve_ci_t(M = 5, s_M = 0.2)
+#' solve_ci_t(M = 55, s_M = 1, df = 99)
 #'
 #' # Defaults to 95% CIs, but other levels can be specified:
-#' solve_ci_t(M = 5, s_M = 0.2, level = 0.99)
+#' solve_ci_t(M = 55, s_M = 1, df = 99, level = 0.99)
 #'
-#' # Will calculate s_M if SD and n are provided, and include the
+#' # Will calculate s_M if s and n (or df) are provided, and include the
 #' # calculation in the solution string
-#' solve_ci_t(M = 5, SD = 2, n = 100)
+#' solve_ci_t(M = 55, s = 10, n = 100)
 #'
-#' # Note: if s_M is provided, will ignore SD and n values
-#' solve_ci_t(M = 5, SD = 2, n = 100, s_M = 4)
+#' # Note: if s_M is provided, it takes precedence; s will be recalculated
+#' solve_ci_t(M = 55, s = 10, n = 100, s_M = 4)
+#'
+#' # If mu is provided, will return the CI of the mean difference (M - mu).
+#' solve_ci_t(M = 55, s_M = 1, n = 100, mu = 50)
 #'
 #' # If you just want the formula:
 #' ci_t_formula()
 #'
+#' # To get the formula for the mean difference, supply a non-null value for mu:
+#' ci_t_formula(mu = TRUE)
+#'
 solve_ci_t <- function(M,
+											 s,
 											 SD,
 											 n,
 											 df,
 											 s_M,
+											 mu = NULL,
 											 level = 0.95,
 											 ...) {
 	# Check argument validity
 	stopifnot(is.numeric(M), length(M) == 1)
+
+	# If SD is supplied instead of s, pass that along as variance.
+	if(missing(s) & !missing(SD)) s <- SD
+
+	# Must supply either n or df; missing argument will be calculated.
+	if(missing(n) & missing(df)) stop('Must supply either n or df.')
+	if(missing(n)) n <- df + 1
+	if(missing(df)) df <- n - 1
+
+	if(missing(s_M) & missing(s)) stop('Must supply either s_M or s (SD).')
+
+	if(!is.null(mu) & !is.numeric(mu)) stop('mu must be a numeric argument.')
 	stopifnot(is.numeric(level), length(level) == 1, level > 0, level < 1)
 
-	if(missing(s_M) & (missing(SD) | missing(n))) {
-		stop('Must supply either s_M or SD and n.')
-	}
-	if(missing(n) & missing(df)) stop('Must supply either n or df.')
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -255,14 +279,14 @@ solve_ci_t <- function(M,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate s_M from SD and n
+	# Calculate s_M from s and n
 	if(missing(s_M)) {
-		stopifnot(is.numeric(SD), is.numeric(n))
-		stopifnot(length(SD) == 1, length(n) == 1)
-		stopifnot(SD > 0, n > 0)
+		stopifnot(is.numeric(s), is.numeric(n))
+		stopifnot(length(s) == 1, length(n) == 1)
+		stopifnot(s > 0, n > 0)
 		stopifnot(round(n) == n)
 
-		s_M.lst <- solve_s_M(SD = SD,
+		s_M.lst <- solve_s_M(s = s,
 												 n = n,
 												 round_interim = opts$round_interim,
 												 round_final = opts$round_interim,
@@ -274,6 +298,8 @@ solve_ci_t <- function(M,
 		s_M.solution <- s_M.lst$solution
 	} else {
 		s_M.solution <- NULL
+		sqrt_n <- rnd(sqrt(n), opts$round_interim)
+		s <- rnd(s_M*sqrt_n, opts$round_interim)
 	}
 
 	stopifnot(is.numeric(s_M), length(s_M) == 1, s_M > 0)
@@ -285,16 +311,27 @@ solve_ci_t <- function(M,
 	M <- rnd(M, opts$round_interim)
 	s_M <- rnd(s_M, opts$round_interim)
 
+	# Estimate the Mean Diff if mu is provided.
+	if(!is.null(mu)) {
+		mu <- rnd(mu, opts$round_interim)
+		M_diff <- M - mu
+		estimate <- M_diff
+	} else {
+		M_diff <- NULL
+		estimate <- M
+	}
+
 	# Calculate CI
 	t_crit <- rnd(qt(p = (1-level)/2, df = df, lower.tail = FALSE), digits = opts$round_t)
 
 	marg_err <- rnd(t_crit*s_M, opts$round_interim)
-	CI_lower <- rnd(M - marg_err, opts$round_final)
-	CI_upper <- rnd(M + marg_err, opts$round_final)
+	CI_lower <- rnd(estimate - marg_err, opts$round_final)
+	CI_upper <- rnd(estimate + marg_err, opts$round_final)
 
 
 	# Get base formula without LaTeX math/aligned blocks
-	CI.formula <- ci_t_formula(level = level,
+	CI.formula <- ci_t_formula(mu = mu,
+														 level = level,
 														 use_aligned = opts$use_aligned,
 														 add_math = FALSE,
 														 add_aligned = FALSE)
@@ -308,7 +345,8 @@ solve_ci_t <- function(M,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		CI.solution,
-		"<<equals>> <<M>> \\pm (<<t_crit>>)(<<s_M>>)",# = <<M>> \\pm <<marg_err>>",
+		{ if(!is.null(mu)) "<<equals>> (<<M>> - <<mu>>) \\pm (<<t_crit>>)(<<s_M>>)" },
+		"<<equals>> <<estimate>> \\pm (<<t_crit>>)(<<s_M>>)",# = <<M>> \\pm <<marg_err>>",
 		# "<<equals>> <<M>> \\pm <<marg_err>>",
 		# "<<equals>> \\mathbf{(<<CI_lower>>, <<CI_upper>>)}",
 		"\\text{Lower bound} <<equals>> <<M>> - <<marg_err>> = \\mathbf{<<CI_lower>>}",
@@ -327,11 +365,12 @@ solve_ci_t <- function(M,
 	# Return list containing both values and solution string
 	# Interpretation is included if requested
 	list(M = M,
-			 SD = if(missing(SD)) NULL else SD,
-			 s = if(missing(SD)) NULL else SD,
+			 s = if(missing(s)) NULL else s,
+			 SD = if(missing(s)) NULL else s,
 			 n = if(missing(n)) NULL else n,
 			 df = df,
 			 s_M = s_M,
+			 mu = mu,
 			 level = level,
 			 t_crit = t_crit,
 			 marg_err = marg_err,
@@ -347,7 +386,8 @@ solve_ci_t <- function(M,
 #'
 #' @export
 #'
-ci_t_formula <- function(level = 0.95,
+ci_t_formula <- function(mu = NULL,
+												 level = 0.95,
 												 ...) {
 
 	# Check argument validity
@@ -360,9 +400,13 @@ ci_t_formula <- function(level = 0.95,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
+	# Round CI level
 	level <- rnd(level, opts$round_interim)
 
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> M \\pm (t_{1 - \\alpha/2})(s_{M})")
+	# Estimate Mean or Mean Difference:
+	estimate <- ifelse(!is.null(mu), "(M - \\mu)", "M")
+
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t_{1 - \\alpha/2})(s_{M})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -370,6 +414,8 @@ ci_t_formula <- function(level = 0.95,
 
 	return(solution)
 }
+
+
 
 
 # t (Mean Difference for paired samples):

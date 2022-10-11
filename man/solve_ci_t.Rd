@@ -5,23 +5,27 @@
 \alias{ci_t_formula}
 \title{Confidence Intervals Around Sample Mean (using \emph{t} distribution)}
 \usage{
-solve_ci_t(M, SD, n, df, s_M, level = 0.95, ...)
+solve_ci_t(M, SD, n, df, s_M, mu = NULL, level = 0.95, ...)
 
-ci_t_formula(level = 0.95, ...)
+ci_t_formula(mu = NULL, level = 0.95, ...)
 }
 \arguments{
 \item{M}{Numeric scalar. Sample mean.}
 
-\item{SD}{Numeric scalar. Population standard deviation. Required if s_M
-is not provided.}
+\item{SD}{Numeric scalar. Population standard deviation. Required if s_M is
+not provided.}
 
 \item{n}{Numeric scalar. Sample size. Required if s_M is not provided.}
 
 \item{df}{Numeric scalar. Degrees of freedom. Required if n is not provided.}
 
 \item{s_M}{Numeric scalar. Standard error of the mean. If not provided, will
-be calculated from \code{SD} and \code{n} (using \code{\link[=solve_s_M]{solve_s_M()}}) and included in
-the solution string.}
+be calculated from \code{SD} and \code{n} (using \code{\link[=solve_s_M]{solve_s_M()}}) and included in the
+solution string.}
+
+\item{mu}{Numeric scalar. Population mean under the null hypothesis. If
+provided, will return the confidence interval around the mean difference
+(\eqn{M - \mu}).}
 
 \item{level}{Numeric scalar. Confidence level; defaults to 0.95 (95\%
 confidence intervals).}
@@ -38,12 +42,17 @@ both values \code{CI}), the solution string (\code{solution}), and the bare form
 in LaTeX format as a character string.
 }
 \description{
-Calculates confidence intervals around a sample mean wwhen the population
+Calculates confidence intervals around a sample mean when the population
 standard deviation (\eqn{\sigma}) must be estimated using the sample standard
 deviation (\eqn{s}, aka \code{SD}) \eqn{M \pm (t_{1 - \alpha/2})(s_{M})}. May
 either provide \code{s_M}, or that value can be calculated from \code{SD} and \code{n}.
 }
 \details{
+Optionally, provide the value of mu (\eqn{mu}, the population standard
+deviation under the null hypothesis), which will return the confidence
+interval around the mean difference: \eqn{(M - \mu) \pm (t_{1 -
+\alpha/2})(s_{M})}.
+
 Note that the critical value of \emph{t} (\code{t_crit}) is rounded to the value of
 \code{round_t} instead of the value of \code{round_interim} or \code{round_final} (see
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).
@@ -61,6 +70,9 @@ solve_ci_t(M = 5, SD = 2, n = 100)
 
 # Note: if s_M is provided, will ignore SD and n values
 solve_ci_t(M = 5, SD = 2, n = 100, s_M = 4)
+
+# If mu is provided, will return the CI of the mean difference (M - mu).
+solve_ci_t(M = 55, SD = 2, n = 100, mu = 50)
 
 # If you just want the formula:
 ci_t_formula()
