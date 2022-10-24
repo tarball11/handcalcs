@@ -38,17 +38,18 @@ solve_z_to_p <- function(z,
 
 	# Round the initial value
 	z <- rnd(z, opts$round_z)
+	abs_z <- abs(z)
 
 	# Get the p-value/solution string:
 	if(direction == 'pos') {
 		p <- rnd(pnorm(q = z, lower.tail=FALSE), opts$round_final)
 		sol.str <- "p(z > <<z>>) <<equals>> \\mathbf{<<p>>}"
 	} else if(direction == 'neg') {
-		p <- rnd(pnorm(q = z, lower.tail=FALSE), opts$round_final)
+		p <- rnd(pnorm(q = z, lower.tail=TRUE), opts$round_final)
 		sol.str <- "p(z < <<z>>) <<equals>> \\mathbf{<<p>>}"
 	} else if(direction == 'both') {
-		p <- rnd(pnorm(q = z, lower.tail=FALSE), opts$round_final)
-		sol.str <- "p(z > <<abs(z)>>  & z < <<-abs(z)>>) <<equals>> \\mathbf{<<p>>}"
+		p <- rnd(pnorm(q = abs_z, lower.tail=FALSE)*2, opts$round_final)
+		sol.str <- "p(z > <<abs_z>>\\ \\&\\ z < <<-abs_z>>) <<equals>> \\mathbf{<<p>>}"
 	}
 
 	solution <- glue_solution(
