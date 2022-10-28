@@ -259,19 +259,20 @@ solve_ci_t <- function(M,
 											 df,
 											 s_M,
 											 mu = NULL,
-											 paired = FALSE,
 											 level = 0.95,
 											 ...) {
 	# Check argument validity
 	stopifnot(is.numeric(M), length(M) == 1)
 
-	# If SD is supplied instead of s, pass that along as variance.
+	# If SD is supplied instead of s, pass that along as standard deviation
 	if(missing(s) & !missing(SD)) s <- SD
 
 	# Must supply either n or df; missing argument will be calculated.
 	if(missing(n) & missing(df)) stop('Must supply either n or df.')
 	if(missing(n)) n <- df + 1
 	if(missing(df)) df <- n - 1
+	stopifnot(is.numeric(df), length(df) == 1, df > 0)
+	stopifnot(is.numeric(n), length(n) == 1, df > 0)
 
 	if(missing(s_M) & missing(s)) stop('Must supply either s_M or s (SD).')
 
@@ -310,9 +311,6 @@ solve_ci_t <- function(M,
 	}
 
 	stopifnot(is.numeric(s_M), length(s_M) == 1, s_M > 0)
-
-	if(missing(df)) df <- n - 1
-	stopifnot(is.numeric(df), length(df) == 1, df > 0)
 
 	# Round initial values
 	M <- rnd(M, opts$round_interim)
@@ -489,13 +487,13 @@ ci_t_formula <- function(mu = NULL,
 #' solve_ci_t_paired(M_D = 5, s_D = 10, n = 100, s_M_D = 4)
 #'
 #' # If mu is provided, will return the CI of the mean difference (M_D - mu_D).
-#' solve_ci_t_paired(M_D = 5, s_M_D = 1, n = 100, mu = 0)
+#' solve_ci_t_paired(M_D = 5, s_M_D = 1, n = 100, mu_D = 0)
 #'
 #' # If you just want the formula:
 #' ci_t_paired_formula()
 #'
 #' # To get the formula for the mean difference, supply a non-null value for mu:
-#' ci_t_paired_formula(mu = TRUE)
+#' ci_t_paired_formula(mu_D = TRUE)
 #'
 solve_ci_t_paired <- function(M_D,
 															s_D,
@@ -668,9 +666,264 @@ ci_t_paired_formula <- function(mu_D = NULL,
 }
 
 
+#' Confidence Intervals of Difference Between Independent Means (using *t*
+#' distribution)
+#'
+#' Calculates confidence intervals for the difference between two independent
+#' sample means: \eqn{(M_{1} - M_{2}) \pm (t_{1 - \alpha/2})(s_{M_{1} -
+#' M_{2}})}. May either provide `s_M_diff`, or that value can be calculated by
+#' providing the sample sizes (`n_1` and `n_2`) and either the pooled variance
+#' (`s_p2`) or the two sample standard deviations (`s_1` and `s_2`).
+#'
+#' You must provide either `df` or the two sample sizes (`n_1` and `n_2`). If
+#' sample sizes are provided, `df` will be calculated (\eqn{df = n_1 + n_2 -
+#' 1}). If both are provided, this allows for the possibility of errors that
+#' produce incorrect results. However, it also allows for the possibility of
+#' using a different value of `df` than `n_1 + n_2 - 1`, for instance of
+#' requiring use of a statistical table that does not have that exact value of
+#' `df` listed.
+#'
+#' Note that the critical value of *t* (`t_crit`) is rounded to the value of
+#' `round_t` instead of the value of `round_interim` or `round_final` (see
+#' [handcalcs_defaults()]).
+#'
+#' @param M_1,M_2 Numeric scalars. Means of samples 1 and 2.
+#' @param s_1,s_2,SD_1,SD_2 Numeric scalars. Standard deviations of samples 1
+#'   and 2. May be named either `s_1` and `s_2` or `SD_1` and `SD_2`. Required
+#'   if not providing pooled variance (`s_p2`) or the standard error of the
+#'   differences (`s_M_diff`).
+#' @param s_p2 Numeric scalar. Pooled variance. Will be calculated from sample
+#'   standard deviations (`s_1`, `s_2`) and sample sizes (`n_1` and `n_2`) if
+#'   those values are provided.
+#' @param n_1,n_2 Numeric scalars. Sample sizes of samples 1 and 2. Required if
+#'   s_M_diff is not provided. Also required if `df` is not provided.
+#' @param df  Numeric scalar. Degrees of freedom (df, \eqn{df = n_1 + n_2 - 1}).
+#'   If not provided, will be calculated from `n_1` and `n_2`. calculated.
+#' @param s_M_diff Numeric scalar. Standard error of the difference of the
+#'   means. If not provided, will be calculated (using [solve_s_M_diff()]) from
+#'   sample sizes (`n_1` and `n_2`) and standard deviations (`s_1`, `s_2`) and
+#'   included in the solution string.
+#' @param level Numeric scalar. Confidence level; defaults to 0.95 (95%
+#'   confidence intervals).
+#' @param ... Additional arguments to override default behaviors (see
+#'   [handcalcs_defaults()]
+#'
+#' @return `solve_ci_t_indep()` returns a list with all provided values (`M_1`,
+#'   `M_2`, `s_1`, `s_2`, `SD_1`, `SD_2`, `n_1`, `n_2`, `df`, `s_M_diff`,
+#'   `level`), the interim calculations (`s_M_diff`, `t_crit`, `marg_err`), the
+#'   final value (`CI_lower`, `CI_upper`, as well as a named vector containing
+#'   both values `CI`), the solution string (`solution`), and the bare formula
+#'   (`formula`) in LaTeX format. `ci_t_indep_formula()` returns just the bare
+#'   formula in LaTeX format as a character string.
+#' @export
+#'
+#' @examples
+#'
+#' solve_ci_t_indep(M_1 = 55, M_2 = 50, s_M_diff = 1, df = 98)
+#'
+#' # Defaults to 95% CIs, but other levels can be specified:
+#' solve_ci_t_indep(M_1 = 55, M_2 = 50, s_M_diff = 1, df = 98, level = 0.99)
+#'
+#' # If s_M_diff is not provided, can be calculated from sample sizes and either
+#' # pooled variance (s_p2):
+#' solve_ci_t_indep(M_1 = 50, M_2 = 45, n_1 = 50, n_2 = 50, s_p2 = 0.5)
+#'
+#' # or standard deviations (s_1 and s_2)
+#' solve_ci_t_indep(M_1 = 50, M_2 = 45, n_1 = 50, n_2 = 50, s_1 = 1.5, s_2 = 2.0)
+#'
+#' # If you just want the formula:
+#' ci_t_indep_formula()
+#'
+#'
+solve_ci_t_indep <- function(M_1, M_2,
+														 s_1, s_2,
+														 SD_1, SD_2,
+														 s_p2,
+														 n_1, n_2,
+														 df,
+														 s_M_diff,
+														 level = 0.95,
+														 ...) {
+	# Check argument validity
+	stopifnot(is.numeric(M_1), length(M_1) == 1)
+	stopifnot(is.numeric(M_2), length(M_2) == 1)
 
-# t (Mean Difference for paired samples):
-# "95% CI = M_D \\pm (t_{\\alpha/2})(s_{M_{D}})"
+	# If SD is supplied instead of s, pass that along as standard deviation.
+	if(missing(s_1) & !missing(SD_1)) s_1 <- SD_1
+	if(missing(s_2) & !missing(SD_2)) s_2 <- SD_2
+
+	# Must supply either n_1 and n_2 or df.
+	if((missing(n_1) | missing(n_2)) & missing(df)) stop('Must supply either sample sizes (n_1 and n_2) or df.')
+	if(missing(df)) df <- n_1 + n_2 - 1
+	stopifnot(is.numeric(df), length(df) == 1, df > 0)
+
+	# If standard error of the differences is not provided, must supply sample
+	# sizes and either the pooled variance or sample standard deviations
+	if(missing(s_M_diff)) {
+		if(missing(n_1) | missing(n_2)) stop('If not supplying standard error of the differences (s_M_diff), must include sample sizes (n_1 and n_2)')
+		if(missing(s_p2) & (missing(s_1) | missing(s_2))) stop('If not supplying standard error of the differences (s_M_diff), must include either pooled variance (s_p2) or sample standard deviations (s_1 and s_2)')
+	}
+
+	# Make sure level argument is valid
+	stopifnot(is.numeric(level), length(level) == 1, level > 0, level < 1)
+
+	# Get list of options (allowing user to override defaults) for rounding
+	# behavior and for presenting solutions in LaTeX environment.
+	opts <- get_handcalcs_opts(...)
+
+	# Use the appropriate equals sign for an aligned environment
+	equals <- ifelse(opts$use_aligned, "&=", "=")
+
+	# Calculate s_M_diff sample sizes and pooled variance or standard deviations
+	if(missing(s_M_diff)) {
+		# Verify sample size arguments:
+		stopifnot(is.numeric(n_1), is.numeric(n_2))
+		stopifnot(length(n_1) == 1, length(n_2) == 1)
+		stopifnot(n_1 > 0, n_2 > 0)
+		stopifnot(round(n_1) == n_1, round(n_2) == n_2)
+
+		# Use either pooled variance or sample standard deviations:
+		if(!missing(s_p2)) {
+			stopifnot(is.numeric(s_p2))
+			stopifnot(length(s_p2) == 1)
+			stopifnot(s_p2 > 0)
+
+			s_M_diff.lst <- solve_s_M_diff(s_p2 = s_p2,
+																		 n_1 = n_1,
+																		 n_2 = n_2,
+																		 round_interim = opts$round_interim,
+																		 round_final = opts$round_interim,
+																		 add_math = FALSE,
+																		 add_aligned = FALSE,
+																		 use_aligned = opts$use_aligned)
+		} else {
+			stopifnot(is.numeric(s_1), is.numeric(s_2))
+			stopifnot(length(s_1) == 1, length(s_2) == 1)
+			stopifnot(s_1 > 0, s_2 > 0)
+
+			s_M_diff.lst <- solve_s_M_diff(s_1 = s_1,
+																		 s_2 = s_2,
+																		 n_1 = n_1,
+																		 n_2 = n_2,
+																		 round_interim = opts$round_interim,
+																		 round_final = opts$round_interim,
+																		 add_math = FALSE,
+																		 add_aligned = FALSE,
+																		 use_aligned = opts$use_aligned)
+		}
+
+		s_M_diff <- s_M_diff.lst$s_M_diff
+		s_p2 <- s_M_diff.lst$s_p2
+		s_M_diff.solution <- s_M_diff.lst$solution
+	} else {
+		s_M_diff.solution <- NULL
+	}
+
+	stopifnot(is.numeric(s_M_diff), length(s_M_diff) == 1, s_M_diff > 0)
+
+	# Round initial values
+	M_1 <- rnd(M_1, opts$round_interim)
+	M_2 <- rnd(M_2, opts$round_interim)
+	s_M_diff <- rnd(s_M_diff, opts$round_interim)
+
+	# Calculate CI
+	M_diff <- rnd(M_1 - M_2, opts$round_interim)
+
+	t_crit <- rnd(qt(p = (1-level)/2, df = df, lower.tail = FALSE), digits = opts$round_t)
+
+	marg_err <- rnd(t_crit*s_M_diff, opts$round_interim)
+	CI_lower <- rnd(M_diff - marg_err, opts$round_final)
+	CI_upper <- rnd(M_diff + marg_err, opts$round_final)
+
+
+	# Get base formula without LaTeX math/aligned blocks
+	CI.formula <- ci_t_indep_formula(level = level,
+																	 use_aligned = opts$use_aligned,
+																	 add_math = FALSE,
+																	 add_aligned = FALSE)
+
+	# Prepend the solution for s_M_diff if calculating from components
+	CI.solution <- ifelse(!is.null(s_M_diff.solution),
+												paste(s_M_diff.solution, ' \\\\ ', CI.formula),
+												CI.formula)
+
+
+	# Create the solution string, with rounded values (minimally displayed)
+	solution <- glue_solution(
+		CI.solution,
+		"<<equals>> (<<M_1>> - <<M_2>>) \\pm (<<t_crit>>)(<<s_M_diff>>)",
+		"<<equals>> <<M_diff>> \\pm <<marg_err>>",
+		"\\text{Lower bound} <<equals>> <<M_diff>> - <<marg_err>> = \\mathbf{<<CI_lower>>}",
+		"\\text{Upper bound} <<equals>> <<M_diff>> + <<marg_err>> = \\mathbf{<<CI_upper>>}",
+		M_1 = ifelse(opts$round_to == 'sigfigs', M_1, fmt(M_1, opts$round_interim)),
+		M_2 = ifelse(opts$round_to == 'sigfigs', M_2, fmt(M_2, opts$round_interim)),
+		M_diff = ifelse(opts$round_to == 'sigfigs', M_diff, fmt(M_diff, opts$round_interim)),
+		t_crit = ifelse(opts$round_to == 'sigfigs', t_crit, fmt(t_crit, opts$round_t)),
+		s_M_diff = ifelse(opts$round_to == 'sigfigs', s_M_diff, fmt(s_M_diff, opts$round_interim)),
+		marg_err = ifelse(opts$round_to == 'sigfigs', marg_err, fmt(marg_err, opts$round_interim)),
+		CI_lower = ifelse(opts$round_to == 'sigfigs', CI_lower, fmt(CI_lower, opts$round_final)),
+		CI_upper = ifelse(opts$round_to == 'sigfigs', CI_upper, fmt(CI_upper, opts$round_final)))
+
+	# Add LaTeX math code, if desired.
+	if (opts$add_aligned) solution <- add_aligned(solution)
+	if (opts$add_math) solution <- add_math(solution)
+
+	# Return list containing both values and solution string
+	# Interpretation is included if requested
+	list(M_1 = M_1,
+			 M_2 = M_2,
+			 s_1 = if(missing(s_1)) NULL else s_1,
+			 s_2 = if(missing(s_2)) NULL else s_2,
+			 SD_1 = if(missing(s_1)) NULL else s_1,
+			 SD_2 = if(missing(s_2)) NULL else s_2,
+			 s_p2 = if(missing(s_p2)) NULL else s_p2,
+			 n_1 = if(missing(n_1)) NULL else n_1,
+			 n_2 = if(missing(n_2)) NULL else n_2,
+			 df = df,
+			 s_M_diff = s_M_diff,
+			 level = level,
+			 M_diff,
+			 t_crit = t_crit,
+			 marg_err = marg_err,
+			 CI = c(CI_lower = CI_lower, CI_upper = CI_upper),
+			 CI_lower = CI_lower,
+			 CI_upper = CI_upper,
+			 solution = solution,
+			 formula = CI.formula) %>%
+		purrr::compact()
+}
+
+#' @rdname solve_ci_t_indep
+#'
+#' @export
+#'
+ci_t_indep_formula <- function(level = 0.95,
+															 ...) {
+
+	# Check argument validity
+	stopifnot(is.numeric(level), level > 0, level < 1)
+
+	# Get list of options (allowing user to override defaults) for rounding
+	# behavior and for presenting solutions in LaTeX environment.
+	opts<- get_handcalcs_opts(...)
+
+	# Use the appropriate equals sign for an aligned environment
+	equals <- ifelse(opts$use_aligned, "&=", "=")
+
+	# Round CI level
+	level <- rnd(level, opts$round_interim)
+
+
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> (M_{1} - M_{2}) \\pm (t_{1 - \\alpha/2})(s_{M_{1} - M_{2}})")
+
+	# Add LaTeX math code, if desired.
+	if (opts$add_aligned) solution <- add_aligned(solution)
+	if (opts$add_math) solution <- add_math(solution)
+
+	return(solution)
+}
 
 # t (Mean Difference for independent samples):
 # "95% CI = M_1 - M_2 \\pm (t_{\\alpha/2})(s_{(M_{1} - M_{2})})"
+
+
