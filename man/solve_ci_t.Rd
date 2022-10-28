@@ -5,7 +5,7 @@
 \alias{ci_t_formula}
 \title{Confidence Intervals Around Sample Mean (using \emph{t} distribution)}
 \usage{
-solve_ci_t(M, s, SD, n, df, s_M, mu = NULL, paired = FALSE, level = 0.95, ...)
+solve_ci_t(M, s, SD, n, df, s_M, mu = NULL, level = 0.95, ...)
 
 ci_t_formula(mu = NULL, level = 0.95, ...)
 }

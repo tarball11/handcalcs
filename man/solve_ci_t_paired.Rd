@@ -90,12 +90,12 @@ solve_ci_t_paired(M_D = 5, s_D = 10, n = 100)
 solve_ci_t_paired(M_D = 5, s_D = 10, n = 100, s_M_D = 4)
 
 # If mu is provided, will return the CI of the mean difference (M_D - mu_D).
-solve_ci_t_paired(M_D = 5, s_M_D = 1, n = 100, mu = 0)
+solve_ci_t_paired(M_D = 5, s_M_D = 1, n = 100, mu_D = 0)
 
 # If you just want the formula:
 ci_t_paired_formula()
 
 # To get the formula for the mean difference, supply a non-null value for mu:
-ci_t_paired_formula(mu = TRUE)
+ci_t_paired_formula(mu_D = TRUE)
 
 }
