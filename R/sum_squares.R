@@ -6,13 +6,22 @@
 #' use `sum_squares_formula()`. To generate the table demonstrating the
 #' calculations, use `sum_squares_table`.
 #'
-#' The standard functions use the conceptual formula: \deqn{SS = \sum(X - M)^2}.
+#' If raw data are provided, will calculate `SS` using the conceptual formula:
+#' \deqn{SS = \sum(X - M)^2}.
+#'
+#' Can also be calculated by rearranging the variance formula to solve for `SS`
+#' \deqn{SS = (df)(s^2)}. Simply provide `s` (or `SD`) and `df` instead of raw
+#' data.
 #'
 #' The '2' functions (`solve_sum_squares2`, `sum_squares_formula2`) use the
 #' alternative computational formula: \deqn{SS = \sum(X^2) - [(\sum X)^2] / n}
 #'
 #'
-#' @param x Numeric vector.
+#' @param x Numeric vector of raw values.
+#' @param s,SD Numeric scalar. Sample standard deviation (may be provided either
+#'   as s or SD). Used when calculating from variance formula.
+#' @param df Numeric scalar. Degrees of freedom. Used when calculating from
+#'   variance formula.
 #' @param sub_val Character scalar. Subscript for the value to be calculated in
 #'   the formula, in this case the sum of squares (e.g., \eqn{SS_{x}}). Leave
 #'   empty to report no subscript.
@@ -27,15 +36,15 @@
 #'   [handcalcs_defaults()]).
 #'
 #' @return The two solutions functions (`solve_sum_squares`,
-#'   `solve_sum_squares2`) return a named list with the interim
-#'   calculations, the final value (`SS`), the solution string
-#'   (`solution`), and the bare formula (`formula`) in LaTeX format.
-#'   (Note that the two functions will return different values for the interim
-#'   calculations based on using different formulas.) The two formula functions
-#'   (`sum_squares_formula`, `sum_squares_formula2`) return the bare
-#'   formula in LaTeX format as a character string. The two table functions
-#'   (`sum_squares_table`, `sum_squares_table2`) return a gt object
-#'   which can be rendered into HTML or PDF.
+#'   `solve_sum_squares2`) return a named list with the interim calculations,
+#'   the final value (`SS`), the solution string (`solution`), and the bare
+#'   formula (`formula`) in LaTeX format. (Note that the two functions will
+#'   return different values for the interim calculations based on using
+#'   different formulas.) The two formula functions (`sum_squares_formula`,
+#'   `sum_squares_formula2`) return the bare formula in LaTeX format as a
+#'   character string. The two table functions (`sum_squares_table`,
+#'   `sum_squares_table2`) return a gt object which can be rendered into HTML or
+#'   PDF.
 #'
 #' @export
 #'
@@ -66,13 +75,18 @@
 #' sum_squares_formula(sub_val = "Y", sym_x = "Y")
 #'
 solve_sum_squares <- function(x,
+															df,
+															s,
+															SD,
 															sub_val = "",
 															sym_x = "X",
 															sub_x = "",
 															...) {
 
+	# Must provide either raw data (x) or df and s (or SD):
+	if(missing(x) & missing(df) & (missing(s) | missing(SD))) stop('Must provide either raw data (x) or degrees of freedom (df) and standard deviation (s or SD).')
+
 	# Check argument validity
-	stopifnot(is.numeric(x), any(!is.na(x)))
 	stopifnot(is.character(sub_val), length(sub_val) == 1)
 	stopifnot(is.character(sym_x), nchar(sym_x) == 1)
 	stopifnot(is.character(sub_x))
@@ -84,61 +98,108 @@ solve_sum_squares <- function(x,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate sum of squares
-	x <- rnd(x, opts$round_interim)
-	n <- length(x)
+	if(!missing(x)) {
+		stopifnot(is.numeric(x), any(!is.na(x)))
 
-	# First, calculate the mean (note: consider the mean an interim calculation)
-	M <- solve_mean(x,
-									round_interim = opts$round_interim,
-									round_final = opts$round_interim)$M
+		# Some values are not returned below; set to NULL
+		df <- s <- s2 <- NULL
 
-	# Deviation scores
-	Dev <- rnd(x - M, opts$round_interim)
-	# Squared deviation scores
-	DevSq <- rnd(Dev^2, opts$round_interim)
-	# Sum of the squared deviations
-	SS <- rnd(sum(DevSq), opts$round_final)
+		# Round initial values
+		x <- rnd(x, opts$round_interim)
+		n <- length(x)
 
-	# Get base formula without LaTeX math/aligned blocks
-	SS.formula <- sum_squares_formula(sub_val = sub_val,
-																		sym_x = sym_x,
-																		sub_x = sub_x,
-																		show_summation = opts$show_summation,
-																		use_aligned = opts$use_aligned,
-																		add_math = FALSE,
-																		add_aligned = FALSE)
+		# Calculate sum of squares
+		# First, calculate the mean (note: consider the mean an interim calculation)
+		M <- solve_mean(x,
+										round_interim = opts$round_interim,
+										round_final = opts$round_interim)$M
 
-	# Create the solution string, with rounded values (minimally displayed)
-	solution <- glue_solution(
-		SS.formula,
-		if(opts$show_summation) {"<<equals>> <<Sum.1>>"},
-		if(opts$show_summation) {"<<equals>> <<Sum.2>>"},
-		if(opts$show_summation) {"<<equals>> <<Sum.3>>"},
-		"<<equals>> \\mathbf{<<SS>>}",
-		# Put x & M in brackets if negative (avoid confusion in deviation scores)
-		Sum.1 = summation(lglue("(<<[x]>> - <<[M]>>)^2"), abbrev_sum = opts$abbrev_sum),
-		Sum.2 = summation(lglue("(<<Dev>>)^2"), abbrev_sum = opts$abbrev_sum),
-		Sum.3 = summation(lglue("<<DevSq>>"), abbrev_sum = opts$abbrev_sum),
-		# Round based on the precision of x and the final calculated value unless
-		# round_to is set to 'sigfigs', in which case just present the final rounded
-		# value as is.
-		SS = ifelse(opts$round_to == "sigfigs",
-								SS,
-								fmt(SS, get_digits(c(x, SS), opts$round_final))
+		# Deviation scores
+		Dev <- rnd(x - M, opts$round_interim)
+		# Squared deviation scores
+		DevSq <- rnd(Dev^2, opts$round_interim)
+		# Sum of the squared deviations
+		SS <- rnd(sum(DevSq), opts$round_final)
+
+		# Get base formula without LaTeX math/aligned blocks
+		SS.formula <- sum_squares_formula(sub_val = sub_val,
+																			sym_x = sym_x,
+																			sub_x = sub_x,
+																			s = FALSE,
+																			show_summation = opts$show_summation,
+																			use_aligned = opts$use_aligned,
+																			add_math = FALSE,
+																			add_aligned = FALSE)
+
+		# Create the solution string, with rounded values (minimally displayed)
+		solution <- glue_solution(
+			SS.formula,
+			if(opts$show_summation) {"<<equals>> <<Sum.1>>"},
+			if(opts$show_summation) {"<<equals>> <<Sum.2>>"},
+			if(opts$show_summation) {"<<equals>> <<Sum.3>>"},
+			"<<equals>> \\mathbf{<<SS>>}",
+			# Put x & M in brackets if negative (avoid confusion in deviation scores)
+			Sum.1 = summation(lglue("(<<[x]>> - <<[M]>>)^2"), abbrev_sum = opts$abbrev_sum),
+			Sum.2 = summation(lglue("(<<Dev>>)^2"), abbrev_sum = opts$abbrev_sum),
+			Sum.3 = summation(lglue("<<DevSq>>"), abbrev_sum = opts$abbrev_sum),
+			# Round based on the precision of x and the final calculated value unless
+			# round_to is set to 'sigfigs', in which case just present the final rounded
+			# value as is.
+			SS = ifelse(opts$round_to == "sigfigs",
+									SS,
+									fmt(SS, get_digits(c(x, SS), opts$round_final))
+			)
 		)
-	)
+	} else if(!missing(df) & (!missing(s) | !missing(SD))) {
+		# If SD is supplied instead of s, set s accordingly
+		if(missing(s) & !missing(SD)) s <- SD
+
+		# Some values are not returned below; set to NULL
+		M <- n <- Dev <- DevSq <- NULL
+
+		# Check argument validity:
+		stopifnot(is.numeric(df), is.numeric(s))
+		stopifnot(length(df) == 1, length(s) == 1)
+		stopifnot(df > 0, s > 0)
+
+
+		# Calculate sum of squares
+		s2 <- rnd(s^2, opts$round_interim)
+		SS <- rnd(s2*df, opts$round_final)
+
+		# Get base formula without LaTeX math/aligned blocks
+		SS.formula <- sum_squares_formula(sub_val = sub_val,
+																			s = TRUE,
+																			use_aligned = opts$use_aligned,
+																			add_math = FALSE,
+																			add_aligned = FALSE)
+
+		# Create the solution string, with rounded values (minimally displayed)
+		solution <- glue_solution(
+			SS.formula,
+			"<<equals>> (<<df>>)(<<s>>^2) = (<<df>>)(<<s2>>) = \\mathbf{<<SS>>}",
+			# Round based on the precision of x and the final calculated value unless
+			# round_to is set to 'sigfigs', in which case just present the final rounded
+			# value as is.
+			s = ifelse(opts$round_to == 'sigfigs', s, fmt(s, get_digits(s, opts$round_final))),
+			s2 = ifelse(opts$round_to == 'sigfigs', s, fmt(s2, get_digits(s2, opts$round_final))),
+			SS = ifelse(opts$round_to == 'sigfigs', s, fmt(SS, get_digits(SS, opts$round_final))))
+	}
+
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
 	if (opts$add_math) solution <- add_math(solution)
 
 	# Return list containing both values and solution string
-	list(x = x,
-			 M = M,
-			 n = n,
-			 Dev = Dev,
-			 DevSq = DevSq,
+	list(x = if(missing(x)) NULL else x,
+			 M = if(is.null(M)) NULL else M,
+			 n = if(is.null(n)) NULL else n,
+			 Dev = if(is.null(Dev)) NULL else Dev,
+			 DevSq = if(is.null(DevSq)) NULL else DevSq,
+			 s = if(missing(s)) NULL else s,
+			 s2 = if(is.null(s2)) NULL else s2,
+			 df = if(missing(df)) NULL else df,
 			 SS = SS,
 			 solution = solution,
 			 formula = SS.formula)
@@ -151,6 +212,7 @@ solve_sum_squares <- function(x,
 sum_squares_formula <- function(sub_val = "",
 																sym_x = "X",
 																sub_x = "",
+																s = TRUE,
 																...) {
 	# Check argument validity
 	stopifnot(is.character(sub_val), length(sub_val) == 1)
@@ -164,14 +226,19 @@ sum_squares_formula <- function(sub_val = "",
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Create the subscripts for the summation sequence:
-	sum_seq = c('1', '2', 'n')
-	sub_x_seq <- if(nchar(sub_x) == 0) sum_seq else lglue("<<sub_x>>_{<<sum_seq>>}")
+	if(s) {
+		solution <- lglue("\\mathit{SS}_{<<sub_val>>} <<equals>> df_{<<sub_val>>}s_{<<sub_val>>}^2")
+	} else {
+		# Create the subscripts for the summation sequence:
+		sum_seq = c('1', '2', 'n')
+		sub_x_seq <- if(nchar(sub_x) == 0) sum_seq else lglue("<<sub_x>>_{<<sum_seq>>}")
 
 
-	solution <- lglue(
-		"\\mathit{SS}_{<<sub_val>>} <<equals>> \\sum(<<sym_x>>_{<<sub_x>>} - M_{<<sub_val>>})^{2}",
-		if(opts$show_summation) {"\\\\ <<equals>> (<<sym_x>>_{<<sub_x_seq[1]>>} - M_{<<sub_val>>})^2 + (<<sym_x>>_{<<sub_x_seq[2]>>} - M_{<<sub_val>>})^2 + \\cdots + (<<sym_x>>_{<<sub_x_seq[3]>>} - M_{<<sub_val>>})^2"})
+		solution <- lglue(
+			"\\mathit{SS}_{<<sub_val>>} <<equals>> \\sum(<<sym_x>>_{<<sub_x>>} - M_{<<sub_val>>})^{2}",
+			if(opts$show_summation) {"\\\\ <<equals>> (<<sym_x>>_{<<sub_x_seq[1]>>} - M_{<<sub_val>>})^2 + (<<sym_x>>_{<<sub_x_seq[2]>>} - M_{<<sub_val>>})^2 + \\cdots + (<<sym_x>>_{<<sub_x_seq[3]>>} - M_{<<sub_val>>})^2"})
+
+	}
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)

@@ -9,9 +9,9 @@
 \alias{sum_squares_table2}
 \title{Sum of Squares}
 \usage{
-solve_sum_squares(x, sub_val = "", sym_x = "X", sub_x = "", ...)
+solve_sum_squares(x, df, s, SD, sub_val = "", sym_x = "X", sub_x = "", ...)
 
-sum_squares_formula(sub_val = "", sym_x = "X", sub_x = "", ...)
+sum_squares_formula(sub_val = "", sym_x = "X", sub_x = "", s = TRUE, ...)
 
 sum_squares_table(SS.lst, sub_val = "", sym_x = "X", sub_x = "", ...)
 
@@ -22,7 +22,13 @@ sum_squares_formula2(sub_val = "", sym_x = "X", sub_x = "", ...)
 sum_squares_table2(SS.lst, sym_x = "X", sub_x = "", ...)
 }
 \arguments{
-\item{x}{Numeric vector.}
+\item{x}{Numeric vector of raw values.}
+
+\item{df}{Numeric scalar. Degrees of freedom. Used when calculating from
+variance formula.}
+
+\item{s, SD}{Numeric scalar. Sample standard deviation (may be provided either
+as s or SD). Used when calculating from variance formula.}
 
 \item{sub_val}{Character scalar. Subscript for the value to be calculated in
 the formula, in this case the sum of squares (e.g., \eqn{SS_{x}}). Leave
@@ -43,15 +49,15 @@ the solution function.}
 }
 \value{
 The two solutions functions (\code{solve_sum_squares},
-\code{solve_sum_squares2}) return a named list with the interim
-calculations, the final value (\code{SS}), the solution string
-(\code{solution}), and the bare formula (\code{formula}) in LaTeX format.
-(Note that the two functions will return different values for the interim
-calculations based on using different formulas.) The two formula functions
-(\code{sum_squares_formula}, \code{sum_squares_formula2}) return the bare
-formula in LaTeX format as a character string. The two table functions
-(\code{sum_squares_table}, \code{sum_squares_table2}) return a gt object
-which can be rendered into HTML or PDF.
+\code{solve_sum_squares2}) return a named list with the interim calculations,
+the final value (\code{SS}), the solution string (\code{solution}), and the bare
+formula (\code{formula}) in LaTeX format. (Note that the two functions will
+return different values for the interim calculations based on using
+different formulas.) The two formula functions (\code{sum_squares_formula},
+\code{sum_squares_formula2}) return the bare formula in LaTeX format as a
+character string. The two table functions (\code{sum_squares_table},
+\code{sum_squares_table2}) return a gt object which can be rendered into HTML or
+PDF.
 }
 \description{
 Calculate value of sum of squares (with rounding) and present solutions.
@@ -61,7 +67,12 @@ use \code{sum_squares_formula()}. To generate the table demonstrating the
 calculations, use \code{sum_squares_table}.
 }
 \details{
-The standard functions use the conceptual formula: \deqn{SS = \sum(X - M)^2}.
+If raw data are provided, will calculate \code{SS} using the conceptual formula:
+\deqn{SS = \sum(X - M)^2}.
+
+Can also be calculated by rearranging the variance formula to solve for \code{SS}
+\deqn{SS = (df)(s^2)}. Simply provide \code{s} (or \code{SD}) and \code{df} instead of raw
+data.
 
 The '2' functions (\code{solve_sum_squares2}, \code{sum_squares_formula2}) use the
 alternative computational formula: \deqn{SS = \sum(X^2) - [(\sum X)^2] / n}
