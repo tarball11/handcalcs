@@ -108,8 +108,8 @@ solve_z_crit <- function(alpha = 0.05,
 #' solve_t_crit(alpha = 0.01, df = 100, direction = 'neg')
 #' solve_t_crit(alpha = 0.01, df = 100, direction = 'both')
 #'
-#' # In some cases, you may wish to change the default value for round_final:
-#' solve_t_crit(alpha = 0.05, df = 100, direction = 'pos', round_final = 3)
+#' # In some cases, you may wish to change the default value for round_t:
+#' solve_t_crit(alpha = 0.05, df = 100, direction = 'pos', round_t = 3)
 #'
 solve_t_crit <- function(alpha = 0.05,
 												 df,
@@ -160,5 +160,78 @@ solve_t_crit <- function(alpha = 0.05,
 			 df = df,
 			 direction = direction,
 			 t_crit = t_crit,
+			 solution = solution)
+}
+
+
+#' Critical values of *Q* (Studentized Range Statistic)
+#'
+#' Calculates the critical value of *Q* (the Studentized Range Statistic for
+#' multiple comparisons) for a given \eqn{\alpha}, degrees of freedom for error
+#' (`df_error`) from the ANOVA, and number of groups being compared (`k`), along
+#' with the solution string in LaTeX format.
+#'
+#' This is used when conducting *post hoc* tests after a significant ANOVA,
+#' considering each mean difference, taking into consideration the total number
+#' of comparisons to maintain an overall Type I error rate (`alpha`). The
+#' critical value would be compared against the value of Q_obt from the
+#' `[solve_Q_obt()]` function for each comparison.
+#'
+#'
+#' @param alpha Numeric scalar. Value of alpha (probability of a Type I error).
+#'   Defaults to 0.05.
+#' @param df_error Numeric scalar. Degrees of freedom.
+#' @param k Numeric scalar. Number of groups in design.
+#' @param ... Additional arguments to override default behaviors (see
+#'   [handcalcs_defaults()]).
+#'
+#' @return Returns a list with the given values (`alpha`, `df`, `k`), the final
+#'   value (`Q_crit`), and the solution string (`solution`).
+#' @export
+#'
+#' @examples
+#'
+#' solve_Q_crit(alpha = 0.01, df_error = 100, k = 3)
+#' solve_Q_crit(alpha = 0.01, df_error = 100, k = 4)
+#' solve_Q_crit(alpha = 0.01, df_error = 100, k = 5)
+#'
+#' # In some cases, you may wish to change the default value for round_final:
+#' solve_Q_crit(alpha = 0.05, df = 100, k = 3, round_final = 4)
+#'
+solve_Q_crit <- function(alpha = 0.05,
+												 df_error,
+												 k,
+												 ...) {
+	# Check argument validity
+	stopifnot(is.numeric(alpha) & dplyr::between(alpha, 0.00001, 0.5))
+	stopifnot(is.numeric(df_error) & df_error >= 1)
+	stopifnot(is.numeric(k) & k >= 2)
+
+	# Get list of options (allowing user to override defaults) for rounding
+	# behavior and for presenting solutions in LaTeX environment.
+	opts<- get_handcalcs_opts(...)
+
+	# Use the appropriate equals sign for an aligned environment
+	equals <- ifelse(opts$use_aligned, "&=", "=")
+
+	# Get the critical value/solution string:
+	Q_crit <- rnd(qtukey(alpha, nmeans = k, df = df_error, lower.tail = FALSE), opts$round_final)
+
+	solution <- glue_solution(
+		"\\alpha_{\\text{two-tailed}} <<equals>> <<alpha>>",
+		"Q_{\\text{crit}(\\mathit{df_{\\text{error}} = <<df_error>>, k = <<k>>)} <<equals>> \\mathbf{<<Q_crit>>}",
+		# Print value of 'Q' to the precision of opts$round_final unless round_to is
+		# set to 'sigfigs', in which case just present the final rounded value as is.
+		Q_crit = ifelse(opts$round_to == 'sigfigs', Q_crit, fmt(Q_crit, opts$round_final)))
+
+	# Add LaTeX math code, if desired.
+	if (opts$add_aligned) solution <- add_aligned(solution)
+	if (opts$add_math) solution <- add_math(solution)
+
+	# Return list containing both values and solution string
+	list(alpha = alpha,
+			 df_error = df_error,
+			 k = k,
+			 Q_crit = Q_crit,
 			 solution = solution)
 }
