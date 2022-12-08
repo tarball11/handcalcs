@@ -13,8 +13,10 @@
 #'
 #' @param SS_1 Numeric scalar. Sum of squares of sample 1.
 #' @param SS_2 Numeric scalar. Sum of squares of sample 2.
-#' @param s_1,SD_1 Numeric scalar. Standard deviation of sample 1.
-#' @param s_2,SD_2 Numeric scalar. Standard deviation of sample 2.
+#' @param s_1,SD_1 Numeric scalar. Standard deviation of sample 1. (May be
+#'   provided either as s_1 or SD_1.)
+#' @param s_2,SD_2 Numeric scalar. Standard deviation of sample 2. (May be
+#'   provided either as s_2 or SD_2.)
 #' @param n_1 Numeric scalar. Sample size of sample 1.
 #' @param n_2 Numeric scalar. Sample size of sample 2.
 #' @param ... Additional arguments to override default behaviors (see
@@ -464,6 +466,10 @@ solve_t_indep_samples <- function(M_1,
 																	 add_math = FALSE,
 																	 add_aligned = FALSE,
 																	 use_aligned = opts$use_aligned)
+
+		# If the pooled variance was calculated as part of the s_M_diff,
+		# make sure the value gets set so it is included in the return list
+		if(missing(s_p2)) s_p2 <- s_M_diff.lst$s_p2
 
 		s_M_diff <- s_M_diff.lst$s_M_diff
 		s_M_diff_solution <- s_M_diff.lst$solution

@@ -14,9 +14,11 @@ s_p2_formula(type = "SS", ...)
 
 \item{SS_2}{Numeric scalar. Sum of squares of sample 2.}
 
-\item{s_1, SD_1}{Numeric scalar. Standard deviation of sample 1.}
+\item{s_1, SD_1}{Numeric scalar. Standard deviation of sample 1. (May be
+provided either as s_1 or SD_1.)}
 
-\item{s_2, SD_2}{Numeric scalar. Standard deviation of sample 2.}
+\item{s_2, SD_2}{Numeric scalar. Standard deviation of sample 2. (May be
+provided either as s_2 or SD_2.)}
 
 \item{n_1}{Numeric scalar. Sample size of sample 1.}
 
