@@ -291,7 +291,7 @@ variance_formula <- function(mode,
 	if(mode == "population") {
 		solution<- lglue("\\sigma^2_{<<sub_val>>} <<equals>> \\frac{\\mathit{SS}_{<<sub_val>>}}{N}")
 	} else {
-		solution<- lglue("s^2_{<<sub_val>>} <<equals>> \\frac{\\mathit{SS}_{<<sub_val>>}}{N - 1}")
+		solution<- lglue("s^2_{<<sub_val>>} <<equals>> \\frac{\\mathit{SS}_{<<sub_val>>}}{\\mathit{df}}")
 	}
 
 	# Add LaTeX math code, if desired.
