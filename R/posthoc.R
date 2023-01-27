@@ -187,8 +187,8 @@ solve_LSD <- function(M_1,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate Q_obt:
-	M_diff <- rnd(abs(M_1 - M_2), opts$round_interim)
+	# Calculate t_obt:
+	M_diff <- rnd(M_1 - M_2, opts$round_interim)
 
 	MS_error_n1 <- rnd(MS_error/n_1, opts$round_interim)
 	MS_error_n2 <- rnd(MS_error/n_2, opts$round_interim)
@@ -205,8 +205,8 @@ solve_LSD <- function(M_1,
 	solution <- glue_solution(
 		t_obt.f,
 		# Put negative values of M_2 in brackets
-		"<<equals>> \\frac{|<<(M_1)>> - <<(M_2)>>|}{\\sqrt{\\frac{<<MS_error>>}{<<n_1>>} + \\frac{<<MS_error>>}{<<n_2>>}}}",
-		"<<equals>> \\frac{|<<M_diff>>|}{\\sqrt{<<MS_error_n1>> + <<MS_error_n2>>}} = \\frac{|<<M_diff>>|}{\\sqrt{<<Sum_MS_error_n>>}} = \\frac{|<<M_diff>>|}{\\sqrt{<<s_M_diff2>>}} = \\frac{|<<M_diff>>|}{<<s_M_diff>>} = \\mathbf{<<t_obt>>}",
+		"<<equals>> \\frac{<<(M_1)>> - <<(M_2)>>}{\\sqrt{\\frac{<<MS_error>>}{<<n_1>>} + \\frac{<<MS_error>>}{<<n_2>>}}}",
+		"<<equals>> \\frac{<<M_diff>>}{\\sqrt{<<MS_error_n1>> + <<MS_error_n2>>}} = \\frac{<<M_diff>>}{\\sqrt{<<Sum_MS_error_n>>}} = \\frac{<<M_diff>>}{\\sqrt{<<s_M_diff2>>}} = \\frac{<<M_diff>>}{<<s_M_diff>>} = \\mathbf{<<t_obt>>}",
 		M_diff = fmt(M_diff, get_digits(M_diff, opts$round_interim)),
 		s_M_diff = fmt(s_M_diff, get_digits(s_M_diff, opts$round_interim)),
 		# Print values of 't_obt' to the precision of opts$round_final unless round_to is
