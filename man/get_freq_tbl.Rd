@@ -16,6 +16,7 @@ get_freq_tbl(
   x_name = "x",
   solutions = TRUE,
   return_type = c("gt", "kable", "tbl"),
+  sort_desc = FALSE,
   font_size = 12,
   ...
 )
@@ -54,9 +55,13 @@ FALSE)? Note: values will be rounded to the value of round_final.}
 of the calculated values.}
 
 \item{return_type}{Determines what type of object to return: either "tbl"
-(for a \verb{[tibble::tibble()]} object), "gt" (for a \verb{[(gt::gt()]} object, the default), or
-"kable" (for a \verb{[(knitr::kable()]} object with additional formatting from
-\verb{[kableExtra::kableExtra()]}).}
+(for a \verb{[tibble::tibble()]} object), "gt" (for a \verb{[(gt::gt()]} object, the
+default), or "kable" (for a \verb{[(knitr::kable()]} object with additional
+formatting from \verb{[kableExtra::kableExtra()]}).}
+
+\item{sort_desc}{Boolean scalar. If TRUE, will sort the frequency table in
+descending order (by x). If FALSE (the default), will sort in ascending
+order.}
 
 \item{font_size}{Numeric scalar. Font size of table in points (as rendered by
 \verb{[gt::gt()]}).}

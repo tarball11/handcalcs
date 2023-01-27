@@ -37,9 +37,12 @@
 #'   `FALSE`, will show all of the requested columns, but will not display any
 #'   of the calculated values.
 #' @param return_type Determines what type of object to return: either "tbl"
-#'   (for a `[tibble::tibble()]` object), "gt" (for a `[(gt::gt()]` object, the default), or
-#'   "kable" (for a `[(knitr::kable()]` object with additional formatting from
-#'   `[kableExtra::kableExtra()]`).
+#'   (for a `[tibble::tibble()]` object), "gt" (for a `[(gt::gt()]` object, the
+#'   default), or "kable" (for a `[(knitr::kable()]` object with additional
+#'   formatting from `[kableExtra::kableExtra()]`).
+#' @param sort_desc Boolean scalar. If TRUE, will sort the frequency table in
+#'   descending order (by x). If FALSE (the default), will sort in ascending
+#'   order.
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]).
 #'
@@ -81,6 +84,7 @@ get_freq_tbl<- function(x,
 												x_name = "x",
 												solutions = TRUE,
 												return_type = c('gt', 'kable', 'tbl'),
+												sort_desc = FALSE,
 												font_size = 12,
 												...) {
 
@@ -88,6 +92,7 @@ get_freq_tbl<- function(x,
 	stopifnot(length(x) > 0)
 	stopifnot(is.logical(grouped))
 	stopifnot(is.logical(solutions))
+	stopifnot(is.logical(sort_desc))
 
 	return_type <- match.arg(return_type)
 	if(missing(return_type)) return_type == 'gt'
@@ -155,8 +160,10 @@ get_freq_tbl<- function(x,
 	if(cp) freq.tbl <- freq.tbl %>% dplyr::mutate(`c%` = rnd(cf/sum(f)*100, opts$round_interim))
 	if(pr) freq.tbl <- freq.tbl %>% dplyr::mutate(pr = dplyr::lag(`c%`, default = if(solutions) 0 else NA))
 
-	# Sort numeric vectors descending
-	if(is.numeric(x)) freq.tbl <- dplyr::arrange(freq.tbl, dplyr::desc(x))
+	# Sort numeric vectors according to sort_x (ascending or descending)
+	if(is.numeric(x)) {
+			freq.tbl <- dplyr::arrange(freq.tbl, if(sort_desc) dplyr::desc(x) else x)
+	}
 
 
 	if(return_type == 'tbl') {
@@ -219,7 +226,9 @@ get_freq_tbl<- function(x,
 		freq.tbl <- dplyr::mutate(freq.tbl, x = as.character(x), f = as.character(f))
 
 		# Format the columns with decimals (if presenting solutions)
+		# Also ensure other columns are represented as characters to  bind with summary.tbl
 		if(rf) freq.tbl <- dplyr::mutate(freq.tbl, rf = fmt(rf, digits = opts$round_interim))
+		if(cf) freq.tbl <- dplyr::mutate(freq.tbl, cf = as.character(cf))
 		if(cp) freq.tbl <- dplyr::mutate(freq.tbl, `c%` = fmt(`c%`, digits = opts$round_final))
 		if(pr) freq.tbl <- dplyr::mutate(freq.tbl, pr = fmt(pr, digits = opts$round_final))
 
