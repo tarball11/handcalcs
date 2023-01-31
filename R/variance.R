@@ -245,7 +245,7 @@ solve_variance <- function(mode,
 	} else {
 		solution <- glue_solution(
 			var.solution,
-			"<<equals>> \\frac{<<SS>>}{<<n>> - 1} = <<equals>> \\frac{<<SS>>}{<<n - 1>>} = <<equals>> \\mathbf{<<variance.fmt>>}")
+			"<<equals>> \\frac{<<SS>>}{<<n>> - 1} = \\frac{<<SS>>}{<<n - 1>>} = \\mathbf{<<variance.fmt>>}")
 	}
 
 	# Add LaTeX math code, if desired.
