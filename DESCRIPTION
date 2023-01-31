@@ -19,5 +19,12 @@ Imports:
     dplyr,
     magrittr,
     gt,
-    ggplot2
+    ggplot2,
+    rlang,
+    tibble,
+    stringr,
+    purrr,
+    forcats,
+    tidyr,
+    tidyselect
 VignetteBuilder: knitr

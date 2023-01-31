@@ -18,38 +18,29 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of handcalcs is to ...
+The goal of handcalcs is to make it easy for anyone who is teaching (or learning) statistics to have an easy way to generate solutions that show the step-by-step processes of solving the problems by hand. 
+
+The basic unit is the set of `solve_*` functions. These functions will calculate a specific statistical outcome from the arguments, and return a list that includes not just the final calculated value (and all interim calculated values), but also a LaTeX string that shows the steps by which that value was calculated. This allows for easy generation of statistics problem sets along with their solutions. 
+
+## Rounding
+There are two options to handling rounding behavior. 
+[UPDATE TO DEAL WITH NEW `round_to` OPTION.]
+
+- `round_interim`: Raw data values and all interim calculations are rounded to this number of decimal places. 
+- `round_final`: The final calculated value is rounded to this number of decimal places. This rounded value is what is returned as part of the list. However, the value that is displayed as part of the LaTeX solution string is intentionally presented such that additional digits past zero are not displayed if they are not needed. For instance, in calculating the mean of 5 and 7, if `round_final = 4`, the solution would display this as 6 instead of 6.0000. The number of digits displayed takes into consideration the number of digits past the decimal in both the raw values and the final calculated value, using the largest number of digits (up to the value of `round_final`) necessary to preserve the calculations. For instance, in calculating the mean of 5.25 and 7.75, it would display as 6.50 instead of 6.5 because there are two digits past the decimal in the original data. 
+
+
 
 ## Installation
+
+
+
+
 
 You can install the development version of handcalcs from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("tarball11/StatsSolutions")
+devtools::install_github("tarball11/handcalcs")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(handcalcs)
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
