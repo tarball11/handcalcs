@@ -241,14 +241,11 @@ solve_variance <- function(mode,
 	if(mode == "population") {
 		solution <- glue_solution(
 			var.solution,
-			"<<equals>> \\frac{<<SS>>}{<<n>>}",
-			"<<equals>> \\mathbf{<<variance.fmt>>}")
+			"<<equals>> \\frac{<<SS>>}{<<n>>} = \\mathbf{<<variance.fmt>>}")
 	} else {
 		solution <- glue_solution(
 			var.solution,
-			"<<equals>> \\frac{<<SS>>}{<<n>> - 1}",
-			"<<equals>> \\frac{<<SS>>}{<<n - 1>>}",
-			"<<equals>> \\mathbf{<<variance.fmt>>}")
+			"<<equals>> \\frac{<<SS>>}{<<n>> - 1} = <<equals>> \\frac{<<SS>>}{<<n - 1>>} = <<equals>> \\mathbf{<<variance.fmt>>}")
 	}
 
 	# Add LaTeX math code, if desired.

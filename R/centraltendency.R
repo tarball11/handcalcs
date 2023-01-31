@@ -86,8 +86,7 @@ solve_mean <- function(x,
 		M.formula,
 		# Show the summation step, if set
 		if(opts$show_summation) {"<<equals>> \\frac{<<Num>>}{<<n>>}"},
-		"<<equals>> \\frac{<<SumX>>}{<<n>>}",
-		"<<equals>> \\mathbf{<<M>>}",
+		"<<equals>> \\frac{<<SumX>>}{<<n>>} = <<equals>> \\mathbf{<<M>>}",
 		# Put negative values of x in brackets
 		Num = summation(lglue("<<(x)>>"), abbrev_sum = opts$abbrev_sum),
 		SumX = fmt(SumX, get_digits(SumX, opts$round_interim)),
