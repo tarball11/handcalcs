@@ -219,7 +219,7 @@ solve_Q_crit <- function(alpha = 0.05,
 
 	solution <- glue_solution(
 		"\\alpha_{\\text{two-tailed}} <<equals>> <<alpha>>",
-		"Q_{\\text{crit}(\\mathit{df_{\\text{error}} = <<df_error>>, k = <<k>>)} <<equals>> \\mathbf{<<Q_crit>>}",
+		"Q_{\\text{crit}(\\mathit{df}_{\\text{error}} = <<df_error>>, k = <<k>>)} <<equals>> \\mathbf{<<Q_crit>>}",
 		# Print value of 'Q' to the precision of opts$round_final unless round_to is
 		# set to 'sigfigs', in which case just present the final rounded value as is.
 		Q_crit = ifelse(opts$round_to == 'sigfigs', Q_crit, fmt(Q_crit, opts$round_final)))
