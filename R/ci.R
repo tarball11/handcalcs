@@ -169,9 +169,12 @@ ci_z_formula <- function(level = 0.95,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
+	# Round CI level
 	level <- rnd(level, opts$round_interim)
+	alpha <- 1 - level
 
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> M \\pm (z_{1 - \\alpha/2})(\\sigma_{M})")
+	# Solution string:
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> M \\pm (z_{\\alpha = <<alpha>>})(\\sigma_{M})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -408,11 +411,13 @@ ci_t_formula <- function(mu = NULL,
 
 	# Round CI level
 	level <- rnd(level, opts$round_interim)
+	alpha <- 1 - level
 
 	# Estimate Mean or Mean Difference:
 	estimate <- ifelse(!is.null(mu), "(M - \\mu)", "M")
 
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t_{1 - \\alpha/2})(s_{M})")
+	# Solution string:
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t_{\\alpha = <<alpha>>})(s_{M})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -653,11 +658,13 @@ ci_t_paired_formula <- function(mu_D = NULL,
 
 	# Round CI level
 	level <- rnd(level, opts$round_interim)
+	alpha <- 1 - level
 
 	# Estimate Mean or Mean Difference:
 	estimate <- ifelse(!is.null(mu_D), "(M_{D} - \\mu_{D})", "M_{D}")
 
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t_{1 - \\alpha/2})(s_{M_{D}})")
+	# Solution string:
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t_{\\alpha = <<alpha>>})(s_{M_{D}})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -913,9 +920,10 @@ ci_t_indep_formula <- function(level = 0.95,
 
 	# Round CI level
 	level <- rnd(level, opts$round_interim)
+	alpha <- 1 - level
 
-
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> (M_{1} - M_{2}) \\pm (t_{1 - \\alpha/2})(s_{M_{1} - M_{2}})")
+	# Solution string:
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> (M_{1} - M_{2}) \\pm (t_{\\alpha = <<alpha>>})(s_{M_{1} - M_{2}})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)

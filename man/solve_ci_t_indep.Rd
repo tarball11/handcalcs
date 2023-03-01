@@ -84,7 +84,6 @@ Note that the critical value of \emph{t} (\code{t_crit}) is rounded to the value
 }
 \examples{
 
-<<<<<<< HEAD
 solve_ci_t_indep(M_1 = 55, M_2 = 50, s_M_diff = 1, df = 98)
 
 # Defaults to 95\% CIs, but other levels can be specified:
@@ -96,30 +95,9 @@ solve_ci_t_indep(M_1 = 50, M_2 = 45, n_1 = 50, n_2 = 50, s_p2 = 0.5)
 
 # or standard deviations (s_1 and s_2)
 solve_ci_t_indep(M_1 = 50, M_2 = 45, n_1 = 50, n_2 = 50, s_1 = 1.5, s_2 = 2.0)
-=======
-solve_ci_t_indep(M = 55, s_M_diff = 1, df = 99)
-
-# Defaults to 95\% CIs, but other levels can be specified:
-solve_ci_t_indep(M = 55, s_M_diff = 1, df = 99, level = 0.99)
-
-# Will calculate s_M_diff if s and n (or df) are provided, and include the
-# calculation in the solution string
-solve_ci_t_indep(M = 55, s = 10, n = 100)
-
-# Note: if s_M_diff is provided, it takes precedence; s will be recalculated
-solve_ci_t_indep(M = 55, s = 10, n = 100, s_M_diff = 4)
-
-# If mu is provided, will return the CI of the mean difference (M - mu).
-solve_ci_t_indep(M = 55, s_M_diff = 1, n = 100, mu = 50)
->>>>>>> be61bc195412aca1a4d0617fb50c07563a278533
 
 # If you just want the formula:
 ci_t_indep_formula()
 
-<<<<<<< HEAD
-=======
-# To get the formula for the mean difference, supply a non-null value for mu:
-ci_t_indep_formula(mu = TRUE)
->>>>>>> be61bc195412aca1a4d0617fb50c07563a278533
 
 }
