@@ -84,7 +84,7 @@ solve_mean <- function(x,
 	# Create the solution string, with rounded values (minimally displayed)
 	solution <- glue_solution(
 		M.formula,
-		# Show the summation step and final calcs on one, if set, otherwise just
+		# Show the summation step and final calcs on one line if set, otherwise just show calcs
 		if(opts$show_summation) {"<<equals>> \\frac{<<Num>>}{<<n>>} = \\frac{<<SumX>>}{<<n>>} = \\mathbf{<<M>>}"},
 		if(!opts$show_summation) {"<<equals>> \\frac{<<SumX>>}{<<n>>} = \\mathbf{<<M>>}"},
 		# Put negative values of x in brackets
