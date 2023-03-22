@@ -189,8 +189,9 @@ s_p2_formula <- function(type = 'SS',
 	# Create the formula string:
 	stem <- "s_{p}^{2} <<equals>> "
 	SS.f <- " \\frac{\\mathit{SS}_{1} + \\mathit{SS}_{2}}{\\mathit{df}_{1} + \\mathit{df}_{2}} "
-	s.f <- " = \\frac{(n_{1} - 1)(s_{1}^{2}) + (n_{2} - 1)(s_{2}^{2})}{n_{1} + n_{2} - 2}"
-	solution<- if(type == 'SS') lglue(stem, SS.f) else lglue(stem, SS.f, s.f)
+	s.f1 <- " = \\frac{(\\mathit{df}_{1})(s_{1}^{2}) + (\\mathit{df}_{2})(s_{2}^{2})}{\\mathit{df}_{1} + \\mathit{df}_{2}}"
+	s.f2 <- " = \\frac{(n_{1} - 1)(s_{1}^{2}) + (n_{2} - 1)(s_{2}^{2})}{n_{1} + n_{2} - 2}"
+	solution<- if(type == 'SS') lglue(stem, SS.f) else lglue(stem, SS.f, s.f1, s.f2)
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
