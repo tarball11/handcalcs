@@ -154,11 +154,18 @@ get_freq_tbl<- function(x,
 	# Blank out frequencies if hiding solutions:
 	if(!solutions) freq.tbl <- freq.tbl %>% dplyr::mutate(f = NA)
 
-	# Add additional columns (will be calculated as NA if solutions = TRUE)
-	if(rf) freq.tbl <- freq.tbl %>% dplyr::mutate(rf = rnd(f/sum(f), opts$round_interim))
-	if(cf) freq.tbl <- freq.tbl %>% dplyr::mutate(cf = cumsum(f))
-	if(cp) freq.tbl <- freq.tbl %>% dplyr::mutate(`c%` = rnd(cf/sum(f)*100, opts$round_interim))
-	if(pr) freq.tbl <- freq.tbl %>% dplyr::mutate(pr = dplyr::lag(`c%`, default = if(solutions) 0 else NA))
+	# Add additional columns (will be re-calculated as NA if solutions = TRUE)
+	freq.tbl <- freq.tbl %>%
+		dplyr::mutate(rf = rnd(f/sum(f), opts$round_interim),
+									cf = cumsum(f),
+									cp = rnd(cf/sum(f)*100, opts$round_interim),
+									pr = dplyr::lag(cp, default = if(solutions) 0 else NA))
+	# Remove columns that aren't needed
+	# (Note: formulas above require all columns to be created first.)
+	if(!rf) freq.tbl <- freq.tbl %>% dplyr::select(-rf)
+	if(!cf) freq.tbl <- freq.tbl %>% dplyr::select(-cf)
+	if(!cp) freq.tbl <- freq.tbl %>% dplyr::select(-cp)
+	if(!pr) freq.tbl <- freq.tbl %>% dplyr::select(-pr)
 
 	# Sort numeric vectors according to sort_x (ascending or descending)
 	if(is.numeric(x)) {
@@ -178,7 +185,7 @@ get_freq_tbl<- function(x,
 			# Overall table style/size
 			gt::tab_options(table.font.size = font_size) %>%
 			gt::cols_width(tidyselect::any_of(c('f', 'cf')) ~ gt::px(40),
-										 tidyselect::any_of(c('rf', 'c%', 'pr')) ~ gt::px(60)) %>%
+										 tidyselect::any_of(c('rf', 'cp', 'pr')) ~ gt::px(60)) %>%
 			# Style the column labels
 			gt::tab_style(style = gt::cell_text(style = "italic",
 																					weight = "bold",
@@ -194,7 +201,7 @@ get_freq_tbl<- function(x,
 
 		# Format the columns with decimals (if presenting solutions)
 		if(rf & solutions) freq.gt <- freq.gt %>% gt::fmt_number(rf, decimals = opts$round_interim)
-		if(cp & solutions) freq.gt <- freq.gt %>% gt::fmt_number(`c%`, decimals = opts$round_final)
+		if(cp & solutions) freq.gt <- freq.gt %>% gt::fmt_number(cp, decimals = opts$round_final)
 		if(pr & solutions) freq.gt <- freq.gt %>% gt::fmt_number(pr, decimals = opts$round_final)
 
 		# Include rf in summary row if appropriate
@@ -229,7 +236,7 @@ get_freq_tbl<- function(x,
 		# Also ensure other columns are represented as characters to  bind with summary.tbl
 		if(rf) freq.tbl <- dplyr::mutate(freq.tbl, rf = fmt(rf, digits = opts$round_interim))
 		if(cf) freq.tbl <- dplyr::mutate(freq.tbl, cf = as.character(cf))
-		if(cp) freq.tbl <- dplyr::mutate(freq.tbl, `c%` = fmt(`c%`, digits = opts$round_final))
+		if(cp) freq.tbl <- dplyr::mutate(freq.tbl, cp = fmt(cp, digits = opts$round_final))
 		if(pr) freq.tbl <- dplyr::mutate(freq.tbl, pr = fmt(pr, digits = opts$round_final))
 
 		summary.tbl <- dplyr::mutate(summary.tbl, f = as.character(f))
