@@ -266,15 +266,14 @@ sum_squares_table <- function(SS.lst,
 								 Dev = SS.lst$Dev,
 								 DevSq = SS.lst$DevSq) %>%
 		gt::gt() %>%
+		gt::grand_summary_rows(
+			columns = c(x, Dev, DevSq),
+			fns = list(id = "sum", label = gt::md("$$\\sum$$")) ~ sum(.),
+			fmt = ~ gt::fmt_number(., decimals = opts$round_interim)) %>%
 		gt::cols_label(
 			x = lglue('$$<<sym_x>>_{<<sub_x>>}$$'),
 			Dev = lglue('$$(<<sym_x>>_{<<sub_x>>} - M_{<<sub_val>>})$$'),
 			DevSq = lglue('$$(<<sym_x>>_{<<sub_x>>} - M_{<<sub_val>>})^2$$')) %>%
-		gt::grand_summary_rows(
-			columns = c(x, Dev, DevSq),
-			fns = list("$$\\sum$$" = ~fmt(sum(.),
-																		get_digits(., opts$round_interim))),
-			fmt = gt::fmt_passthrough) %>%
 		table_fmt()
 }
 
@@ -417,14 +416,13 @@ sum_squares_table2 <- function(SS.lst,
 	tibble::tibble(x = SS.lst$x,
 								 XSq = SS.lst$XSq) %>%
 		gt::gt() %>%
+		gt::grand_summary_rows(
+			columns = c(x, XSq),
+			fns = list(id = "sum", label = "$$\\sum$$") ~ sum(.),
+			fmt = ~ gt::fmt_number(., decimals = opts$round_interim)) %>%
 		gt::cols_label(
 			x = lglue('$$<<sym_x>>_{<<sub_x>>}$$'),
 			XSq = lglue('$$<<sym_x>>_{<<sub_x>>}^2$$')) %>%
-		gt::grand_summary_rows(
-			columns = c(x, XSq),
-			fns = list("$$\\sum$$" = ~fmt(sum(.),
-																		get_digits(., opts$round_interim))),
-			fmt = gt::fmt_passthrough) %>%
 		table_fmt()
 }
 
