@@ -413,6 +413,7 @@ sum_squares_table2 <- function(SS.lst,
 	# behavior and for presenting solutions in LaTeX environment.
 	opts <- get_handcalcs_opts(...)
 
+
 	tibble::tibble(x = SS.lst$x,
 								 XSq = SS.lst$XSq) %>%
 		gt::gt() %>%
