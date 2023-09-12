@@ -196,7 +196,7 @@ get_freq_tbl<- function(x,
 				columns = c(f),
 				fns = list(Total = ~sum(.)),
 				missing_text = "",
-				formatter = gt::fmt_number,
+				fmt = gt::fmt_number,
 				decimals = 0)
 
 		# Format the columns with decimals (if presenting solutions)
@@ -211,7 +211,7 @@ get_freq_tbl<- function(x,
 					columns = c(rf),
 					fns = list(Total = ~sum(.)),
 					missing_text = "",
-					formatter = gt::fmt_number,
+					fmt = gt::fmt_number,
 					decimals = opts$round_interim)
 		}
 

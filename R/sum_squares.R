@@ -274,7 +274,7 @@ sum_squares_table <- function(SS.lst,
 			columns = c(x, Dev, DevSq),
 			fns = list("$$\\sum$$" = ~fmt(sum(.),
 																		get_digits(., opts$round_interim))),
-			formatter = gt::fmt_passthrough) %>%
+			fmt = gt::fmt_passthrough) %>%
 		table_fmt()
 }
 
@@ -424,7 +424,7 @@ sum_squares_table2 <- function(SS.lst,
 			columns = c(x, XSq),
 			fns = list("$$\\sum$$" = ~fmt(sum(.),
 																		get_digits(., opts$round_interim))),
-			formatter = gt::fmt_passthrough) %>%
+			fmt = gt::fmt_passthrough) %>%
 		table_fmt()
 }
 
