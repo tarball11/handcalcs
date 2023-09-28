@@ -181,7 +181,7 @@ solve_z_one_sample <- function(M,
 
 	# Calculate z_obt and p:
 	M_diff <- rnd(M - mu, opts$round_interim)
-	z_obt <- rnd(M_diff/sigma_M, opts$round_final)
+	z_obt <- rnd(M_diff/sigma_M, opts$round_z)
 
 	# Get base formula without LaTeX math/aligned blocks
 	z_obt.f <- z_one_sample_formula(use_aligned = opts$use_aligned,
