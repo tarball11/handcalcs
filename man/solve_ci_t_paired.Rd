@@ -55,8 +55,11 @@ character string.
 }
 \description{
 Calculates confidence intervals around the mean difference score \eqn{M_{D}
-\pm (t_{1 - \alpha/2})(s_{M_{D}})}. May either provide \code{s_M_D}, or that value
-can be calculated from \code{SD_D} and \code{n}.
+\pm (t^{*})(s_{M_{D}})}, where \eqn{t^{*}} is the two-tailed critical value
+of \emph{t} (with \eqn{df = n - 1}) for 1 - the confidence level (e.g., for 95\%
+confidence intervals, the two-tailed value of \emph{t} for \eqn{\alpha = 1 - 0.95
+= 0.05}). May either provide \code{s_M_D}, or that value can be calculated from
+\code{SD_D} and \code{n}.
 }
 \details{
 Optionally, provide the value of \code{mu_D} (\eqn{mu_{D}}), the value of the mean

@@ -37,9 +37,11 @@ the bare formula in LaTeX format as a character string.
 }
 \description{
 Calculates confidence intervals around a sample mean when the population
-standard deviation (\eqn{\sigma}) is known: \eqn{M \pm (z_{1 -
-\alpha/2})(\sigma_{M})}. May either provide \code{sigma_M}, or that value can be
-calculated from \code{sigma} and \code{n}.
+standard deviation (\eqn{\sigma}) is known: \eqn{M \pm (z^{*})(\sigma_{M})},
+where \eqn{z^{*}} is the two-tailed critical value of \emph{z} for 1 - the
+confidence level (e.g., for 95\% confidence intervals, the two-tailed value of
+\emph{z} for \eqn{\alpha = 1 - 0.95 = 0.05}). May either provide \code{sigma_M}, or
+that value can be calculated from \code{sigma} and \code{n}.
 }
 \details{
 Note that the critical value of \emph{z} (\code{z_crit}) is rounded to the value of

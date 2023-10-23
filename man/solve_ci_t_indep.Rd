@@ -64,19 +64,22 @@ formula in LaTeX format as a character string.
 }
 \description{
 Calculates confidence intervals for the difference between two independent
-sample means: \eqn{(M_{1} - M_{2}) \pm (t_{1 - \alpha/2})(s_{M_{1} -
-M_{2}})}. May either provide \code{s_M_diff}, or that value can be calculated by
-providing the sample sizes (\code{n_1} and \code{n_2}) and either the pooled variance
-(\code{s_p2}) or the two sample standard deviations (\code{s_1} and \code{s_2}).
+sample means: \eqn{(M_{1} - M_{2}) \pm (t^{*})(s_{M_{1} - M_{2}})}, where
+\eqn{t^{*}} is the two-tailed critical value of \emph{t} (with \eqn{df = n_1 + n_2
+- 2}) for 1 - the confidence level (e.g., for 95\% confidence intervals, the
+two-tailed value of \emph{t} for \eqn{\alpha = 1 - 0.95 = 0.05}). May either
+provide \code{s_M_diff}, or that value can be calculated by providing the sample
+sizes (\code{n_1} and \code{n_2}) and either the pooled variance (\code{s_p2}) or the two
+sample standard deviations (\code{s_1} and \code{s_2}).
 }
 \details{
 You must provide either \code{df} or the two sample sizes (\code{n_1} and \code{n_2}). If
 sample sizes are provided, \code{df} will be calculated (\eqn{df = n_1 + n_2 -
-1}). If both are provided, this allows for the possibility of errors that
-produce incorrect results. However, it also allows for the possibility of
-using a different value of \code{df} than \code{n_1 + n_2 - 1}, for instance of
-requiring use of a statistical table that does not have that exact value of
-\code{df} listed.
+2}). If both are provided, \code{df} will be used, which allows for the
+possibility of conflicting values that produce undesired results. However, it
+also allows for the possibility of using a different value of \code{df} than
+\eqn{n_1 + n_2 - 2}, such as when using a statistical table that does not
+have that exact value of \code{df} listed.
 
 Note that the critical value of \emph{t} (\code{t_crit}) is rounded to the value of
 \code{round_t} instead of the value of \code{round_interim} or \code{round_final} (see

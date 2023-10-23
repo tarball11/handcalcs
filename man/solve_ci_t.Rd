@@ -44,8 +44,11 @@ bare formula in LaTeX format as a character string.
 \description{
 Calculates confidence intervals around a sample mean when the population
 standard deviation (\eqn{\sigma}) must be estimated using the sample standard
-deviation (\eqn{s}, aka \code{SD}) \eqn{M \pm (t_{1 - \alpha/2})(s_{M})}. May
-either provide \code{s_M}, or that value can be calculated from \code{SD} and \code{n}.
+deviation (\eqn{s}, aka \code{SD}) \eqn{M \pm (t^{*})(s_{M})}, where \eqn{t^{*}}
+is the two-tailed critical value of \emph{t} (with \eqn{df = n - 1}) for 1 - the
+confidence level (e.g., for 95\% confidence intervals, the two-tailed value of
+\emph{t} for \eqn{\alpha = 1 - 0.95 = 0.05}). May either provide \code{s_M}, or that
+value can be calculated from \code{SD} and \code{n}.
 }
 \details{
 Optionally, provide the value of \code{mu} (\eqn{mu}), the predicted value of the

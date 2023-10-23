@@ -1,9 +1,11 @@
 #' Confidence Intervals Around Sample Mean (using *z* distribution)
 #'
 #' Calculates confidence intervals around a sample mean when the population
-#' standard deviation (\eqn{\sigma}) is known: \eqn{M \pm (z_{1 -
-#' \alpha/2})(\sigma_{M})}. May either provide `sigma_M`, or that value can be
-#' calculated from `sigma` and `n`.
+#' standard deviation (\eqn{\sigma}) is known: \eqn{M \pm (z^{*})(\sigma_{M})},
+#' where \eqn{z^{*}} is the two-tailed critical value of *z* for 1 - the
+#' confidence level (e.g., for 95% confidence intervals, the two-tailed value of
+#' *z* for \eqn{\alpha = 1 - 0.95 = 0.05}). May either provide `sigma_M`, or
+#' that value can be calculated from `sigma` and `n`.
 #'
 #' Note that the critical value of *z* (`z_crit`) is rounded to the value of
 #' `round_z` instead of the value of `round_interim` or `round_final` (see
@@ -174,7 +176,7 @@ ci_z_formula <- function(level = 0.95,
 	alpha <- 1 - level
 
 	# Solution string:
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> M \\pm (z_{\\alpha = <<alpha>>})(\\sigma_{M})")
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> M \\pm (z^{*})(\\sigma_{M})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -189,8 +191,11 @@ ci_z_formula <- function(level = 0.95,
 #'
 #' Calculates confidence intervals around a sample mean when the population
 #' standard deviation (\eqn{\sigma}) must be estimated using the sample standard
-#' deviation (\eqn{s}, aka `SD`) \eqn{M \pm (t_{1 - \alpha/2})(s_{M})}. May
-#' either provide `s_M`, or that value can be calculated from `SD` and `n`.
+#' deviation (\eqn{s}, aka `SD`) \eqn{M \pm (t^{*})(s_{M})}, where \eqn{t^{*}}
+#' is the two-tailed critical value of *t* (with \eqn{df = n - 1}) for 1 - the
+#' confidence level (e.g., for 95% confidence intervals, the two-tailed value of
+#' *t* for \eqn{\alpha = 1 - 0.95 = 0.05}). May either provide `s_M`, or that
+#' value can be calculated from `SD` and `n`.
 #'
 #' Optionally, provide the value of `mu` (\eqn{mu}), the predicted value of the
 #' mean under the null hypothesis, which will return the confidence interval
@@ -417,7 +422,7 @@ ci_t_formula <- function(mu = NULL,
 	estimate <- ifelse(!is.null(mu), "(M - \\mu)", "M")
 
 	# Solution string:
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t_{\\alpha = <<alpha>>})(s_{M})")
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t^{*})(s_{M})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -433,8 +438,11 @@ ci_t_formula <- function(mu = NULL,
 #' Confidence Intervals Around Mean Difference Score (using *t* distribution)
 #'
 #' Calculates confidence intervals around the mean difference score \eqn{M_{D}
-#' \pm (t_{1 - \alpha/2})(s_{M_{D}})}. May either provide `s_M_D`, or that value
-#' can be calculated from `SD_D` and `n`.
+#' \pm (t^{*})(s_{M_{D}})}, where \eqn{t^{*}} is the two-tailed critical value
+#' of *t* (with \eqn{df = n - 1}) for 1 - the confidence level (e.g., for 95%
+#' confidence intervals, the two-tailed value of *t* for \eqn{\alpha = 1 - 0.95
+#' = 0.05}). May either provide `s_M_D`, or that value can be calculated from
+#' `SD_D` and `n`.
 #'
 #' Optionally, provide the value of `mu_D` (\eqn{mu_{D}}), the value of the mean
 #' difference predicted by the null hypothesis), which will return the
@@ -664,7 +672,7 @@ ci_t_paired_formula <- function(mu_D = NULL,
 	estimate <- ifelse(!is.null(mu_D), "(M_{D} - \\mu_{D})", "M_{D}")
 
 	# Solution string:
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t_{\\alpha = <<alpha>>})(s_{M_{D}})")
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> <<estimate>> \\pm (t^{*})(s_{M_{D}})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -678,18 +686,21 @@ ci_t_paired_formula <- function(mu_D = NULL,
 #' distribution)
 #'
 #' Calculates confidence intervals for the difference between two independent
-#' sample means: \eqn{(M_{1} - M_{2}) \pm (t_{1 - \alpha/2})(s_{M_{1} -
-#' M_{2}})}. May either provide `s_M_diff`, or that value can be calculated by
-#' providing the sample sizes (`n_1` and `n_2`) and either the pooled variance
-#' (`s_p2`) or the two sample standard deviations (`s_1` and `s_2`).
+#' sample means: \eqn{(M_{1} - M_{2}) \pm (t^{*})(s_{M_{1} - M_{2}})}, where
+#' \eqn{t^{*}} is the two-tailed critical value of *t* (with \eqn{df = n_1 + n_2
+#' - 2}) for 1 - the confidence level (e.g., for 95% confidence intervals, the
+#' two-tailed value of *t* for \eqn{\alpha = 1 - 0.95 = 0.05}). May either
+#' provide `s_M_diff`, or that value can be calculated by providing the sample
+#' sizes (`n_1` and `n_2`) and either the pooled variance (`s_p2`) or the two
+#' sample standard deviations (`s_1` and `s_2`).
 #'
 #' You must provide either `df` or the two sample sizes (`n_1` and `n_2`). If
 #' sample sizes are provided, `df` will be calculated (\eqn{df = n_1 + n_2 -
-#' 1}). If both are provided, this allows for the possibility of errors that
-#' produce incorrect results. However, it also allows for the possibility of
-#' using a different value of `df` than `n_1 + n_2 - 1`, for instance of
-#' requiring use of a statistical table that does not have that exact value of
-#' `df` listed.
+#' 2}). If both are provided, `df` will be used, which allows for the
+#' possibility of conflicting values that produce undesired results. However, it
+#' also allows for the possibility of using a different value of `df` than
+#' \eqn{n_1 + n_2 - 2}, such as when using a statistical table that does not
+#' have that exact value of `df` listed.
 #'
 #' Note that the critical value of *t* (`t_crit`) is rounded to the value of
 #' `round_t` instead of the value of `round_interim` or `round_final` (see
@@ -762,7 +773,7 @@ solve_ci_t_indep <- function(M_1, M_2,
 
 	# Must supply either n_1 and n_2 or df.
 	if((missing(n_1) | missing(n_2)) & missing(df)) stop('Must supply either sample sizes (n_1 and n_2) or df.')
-	if(missing(df)) df <- n_1 + n_2 - 1
+	if(missing(df)) df <- (n_1 - 1) + (n_2 - 1)
 	stopifnot(is.numeric(df), length(df) == 1, df > 0)
 
 	# If standard error of the differences is not provided, must supply sample
@@ -923,7 +934,7 @@ ci_t_indep_formula <- function(level = 0.95,
 	alpha <- 1 - level
 
 	# Solution string:
-	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> (M_{1} - M_{2}) \\pm (t_{\\alpha = <<alpha>>})(s_{M_{1} - M_{2}})")
+	solution <- lglue("<<level*100>>\\% \\ \\text{CI} <<equals>> (M_{1} - M_{2}) \\pm (t^{*})(s_{M_{1} - M_{2}})")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
