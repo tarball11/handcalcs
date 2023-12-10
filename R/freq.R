@@ -95,7 +95,7 @@ get_freq_tbl<- function(x,
 	stopifnot(is.logical(sort_desc))
 
 	return_type <- match.arg(return_type)
-	if(missing(return_type)) return_type == 'gt'
+	if(missing(return_type)) return_type <- 'gt'
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -261,7 +261,8 @@ get_freq_tbl<- function(x,
 									 linesep = "",
 									 align = c('r', 'c', 'c', 'c', 'c', 'c')) %>%
 			kableExtra::kable_styling(position = "center",
-																latex_options = 'HOLD_position') %>%
+																latex_options = 'HOLD_position',
+																font_size = font_size) %>%
 			kableExtra::row_spec(0, italic = TRUE) %>%
 			kableExtra::row_spec(1:nrow(freq.kbl), hline_after = TRUE) %>%
 			kableExtra::column_spec(2:(ncol(freq.kbl)-1),
