@@ -107,10 +107,11 @@ get_freq_tbl<- function(x,
 		stopifnot(is.numeric(width), length(width) == 1)
 
 		# Set the default lower bound of the lowest interval if not provided
-		if(missing(start)) start <- min(x)
+		# Ensures that the lower bound of each interval is a multiple of the width
+		if(missing(start)) start <- min(x) - (min(x) %% width)
 
 		# Sequence of lower bounds
-		lower <- seq(start, max(x)+1, width)
+		lower <- seq(start, max(x), width)
 
 		# Figure out which interval each x value would fall into
 		freq.tbl <- tibble::tibble(x = x,
@@ -240,7 +241,8 @@ get_freq_tbl<- function(x,
 		if(pr) freq.tbl <- dplyr::mutate(freq.tbl, pr = fmt(pr, digits = opts$round_final))
 
 		summary.tbl <- dplyr::mutate(summary.tbl, f = as.character(f))
-		if(rf) summary.tbl <- dplyr::mutate(summary.tbl, rf = fmt(rf, digits = opts$round_interim))
+		### THIS IS CAUSING PROBLEMS WHEN SOLUTIONS IS FALSE, DISPLAYING NAS INSTEAD OF ""
+		# if(rf) summary.tbl <- dplyr::mutate(summary.tbl, rf = fmt(rf, digits = opts$round_interim))
 
 		# Combine frequency table with summary row
 		full.tbl <- dplyr::bind_rows(freq.tbl, summary.tbl)
@@ -263,15 +265,17 @@ get_freq_tbl<- function(x,
 			kableExtra::kable_styling(position = "center",
 																latex_options = 'HOLD_position',
 																font_size = font_size) %>%
-			kableExtra::row_spec(0, italic = TRUE) %>%
-			kableExtra::row_spec(1:nrow(freq.kbl), hline_after = TRUE) %>%
-			kableExtra::column_spec(2:(ncol(freq.kbl)-1),
-															width = '2cm',
-															border_left = TRUE) %>%
-			kableExtra::column_spec(ncol(freq.kbl),
-															width = '2cm',
-															border_left = TRUE,
-															border_right = TRUE)
+			kableExtra::row_spec(0, italic = TRUE)
+		# This looks like garbage:
+		# %>%
+		# 	# kableExtra::row_spec(1:nrow(freq.kbl), hline_after = TRUE) %>%
+		# 	kableExtra::column_spec(2:(ncol(freq.kbl)-1),
+		# 													width = '2cm',
+		# 													border_left = TRUE) %>%
+		# 	kableExtra::column_spec(ncol(freq.kbl),
+		# 													width = '2cm',
+		# 													border_left = TRUE,
+		# 													border_right = TRUE)
 	}
 }
 
