@@ -241,8 +241,7 @@ get_freq_tbl<- function(x,
 		if(pr) freq.tbl <- dplyr::mutate(freq.tbl, pr = fmt(pr, digits = opts$round_final))
 
 		summary.tbl <- dplyr::mutate(summary.tbl, f = as.character(f))
-		### THIS IS CAUSING PROBLEMS WHEN SOLUTIONS IS FALSE, DISPLAYING NAS INSTEAD OF ""
-		# if(rf) summary.tbl <- dplyr::mutate(summary.tbl, rf = fmt(rf, digits = opts$round_interim))
+		if(rf) summary.tbl <- dplyr::mutate(summary.tbl, rf = fmt(rf, digits = opts$round_interim))
 
 		# Combine frequency table with summary row
 		full.tbl <- dplyr::bind_rows(freq.tbl, summary.tbl)
