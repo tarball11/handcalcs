@@ -4,30 +4,33 @@
 \alias{solve_z_to_p}
 \title{Calculate \emph{p} values from the standard normal (\emph{z}) distribution.}
 \usage{
-solve_z_to_p(z, direction = c("pos", "neg", "both"), ...)
+solve_z_to_p(z_val, direction = c("pos", "neg", "both"), ...)
 }
 \arguments{
-\item{z}{Numeric scalar. Value of z.}
+\item{z_val}{Numeric scalar. Value of z statistic.}
 
 \item{direction}{For which tail(s) of the distribution should the p-value be
-located: pos (area under the curve above \code{z}), neg (area under the curve
-below \code{z}), both (area under the curve above +\code{z} and below -\code{z}).}
+located: pos (area under the curve above \code{z_val}), neg (area under the
+curve below \code{z_val}), both (area under the curve above +\code{z_val} and below
+-\code{z_val}).}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}}
 }
 \value{
-Returns a list with the provided values (\code{z}, \code{direction}), the final
-value (\code{p}), and the solution string (\code{solution}) in LaTeX format.
+Returns a list with the provided values (\code{z_val}, \code{direction}), the
+final value (\code{p_val}), and the solution string (\code{solution}) in LaTeX
+format. (\code{z} and \code{p} are also provided for ease of use and backwards
+compatibility.)
 }
 \description{
-Note that values of \code{z} are rounded to the value of \code{round_z} instead of the
-value of \code{round_interim} or \code{round_final} (see \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).
+Note that values of \code{z_val} are rounded to the value of \code{round_z} instead of
+the value of \code{round_interim} or \code{round_final} (see \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}).
 }
 \examples{
-solve_z_to_p(1.96, direction = 'both')
+solve_z_to_p(z_val = 1.96, direction = 'both')
 
 # In some cases, you may need to change the default value of round_z
-solve_z_to_p(1.645, direction = 'pos', round_z = 3)
+solve_z_to_p(z_val = 1.645, direction = 'pos', round_z = 3)
 
 }

@@ -5,9 +5,18 @@
 \alias{Q_obt_formula}
 \title{Tukey's HSD Post Hoc Test (Studentized Range Statistic)}
 \usage{
-solve_Q_obt(M_1, M_2, n_1, n_2, MS_error, ...)
+solve_Q_obt(
+  M_1,
+  M_2,
+  n_1,
+  n_2,
+  MS_error,
+  MS_W,
+  sub = c("W", "Error", "Within"),
+  ...
+)
 
-Q_obt_formula(...)
+Q_obt_formula(sub = c("W", "Error", "Within"), ...)
 }
 \arguments{
 \item{M_1}{Numeric scalar. Mean of sample 1.}
@@ -18,7 +27,8 @@ Q_obt_formula(...)
 
 \item{n_2}{Numeric scalar. Sample size of sample 2.}
 
-\item{MS_error}{Numeric scalar. Mean Squared Error term from the ANOVA.}
+\item{MS_error, MS_W}{Numeric scalar. Mean Squared Error (aka Mean Squared
+Within) term from the ANOVA.}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}}

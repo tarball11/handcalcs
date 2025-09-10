@@ -7,7 +7,7 @@
 \usage{
 solve_LSD(M_1, M_2, n_1, n_2, MS_error, ...)
 
-LSD_formula(...)
+LSD_formula(sub = c("W", "Error", "Within"), ...)
 }
 \arguments{
 \item{M_1}{Numeric scalar. Mean of sample 1.}

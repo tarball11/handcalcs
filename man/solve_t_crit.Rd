@@ -39,7 +39,7 @@ solve_t_crit(alpha = 0.01, df = 100, direction = 'pos')
 solve_t_crit(alpha = 0.01, df = 100, direction = 'neg')
 solve_t_crit(alpha = 0.01, df = 100, direction = 'both')
 
-# In some cases, you may wish to change the default value for round_final:
-solve_t_crit(alpha = 0.05, df = 100, direction = 'pos', round_final = 3)
+# In some cases, you may wish to change the default value for round_t:
+solve_t_crit(alpha = 0.05, df = 100, direction = 'pos', round_t = 3)
 
 }

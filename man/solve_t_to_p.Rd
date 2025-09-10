@@ -4,31 +4,34 @@
 \alias{solve_t_to_p}
 \title{Calculate \emph{p} values from the \emph{t} distribution.}
 \usage{
-solve_t_to_p(t, df, direction = c("pos", "neg", "both"), ...)
+solve_t_to_p(t_val, df, direction = c("pos", "neg", "both"), ...)
 }
 \arguments{
-\item{t}{Numeric scalar. Value of t.}
+\item{t_val}{Numeric scalar. Value of t statistic.}
 
 \item{df}{Numeric scalar. Degrees of freedom.}
 
 \item{direction}{For which tail(s) of the distribution should the p-value be
-located: pos (area under the curve above \code{t}), neg (area under the curve
-below \code{t}), both (area under the curve above +\code{t} and below -\code{t}).}
+located: pos (area under the curve above \code{t_val}), neg (area under the
+curve below \code{t_val}), both (area under the curve above +\code{t_val} and below
+-\code{t_val}).}
 
 \item{...}{Additional arguments to override default behaviors (see
 \code{\link[=handcalcs_defaults]{handcalcs_defaults()}}}
 }
 \value{
-Returns a list with the provided values (\code{t}, \code{df}, \code{direction}), the
-final value (\code{p}), and the solution string (\code{solution}) in LaTeX format.
+Returns a list with the provided values (\code{t_val}, \code{df}, \code{direction}),
+the final value (\code{p_val}), and the solution string (\code{solution}) in LaTeX
+format. (\code{t} and \code{p} are also provided for ease of use and backwards
+compatibility.)
 }
 \description{
 Calculate \emph{p} values from the \emph{t} distribution.
 }
 \examples{
-solve_t_to_p(1.96, direction = 'both')
+solve_t_to_p(t_val = 1.96, df = 100, direction = 'both')
 
 # In some cases, you may need to change the default value of round_final
-solve_t_to_p(1.645, direction = 'pos', round_final = 3)
+solve_t_to_p(t_valu = 1.645, df = 100, direction = 'pos', round_final = 3)
 
 }
