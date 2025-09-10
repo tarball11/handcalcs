@@ -6,7 +6,7 @@
 #' regression, and correlation.
 #'
 #'
-#' @docType package
+#' @docType _PACKAGE
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
