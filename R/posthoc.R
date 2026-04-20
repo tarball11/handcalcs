@@ -204,7 +204,11 @@ solve_LSD <- function(M_1,
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
-	# Calculate t_obt:
+	# Round M values
+	M_1 <- rnd(M_1, opts$round_interim)
+	M_2 <- rnd(M_2, opts$round_interim)
+
+		# Calculate t_obt:
 	M_diff <- rnd(M_1 - M_2, opts$round_interim)
 
 	MS_error_n1 <- rnd(MS_error/n_1, opts$round_interim)
