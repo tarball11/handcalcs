@@ -18,7 +18,8 @@
 #' @param M_2 Numeric scalar. Mean of sample 2.
 #' @param n_1 Numeric scalar. Sample size of sample 1.
 #' @param n_2 Numeric scalar. Sample size of sample 2.
-#' @param MS_error Numeric scalar. Mean Squared Error term from the ANOVA.
+#' @param MS_error,MS_W Numeric scalar. Mean Squared Error (aka Mean Squared
+#'   Within) term from the ANOVA.
 #' @param ... Additional arguments to override default behaviors (see
 #'   [handcalcs_defaults()]
 #'
@@ -40,6 +41,8 @@ solve_Q_obt <- function(M_1,
 												n_1,
 												n_2,
 												MS_error,
+												MS_W,
+												sub = c('W', 'Error', 'Within'),
 												...) {
 
 	# Check argument validity:
@@ -47,7 +50,12 @@ solve_Q_obt <- function(M_1,
 	stopifnot(is.numeric(M_2), length(M_2) == 1)
 	stopifnot(is.numeric(n_1), length(n_1) == 1, n_1 > 0)
 	stopifnot(is.numeric(n_2), length(n_2) == 1, n_2 > 0)
+
+	# If MS_W is supplied instead of MS_error, use that one
+	if(missing(MS_error) & !missing(MS_W)) MS_error <- MS_W
+
 	stopifnot(is.numeric(MS_error), MS_error >= 0, length(MS_error) == 1)
+	sub <- match.arg(sub)
 
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
@@ -55,6 +63,10 @@ solve_Q_obt <- function(M_1,
 
 	# Use the appropriate equals sign for an aligned environment
 	equals <- ifelse(opts$use_aligned, "&=", "=")
+
+	# Round M values
+	M_1 <- rnd(M_1, opts$round_interim)
+	M_2 <- rnd(M_2, opts$round_interim)
 
 	# Calculate Q_obt:
 	M_diff <- rnd(abs(M_1 - M_2), opts$round_interim)
@@ -69,7 +81,8 @@ solve_Q_obt <- function(M_1,
 	# Get base formula without LaTeX math/aligned blocks
 	Q_obt.f <- Q_obt_formula(use_aligned = opts$use_aligned,
 													 add_math = FALSE,
-													 add_aligned = FALSE)
+													 add_aligned = FALSE,
+													 sub = sub)
 
 	solution <- glue_solution(
 		Q_obt.f,
@@ -108,7 +121,11 @@ solve_Q_obt <- function(M_1,
 #'
 #' @export
 #'
-Q_obt_formula <- function(...) {
+Q_obt_formula <- function(sub = c('W', 'Error', 'Within'),
+													...) {
+
+	sub <- match.arg(sub)
+
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
 	opts<- get_handcalcs_opts(...)
@@ -117,7 +134,7 @@ Q_obt_formula <- function(...) {
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
 	# Create the formula string:
-	solution<- lglue("Q_{\\text{obt}} <<equals>> \\frac{|M_{1} - M_{2}|}{\\sqrt{(\\frac{\\mathit{MS}_{\\text{error}}}{n_{1}} + \\frac{\\mathit{MS}_{\\text{error}}}{n_{2}})(\\frac{1}{2})}}")
+	solution<- lglue("Q_{\\text{obt}} <<equals>> \\frac{|M_{1} - M_{2}|}{\\sqrt{(\\frac{\\mathit{MS}_{\\text{<<sub>>}}}{n_{1}} + \\frac{\\mathit{MS}_{\\text{<<sub>>}}}{n_{2}})(\\frac{1}{2})}}")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
@@ -239,7 +256,11 @@ solve_LSD <- function(M_1,
 #'
 #' @export
 #'
-LSD_formula <- function(...) {
+LSD_formula <- function(sub = c('W', 'Error', 'Within'),
+												...) {
+
+	sub <- match.arg(sub)
+
 	# Get list of options (allowing user to override defaults) for rounding
 	# behavior and for presenting solutions in LaTeX environment.
 	opts<- get_handcalcs_opts(...)
@@ -248,7 +269,7 @@ LSD_formula <- function(...) {
 	equals <- ifelse(opts$use_aligned, "&=", "=")
 
 	# Create the formula string:
-	solution<- lglue("t_{\\text{obt}} <<equals>> \\frac{|M_{1} - M_{2}|}{\\sqrt{\\frac{\\mathit{MS}_{\\text{error}}}{n_{1}} + \\frac{\\mathit{MS}_{\\text{error}}}{n_{2}}}}")
+	solution<- lglue("t_{\\text{obt}} <<equals>> \\frac{|M_{1} - M_{2}|}{\\sqrt{\\frac{\\mathit{MS}_{\\text{<<sub>>}}}{n_{1}} + \\frac{\\mathit{MS}_{\\text{<<sub>>}}}{n_{2}}}}")
 
 	# Add LaTeX math code, if desired.
 	if (opts$add_aligned) solution <- add_aligned(solution)
